@@ -1,12 +1,12 @@
 {
   "name": "Biotos CRM – Field App",
   "short_name": "Biotos CRM",
-  "description": "Schedario medici e farmacie, visite, appuntamenti, follow-up. Offline-ready.",
+  "description": "PWA CRM per medici/farmacie: visite, agenda, follow-up, report. Offline-ready.",
   "display": "standalone",
   "start_url": "./",
   "scope": "./",
   "background_color": "#07130e",
-  "theme_color": "#12a06a",
+  "theme_color": "#0b8f5c",
   "icons": [
     {
       "src": "icons/icon-192.png",
