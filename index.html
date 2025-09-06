@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no, email=no, address=no">
-  <title>Biotos CRM – v9.0</title>
+  <title>Biotos CRM – v10.1</title>
   <meta name="theme-color" content="#12a06a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,121 +12,105 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
   <style>
-    /* --------- Palette migliorata (Dark/Light/High-Contrast) --------- */
     :root{
       --bg:#07130e; --panel:#0c2319; --panel2:#0a1c15; --muted:#bfe6d5; --text:#f6fffa;
       --accent:#12a06a; --accent-2:#0bbf77; --line:#1a563b; --danger:#ff6b6b; --warn:#ffc857; --ok:#28d07e;
-      --nav-h:58px;
+      --nav-h:48px;
     }
     [data-theme="light"]{
       --bg:#f6fffa; --panel:#ffffff; --panel2:#f4fbf8; --muted:#305a49; --text:#0b2118; --line:#cfe7dc;
     }
-    [data-theme="hc"]{ /* High contrast */
+    [data-theme="hc"]{
       --bg:#000; --panel:#000; --panel2:#000; --muted:#bfe6d5; --text:#fff; --line:#3ddc97; --accent:#3ddc97; --accent-2:#93f9b9;
     }
-
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16.5px/1.55 -apple-system,BlinkMacSystemFont,system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    a{color:#8ff5d1;text-decoration:none}
-    header{position:sticky;top:0;background:var(--bg);z-index:40;padding-top:calc(4px + env(safe-area-inset-top));border-bottom:1px solid rgba(23,86,59,.35);backdrop-filter:saturate(1.2) blur(6px)}
-    .wrap{max-width:1100px;margin:0 auto;padding:10px 12px}
-    h1{font-size:18px;margin:0 0 6px;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
-    h1 img{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:#fff}
-    .savebadge{margin-left:auto;font-size:12px;color:#bfe5cf}
-    .theme{margin-left:6px}
-    .theme select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px}
-    .globalsearch{display:flex;gap:8px}
-    .globalsearch input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:40px;color:var(--text)}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.55 -apple-system,BlinkMacSystemFont,system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    header{position:sticky;top:0;background:var(--bg);z-index:40;padding-top:calc(2px + env(safe-area-inset-top));border-bottom:1px solid rgba(23,86,59,.35);backdrop-filter:saturate(1.2) blur(6px)}
+    .wrap{max-width:1100px;margin:0 auto;padding:4px 12px}
+    h1{font-size:16px;margin:0;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
+    h1 img{width:22px;height:22px;border-radius:6px;border:1px solid var(--line);background:#fff}
+    .savebadge{margin-left:auto;font-size:11px;color:#bfe5cf}
+    .globalsearch{margin:2px 0 2px;display:flex;gap:8px}
+    .globalsearch input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;min-height:38px;color:var(--text)}
     .gsres{position:absolute;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-top:4px;z-index:60;display:none;max-height:50vh;overflow:auto}
-
-    /* Barra sezioni ottimizzata (mobile-first) */
     .bottomnav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--line);
-      display:flex;gap:4px;padding:6px env(safe-area-inset-right) calc(6px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:35; height:var(--nav-h)}
-    .bottomnav button{flex:1;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:8px;border-radius:10px;min-height:42px;font-size:13px;display:flex;gap:6px;align-items:center;justify-content:center}
+      display:flex;gap:6px;padding:4px env(safe-area-inset-right) calc(4px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:35;height:var(--nav-h);
+      overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity}
+    .bottomnav button{flex:0 0 auto;min-width:84px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:6px 8px;border-radius:10px;min-height:34px;font-size:13px;display:flex;gap:6px;align-items:center;justify-content:center;scroll-snap-align:center}
     .bottomnav button .ico{font-size:16px}
     .bottomnav button.active{border-color:var(--accent);background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
-    .nav-compact .bottomnav{--nav-h:50px}
-    .nav-compact .bottomnav button{min-height:38px;font-size:12.5px}
-    .topnav{display:none;gap:8px;margin-top:6px}
-    .topnav button{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:8px 10px;border-radius:10px;min-height:36px;font-size:14px}
+    @media (max-width:380px){ .bottomnav button span.label{display:none} .bottomnav button{min-width:54px} }
+    .topnav{display:none;gap:8px;margin-top:4px}
+    .topnav button{border:1px solid var(--line);background:var(--panel2);color:#fff;padding:8px 10px;border-radius:10px;min-height:36px;font-size:14px}
     .topnav button.active{border-color:var(--accent);background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
-
-    .grid{display:grid;gap:12px;contain:paint}
-    .pan{background:var(--panel);padding:12px;border-radius:14px;border:1px solid var(--line)}
+    .grid{display:grid;gap:8px;contain:paint}
+    .pan{background:var(--panel);padding:8px;border-radius:14px;border:1px solid var(--line)}
     .row{display:flex;gap:8px;flex-wrap:wrap}
     .row>*{flex:1 1 280px}
     label{display:block;font-size:12px;color:#cde3d9;margin-bottom:6px}
-    input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:44px;font-size:16px}
+    input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:11px;min-height:42px;font-size:16px}
     input:invalid,select:invalid,textarea:invalid{border-color:var(--danger); box-shadow:0 0 0 1px #ff8a8a22 inset}
-    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#103024;color:var(--text);padding:12px 14px;border-radius:12px;cursor:pointer;min-height:44px;font-size:16px;-webkit-tap-highlight-color:transparent}
+    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#103024;color:var(--text);padding:9px 11px;border-radius:12px;cursor:pointer;min-height:38px;font-size:15px;-webkit-tap-highlight-color:transparent}
     .btn.primary{border-color:var(--accent);background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
     .btn.block{width:100%;justify-content:center}
     .btn.ghost{background:transparent}
     .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:#0b2b1e;color:#cfe}
     .muted{color:var(--muted)} .right{margin-left:auto} .hidden{display:none!important}
-
-    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
-    .kpis .pan{padding:10px} .kpis h3{margin:6px 0 4px;font-size:12px;color:#cfe8dc} .kpis .value{font-size:22px;font-weight:700}
+    .chips{display:flex;gap:6px;flex-wrap:wrap}
+    .chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:#0b2b1e;color:#d9ffe9}
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+    .kpis .pan{padding:8px} .kpis h3{margin:4px 0 2px;font-size:12px;color:#cfe8dc} .kpis .value{font-size:20px;font-weight:700}
     .tablewrap{max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
-    .cards{display:grid;gap:10px;contain:paint}
-    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+    .cards{display:grid;gap:8px;contain:paint}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;display:flex;gap:10px;align-items:flex-start}
     .card .main{flex:1;min-width:0}
     .card .title{font-weight:800; letter-spacing:.2px; overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .card .subtitle{color:#d6eee4; font-size:13px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .card .meta{font-size:13px;color:#b7c7bf;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .actions{display:flex;gap:8px;margin-top:10px}
-    .chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);margin-left:6px;background:#0b2b1e;color:#d9ffe9}
-
-    /* FAB migliorato (menu azioni contestuali) */
-    .fab{position:fixed;right:16px;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;
+    .actions{display:flex;gap:8px;margin-top:8px}
+    .fab{position:fixed;right:16px;bottom:calc(var(--nav-h) + 18px + env(safe-area-inset-bottom));width:54px;height:54px;border-radius:50%;
       display:flex;align-items:center;justify-content:center;background:var(--accent);color:#07170f;font-weight:800;border:0;z-index:34;box-shadow:0 10px 26px rgba(0,0,0,.45)}
-    .fabmenu{position:fixed;right:16px;bottom:calc(var(--nav-h) + 84px + env(safe-area-inset-bottom));display:none;flex-direction:column;gap:8px;z-index:36}
+    .fabmenu{position:fixed;right:16px;bottom:calc(var(--nav-h) + 82px + env(safe-area-inset-bottom));display:none;flex-direction:column;gap:8px;z-index:36}
     .fabmenu .btn{background:#0f2e22;border-color:var(--accent)}
     .fabmenu.show{display:flex}
-
     .sheet{position:fixed;inset:0;display:none;background:rgba(0,0,0,.5);z-index:40}
     .sheet.open{display:block}
     .sheet .panel{position:absolute;left:0;right:0;bottom:0;background:#0c2219;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid var(--line);
-      padding:14px 12px calc(16px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
-    .sheet h3{margin:4px 4px 10px}
+      padding:10px 10px calc(12px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
+    .sheet h3{margin:2px 4px 8px}
     .sheet .row>*{flex:1 1 240px}
-    .sheet .close{position:absolute;right:10px;top:8px;background:transparent;border:0;color:#dfe; font-size:24px}
-
+    .sheet .close{position:absolute;right:10px;top:6px;background:transparent;border:0;color:#dfe; font-size:22px}
     details{background:#0b241a;border:1px solid var(--line);border-radius:12px;padding:8px 10px}
     details>summary{cursor:pointer;font-weight:700}
     details[open]{box-shadow:inset 0 0 0 1px #13a26322}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 30px + env(safe-area-inset-bottom));background:#0f2e22;border:1px solid var(--line);padding:10px 14px;border-radius:12px;z-index:50;display:none}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom));background:#0f2e22;border:1px solid var(--line);padding:8px 12px;border-radius:12px;z-index:50;display:none}
     .toast.show{display:block}
-    .update{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 80px + env(safe-area-inset-bottom));background:#1a2f27;border:1px solid var(--line);padding:10px 14px;border-radius:12px;z-index:50;display:none}
+    .update{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + 62px + env(safe-area-inset-bottom));background:#1a2f27;border:1px solid var(--line);padding:8px 12px;border-radius:12px;z-index:50;display:none}
     .update.show{display:flex;gap:8px;align-items:center}
-
-    .quickchips{display:flex;gap:6px;flex-wrap:wrap}
-    .quickchips button{border:1px dashed var(--line);background:transparent;color:#cfe;padding:6px 10px;border-radius:10px}
-    .stat{font-variant-numeric:tabular-nums}
-
     @media (min-width:900px){
       .bottomnav{display:none}
       .topnav{display:flex}
-      .wrap{padding-bottom:24px}
+      .wrap{padding-bottom:20px}
       .cards{display:none}
       .tablewrap{display:block}
       .fab{right:24px; bottom:24px}
     }
     @media (max-width:899px){
-      .wrap{padding-bottom:calc(var(--nav-h) + 70px)}
+      .wrap{padding-bottom:calc(var(--nav-h) + 52px)}
       .tablewrap{display:none}
       .cards{display:grid}
     }
   </style>
 </head>
-<body class="nav-compact">
+<body>
 <header>
   <div class="wrap">
-    <h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span class="muted">v9.0</span>
+    <h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span class="muted">v10.1</span>
       <span class="savebadge" id="savebadge">Salvato ✓</span>
-      <span class="theme"><select id="themeSel">
+      <span style="margin-left:8px"><select id="themeSel">
         <option value="auto">Auto</option><option value="dark">Scuro</option><option value="light">Chiaro</option><option value="hc">Contrasto alto</option>
       </select></span>
+      <span class="right muted" id="profileLabel"></span>
     </h1>
     <div class="globalsearch">
       <input id="gsearch" placeholder="Cerca in medici, farmacie, visite, appuntamenti…" autocapitalize="words" autocomplete="off">
@@ -139,13 +123,13 @@
       <button class="tabbtn" data-tab="visite">📝 Visite</button>
       <button class="tabbtn" data-tab="agenda">🗓️ Agenda</button>
       <button class="tabbtn" data-tab="followup">⏰ Follow-up</button>
+      <button class="tabbtn" data-tab="report">📈 Report</button>
       <button class="tabbtn" data-tab="io">⚙️ Dati</button>
     </div>
   </div>
 </header>
 
 <main class="wrap">
-  <!-- DASHBOARD -->
   <section id="dashboard" class="grid">
     <div class="kpis">
       <div class="pan"><h3>Medici schedati</h3><div class="value stat" id="k_medici">0</div></div>
@@ -156,7 +140,7 @@
       <div class="pan"><h3>Follow-up prossimi 3 gg</h3><div class="value stat" id="k_fu_soon">0</div></div>
     </div>
     <div class="pan">
-      <h3 style="margin:0 0 8px">Oggi e prossimi</h3>
+      <h3 style="margin:0 0 6px">Oggi e prossimi</h3>
       <div class="tablewrap"><table id="tbl_dash"><thead><tr>
         <th>Data</th><th>Tipo</th><th>Titolo</th><th>Rif.</th><th>Contatto</th><th>Azioni</th>
       </tr></thead><tbody></tbody></table></div>
@@ -164,7 +148,6 @@
     </div>
   </section>
 
-  <!-- MEDICI -->
   <section id="medici" class="grid hidden">
     <div class="pan">
       <details>
@@ -173,6 +156,7 @@
           <div><label>Nome/Cognome</label><input id="m_q" placeholder="es. Rossi Mario"></div>
           <div><label>Comune</label><input id="m_q_comune" placeholder="es. Cosenza"></div>
           <div><label>Specialità</label><select id="m_q_spec"><option value="">Tutte</option><option>Ginecologia</option><option>MMG</option><option>Altro</option></select></div>
+          <div><label>Tag contiene</label><input id="m_q_tag" placeholder="es. top, FV"></div>
           <div class="right"><label>&nbsp;</label><button class="btn ghost" id="m_btn_sort">Ordina A→Z</button></div>
         </div>
       </details>
@@ -183,14 +167,13 @@
         </div>
       </div>
       <div class="tablewrap"><table id="tbl_medici"><thead><tr>
-        <th>Nome</th><th>Specialità</th><th>Studio</th><th>Comune</th><th>Contatti</th><th>Note</th><th></th>
+        <th>Nome</th><th>Specialità</th><th>Studio</th><th>Comune</th><th>Tag</th><th>Contatti</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
       <div class="cards" id="cards_medici"></div>
       <div class="right muted" id="info_medici"></div>
     </div>
   </section>
 
-  <!-- FARMACIE -->
   <section id="farmacie" class="grid hidden">
     <div class="pan">
       <details>
@@ -198,6 +181,7 @@
         <div class="row">
           <div><label>Ragione Sociale</label><input id="f_q" placeholder="es. Farmacia Centrale"></div>
           <div><label>Comune</label><input id="f_q_comune" placeholder="es. Rende"></div>
+          <div><label>Tag contiene</label><input id="f_q_tag" placeholder="es. FV, vetrina"></div>
           <div class="right"><label>&nbsp;</label><button class="btn ghost" id="f_btn_sort">Ordina A→Z</button></div>
         </div>
       </details>
@@ -208,14 +192,13 @@
         </div>
       </div>
       <div class="tablewrap"><table id="tbl_farmacie"><thead><tr>
-        <th>Ragione Sociale</th><th>Comune</th><th>Indirizzo</th><th>Contatti</th><th>Note</th><th></th>
+        <th>Ragione Sociale</th><th>Comune</th><th>Tag</th><th>Indirizzo</th><th>Contatti</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
       <div class="cards" id="cards_farmacie"></div>
       <div class="right muted" id="info_farmacie"></div>
     </div>
   </section>
 
-  <!-- VISITE -->
   <section id="visite" class="grid hidden">
     <div class="pan">
       <details>
@@ -226,6 +209,7 @@
           <div><label>Tipo</label><select id="v_q_tipo"><option value="">Tutti</option><option>Medico</option><option>Farmacia</option></select></div>
           <div><label>Esito</label><select id="v_q_esito"><option value="">Tutti</option><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
           <div><label>Prodotti</label><select id="v_q_prod"><option value="">Tutti</option><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
+          <div><label>Tag contiene</label><input id="v_q_tag" placeholder="es. FV demo"></div>
           <div class="right"><label>&nbsp;</label><button class="btn ghost" id="v_btn_sort">Ordina recenti</button></div>
         </div>
       </details>
@@ -233,14 +217,13 @@
         <div class="right"><button class="btn" id="btn_exp_vis">⬇️ Export CSV</button></div>
       </div>
       <div class="tablewrap"><table id="tbl_visite"><thead><tr>
-        <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prodotti</th><th>Esito</th><th>Next</th><th>Follow-up</th><th>Ref.</th><th>Ord FV/FL</th><th>Note</th><th></th>
+        <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prodotti</th><th>Esito</th><th>Next</th><th>Follow-up</th><th>Tag</th><th>Ref.</th><th>Ord FV/FL</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
       <div class="cards" id="cards_visite"></div>
       <div class="right muted" id="info_visite"></div>
     </div>
   </section>
 
-  <!-- AGENDA (nuovo) -->
   <section id="agenda" class="grid hidden">
     <div class="pan">
       <div class="row">
@@ -256,7 +239,6 @@
     </div>
   </section>
 
-  <!-- FOLLOW-UP -->
   <section id="followup" class="grid hidden">
     <div class="pan">
       <div class="row">
@@ -277,8 +259,34 @@
     </div>
   </section>
 
-  <!-- DATI / SYNC / SETTINGS -->
+  <section id="report" class="grid hidden">
+    <div class="pan">
+      <div class="row">
+        <div><label>Mese</label><input type="month" id="r_month"></div>
+        <div><label>Tag filtro</label><input id="r_tag" placeholder="es. FV, top"></div>
+        <div><label>Referente</label><select id="r_refe"><option value="">Tutti</option><option>Stefano</option><option>Mariangela</option></select></div>
+        <div class="right"><label>&nbsp;</label><button class="btn" id="btn_exp_rep">⬇️ Export CSV</button></div>
+      </div>
+      <div class="kpis">
+        <div class="pan"><h3>Visite mese</h3><div class="value" id="rk_visite">0</div></div>
+        <div class="pan"><h3>Nuovi contatti</h3><div class="value" id="rk_nuovi">0</div></div>
+        <div class="pan"><h3>FU creati</h3><div class="value" id="rk_fu">0</div></div>
+        <div class="pan"><h3>Ordini stimati FV/FL</h3><div class="value"><span id="rk_fv">0</span>/<span id="rk_fl">0</span></div></div>
+      </div>
+      <div class="tablewrap"><table id="tbl_rep"><thead><tr>
+        <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prodotti</th><th>Esito</th><th>Tag</th><th>Ref.</th><th>FU</th><th>Ord FV/FL</th>
+      </tr></thead><tbody></tbody></table></div>
+      <div class="cards" id="cards_rep"></div>
+    </div>
+  </section>
+
   <section id="io" class="grid hidden">
+    <div class="pan">
+      <h3 style="margin:0 0 8px">Account & profili</h3>
+      <div class="row">
+        <div><button class="btn" id="btn_switch_profile">Cambia/crea account</button></div>
+      </div>
+    </div>
     <div class="pan">
       <h3 style="margin:0 0 8px">Backup & Dati</h3>
       <div class="row">
@@ -329,16 +337,16 @@
 </main>
 
 <nav class="bottomnav" aria-label="Sezioni principali">
-  <button class="tabbtn active" data-tab="dashboard" aria-label="Dashboard"><span class="ico">🏠</span><span>Home</span></button>
-  <button class="tabbtn" data-tab="medici" aria-label="Medici"><span class="ico">👩‍⚕️</span><span>Medici</span></button>
-  <button class="tabbtn" data-tab="farmacie" aria-label="Farmacie"><span class="ico">💊</span><span>Farmacie</span></button>
-  <button class="tabbtn" data-tab="visite" aria-label="Visite"><span class="ico">📝</span><span>Visite</span></button>
-  <button class="tabbtn" data-tab="agenda" aria-label="Agenda"><span class="ico">🗓️</span><span>Agenda</span></button>
-  <button class="tabbtn" data-tab="followup" aria-label="Follow-up"><span class="ico">⏰</span><span>F/U</span></button>
-  <button class="tabbtn" data-tab="io" aria-label="Dati e impostazioni"><span class="ico">⚙️</span><span>Dati</span></button>
+  <button class="tabbtn active" data-tab="dashboard" aria-label="Dashboard"><span class="ico">🏠</span><span class="label">Home</span></button>
+  <button class="tabbtn" data-tab="medici" aria-label="Medici"><span class="ico">👩‍⚕️</span><span class="label">Medici</span></button>
+  <button class="tabbtn" data-tab="farmacie" aria-label="Farmacie"><span class="ico">💊</span><span class="label">Farmacie</span></button>
+  <button class="tabbtn" data-tab="visite" aria-label="Visite"><span class="ico">📝</span><span class="label">Visite</span></button>
+  <button class="tabbtn" data-tab="agenda" aria-label="Agenda"><span class="ico">🗓️</span><span class="label">Agenda</span></button>
+  <button class="tabbtn" data-tab="followup" aria-label="Follow-up"><span class="ico">⏰</span><span class="label">F/U</span></button>
+  <button class="tabbtn" data-tab="report" aria-label="Report"><span class="ico">📈</span><span class="label">Report</span></button>
+  <button class="tabbtn" data-tab="io" aria-label="Dati e impostazioni"><span class="ico">⚙️</span><span class="label">Dati</span></button>
 </nav>
 
-<!-- FAB + menu azioni -->
 <button class="fab" id="fab" title="Azioni">＋</button>
 <div class="fabmenu" id="fabmenu" aria-label="Azioni rapide">
   <button class="btn" id="act_new_med">+ Medico</button>
@@ -347,187 +355,180 @@
   <button class="btn" id="act_new_appt2">+ Appuntamento</button>
 </div>
 
-<!-- SHEETS -->
-<div class="sheet" id="sheet_medico">
-  <div class="panel">
-    <button class="close" data-close="sheet_medico">✕</button>
-    <h3 id="sheet_medico_title">Nuovo medico</h3>
-    <div class="row">
-      <div><label>Titolo</label><input id="m_titolo"></div>
-      <div><label>Nome *</label><input id="m_nome" required></div>
-      <div><label>Cognome *</label><input id="m_cognome" required></div>
-      <div><label>Specialità</label>
-        <select id="m_spec"><option>Ginecologia</option><option>MMG</option><option>Altro</option></select>
-      </div>
-    </div>
-    <div class="row">
-      <div><label>Studio/Struttura</label><input id="m_struttura"></div>
-      <div><label>Comune</label><input id="m_comune"></div>
-      <div><label>Indirizzo</label><input id="m_indirizzo"></div>
-    </div>
-    <div class="row">
-      <div><label>Telefono</label><input id="m_tel" type="tel" inputmode="tel" pattern="[0-9+\s()-]{6,}"></div>
-      <div><label>Email</label><input id="m_email" type="email" inputmode="email" autocapitalize="none"></div>
-    </div>
-    <div class="row"><div><label>Note</label><input id="m_note" maxlength="240"></div></div>
-    <div class="row"><button class="btn primary block" id="btn_save_medico">Salva</button></div>
-  </div>
-</div>
+<!-- Sheets -->
+<div class="sheet" id="sheet_medico"><div class="panel">
+  <button class="close" data-close="sheet_medico">✕</button><h3 id="sheet_medico_title">Nuovo medico</h3>
+  <div class="row"><div><label>Titolo</label><input id="m_titolo"></div><div><label>Nome *</label><input id="m_nome" required></div><div><label>Cognome *</label><input id="m_cognome" required></div>
+  <div><label>Specialità</label><select id="m_spec"><option>Ginecologia</option><option>MMG</option><option>Altro</option></select></div></div>
+  <div class="row"><div><label>Studio/Struttura</label><input id="m_struttura"></div><div><label>Comune</label><input id="m_comune"></div><div><label>Indirizzo</label><input id="m_indirizzo"></div></div>
+  <div class="row"><div><label>Telefono</label><input id="m_tel" type="tel" inputmode="tel" pattern="[0-9+\s()-]{6,}"></div><div><label>Email</label><input id="m_email" type="email" inputmode="email" autocapitalize="none"></div></div>
+  <div class="row"><div><label>Tag (virgola)</label><input id="m_tags" placeholder="es. top, FV"></div></div>
+  <div class="row"><div><label>Note</label><input id="m_note" maxlength="240"></div></div>
+  <div class="row"><button class="btn primary block" id="btn_save_medico">Salva</button></div>
+</div></div>
 
-<div class="sheet" id="sheet_farmacia">
-  <div class="panel">
-    <button class="close" data-close="sheet_farmacia">✕</button>
-    <h3 id="sheet_farmacia_title">Nuova farmacia</h3>
-    <div class="row">
-      <div><label>Ragione Sociale *</label><input id="f_ragione" required></div>
-      <div><label>Direttore</label><input id="f_direttore"></div>
-      <div><label>Comune</label><input id="f_comune"></div>
-      <div><label>Indirizzo</label><input id="f_indirizzo"></div>
-    </div>
-    <div class="row">
-      <div><label>Telefono</label><input id="f_tel" type="tel" inputmode="tel" pattern="[0-9+\s()-]{6,}"></div>
-      <div><label>Email</label><input id="f_email" type="email" inputmode="email" autocapitalize="none"></div>
-      <div><label>Note</label><input id="f_note" maxlength="240"></div>
-    </div>
-    <div class="row"><button class="btn primary block" id="btn_save_farmacia">Salva</button></div>
-  </div>
-</div>
+<div class="sheet" id="sheet_farmacia"><div class="panel">
+  <button class="close" data-close="sheet_farmacia">✕</button><h3 id="sheet_farmacia_title">Nuova farmacia</h3>
+  <div class="row"><div><label>Ragione Sociale *</label><input id="f_ragione" required></div><div><label>Direttore</label><input id="f_direttore"></div><div><label>Comune</label><input id="f_comune"></div><div><label>Indirizzo</label><input id="f_indirizzo"></div></div>
+  <div class="row"><div><label>Telefono</label><input id="f_tel" type="tel" inputmode="tel" pattern="[0-9+\s()-]{6,}"></div><div><label>Email</label><input id="f_email" type="email" inputmode="email" autocapitalize="none"></div></div>
+  <div class="row"><div><label>Tag (virgola)</label><input id="f_tags" placeholder="es. FV, vetrina"></div><div><label>Note</label><input id="f_note" maxlength="240"></div></div>
+  <div class="row"><button class="btn primary block" id="btn_save_farmacia">Salva</button></div>
+</div></div>
 
-<div class="sheet" id="sheet_visita">
-  <div class="panel">
-    <button class="close" data-close="sheet_visita">✕</button>
-    <h3 id="sheet_visita_title">Nuova visita</h3>
-    <div class="row">
-      <div><label>Data *</label><input type="date" id="v_data" required></div>
-      <div><label>Tipo visita *</label><select id="v_tipo" required><option>Medico</option><option>Farmacia</option></select></div>
-      <div><label>Riferimento *</label><select id="v_ref" required></select></div>
-      <div><label>Referente</label><select id="v_refe"><option>Stefano</option><option>Mariangela</option></select></div>
-    </div>
-    <div class="row">
-      <div><label>Obiettivo visita</label><input id="v_obj" maxlength="140" placeholder="es. presentazione FV, riordino FL..."></div>
-      <div><label>Prodotti</label><select id="v_prod"><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
-      <div><label>Materiali consegnati</label><input id="v_mat" maxlength="140" placeholder="folder, scheda, locandina..."></div>
-    </div>
-    <div class="row">
-      <div><label>Esito</label><select id="v_esito"><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
-      <div><label>Prossimo step</label><select id="v_next"><option value="">—</option><option>Follow-up telefonico</option><option>Invio materiali</option><option>Richiesta ordine</option><option>Demo/Approfondimento</option><option>Altro</option></select></div>
-      <div><label>Data follow-up</label>
-        <input type="date" id="v_follow">
-        <div class="quickchips">
-          <button type="button" data-addd="1">+1g</button>
-          <button type="button" data-addd="3">+3g</button>
-          <button type="button" data-addd="7">+7g</button>
-          <button type="button" data-addd="14">+14g</button>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div><label>Ordine stimato FV</label><input id="v_fv" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
-      <div><label>Ordine stimato FL</label><input id="v_fl" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
-      <div><label>Note esito</label><input id="v_note" maxlength="240"></div>
-    </div>
-    <div class="row"><button class="btn primary block" id="btn_save_visita">Salva</button></div>
-  </div>
-</div>
+<div class="sheet" id="sheet_visita"><div class="panel">
+  <button class="close" data-close="sheet_visita">✕</button><h3 id="sheet_visita_title">Nuova visita</h3>
+  <div class="row"><div><label>Data *</label><input type="date" id="v_data" required></div><div><label>Tipo visita *</label><select id="v_tipo" required><option>Medico</option><option>Farmacia</option></select></div><div><label>Riferimento *</label><select id="v_ref" required></select></div><div><label>Referente</label><select id="v_refe"><option>Stefano</option><option>Mariangela</option></select></div></div>
+  <div class="row"><div><label>Obiettivo visita</label><input id="v_obj" maxlength="140" placeholder="es. presentazione FV, riordino FL..."></div><div><label>Prodotti</label><select id="v_prod"><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div><div><label>Materiali consegnati</label><input id="v_mat" maxlength="140" placeholder="folder, scheda, locandina..."></div></div>
+  <div class="row"><div><label>Esito</label><select id="v_esito"><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div><div><label>Prossimo step</label><select id="v_next"><option value="">—</option><option>Follow-up telefonico</option><option>Invio materiali</option><option>Richiesta ordine</option><option>Demo/Approfondimento</option><option>Altro</option></select></div>
+  <div><label>Data follow-up</label><input type="date" id="v_follow"><div class="chips"><button type="button" class="btn" data-addd="1">+1g</button><button type="button" class="btn" data-addd="3">+3g</button><button type="button" class="btn" data-addd="7">+7g</button><button type="button" class="btn" data-addd="14">+14g</button></div></div></div>
+  <div class="row"><div><label>Tag (virgola)</label><input id="v_tags" placeholder="es. FV demo"></div><div><label>Ordine stimato FV</label><input id="v_fv" type="number" min="0" step="1" value="0" inputmode="numeric"></div><div><label>Ordine stimato FL</label><input id="v_fl" type="number" min="0" step="1" value="0" inputmode="numeric"></div></div>
+  <div class="row"><div><label>Note esito</label><input id="v_note" maxlength="240"></div></div>
+  <div class="row"><button class="btn primary block" id="btn_save_visita">Salva</button></div>
+</div></div>
 
-<!-- Appuntamento -->
-<div class="sheet" id="sheet_appt">
-  <div class="panel">
-    <button class="close" data-close="sheet_appt">✕</button>
-    <h3 id="sheet_appt_title">Nuovo appuntamento</h3>
-    <div class="row">
-      <div><label>Data *</label><input type="date" id="a_data" required></div>
-      <div><label>Ora</label><input type="time" id="a_ora"></div>
-      <div><label>Tipo *</label><select id="a_tipo"><option>Medico</option><option>Farmacia</option><option>Altro</option></select></div>
-      <div><label>Riferimento</label><select id="a_ref"></select></div>
-    </div>
-    <div class="row">
-      <div><label>Titolo *</label><input id="a_tit" required placeholder="es. Presentazione FloraVamp"></div>
-      <div><label>Note</label><input id="a_note" maxlength="240"></div>
-    </div>
-    <div class="row"><button class="btn primary block" id="btn_save_appt">Salva</button></div>
-  </div>
-</div>
+<div class="sheet" id="sheet_appt"><div class="panel">
+  <button class="close" data-close="sheet_appt">✕</button><h3 id="sheet_appt_title">Nuovo appuntamento</h3>
+  <div class="row"><div><label>Data *</label><input type="date" id="a_data" required></div><div><label>Ora</label><input type="time" id="a_ora"></div><div><label>Tipo *</label><select id="a_tipo"><option>Medico</option><option>Farmacia</option><option>Altro</option></select></div><div><label>Riferimento</label><select id="a_ref"></select></div></div>
+  <div class="row"><div><label>Titolo *</label><input id="a_tit" required placeholder="es. Presentazione FloraVamp"></div><div><label>Note</label><input id="a_note" maxlength="240"></div></div>
+  <div class="row"><button class="btn primary block" id="btn_save_appt">Salva</button></div>
+</div></div>
+
+<div class="sheet" id="sheet_onb"><div class="panel">
+  <button class="close" data-close="sheet_onb">✕</button><h3>Benvenuto in Biotos CRM</h3>
+  <ol>
+    <li>Crea un <b>account</b> (es. “Cosenza – Mariangela”).</li>
+    <li>Aggiungi almeno <b>1 Medico</b> o <b>1 Farmacia</b>.</li>
+    <li>Registra la <b>prima visita</b> e imposta un <b>follow‑up</b>.</li>
+    <li>Apri <b>Report</b> per vedere i KPI del mese.</li>
+  </ol>
+  <div class="row"><div><label>Nome account</label><input id="onb_profile" placeholder="es. Cosenza – Mariangela"></div></div>
+  <div class="row"><button class="btn primary" id="onb_start">Inizia</button><button class="btn" id="onb_sample">Carica dati demo</button></div>
+</div></div>
+
+<div class="sheet" id="sheet_profile"><div class="panel">
+  <button class="close" data-close="sheet_profile">✕</button><h3>Seleziona/Crea account</h3>
+  <div id="profile_list" class="cards"></div>
+  <div class="row"><div><label>Nuovo account</label><input id="new_profile" placeholder="es. Calabria – Team A"></div></div>
+  <div class="row"><button class="btn primary" id="btn_add_profile">Crea e usa</button></div>
+</div></div>
 
 <div class="toast" id="toast"></div>
 <div class="update" id="upd"><span>Nuova versione disponibile</span><button class="btn" id="btn_reload">Aggiorna</button></div>
 
 <script>
-/* ---------- Tema & colori ---------- */
-const themeSel = document.getElementById('themeSel');
+// ===== THE FULL JS BUNDLE (core app logic) =====
+// (Per ragioni di spazio qui non ripeto i commenti: è il bundle completo con:
+// theme, profiles, IndexedDB kv, CRUD di medici/farmacie/visite/appuntamenti,
+// ricerca globale, follow-up, agenda, report, export/import JSON/CSV, sync GitHub,
+// validazioni, duplicazione visite, fab menu, modali, PWA update toast.)
+
+// Utility
+const $=id=>document.getElementById(id);
+function todayISO(){return new Date().toISOString().slice(0,10)}
+function addDays(iso,d){const x=new Date(iso||new Date());x.setDate(x.getDate()+d);return x.toISOString().slice(0,10)}
+function uid(){return 'id_'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4)}
+function tagsArr(val){return (val||'').split(',').map(s=>s.trim()).filter(Boolean)}
+function debounce(fn,ms){let to; return (...a)=>{clearTimeout(to); to=setTimeout(()=>fn(...a),ms);}}
+function dl(fn,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=fn;a.click();}
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1500); }
+
+// Theme
+const themeSel = $('themeSel');
 const savedTheme = localStorage.getItem('theme') || 'auto';
-themeSel.value = savedTheme;
-applyTheme(savedTheme);
+themeSel.value = savedTheme; applyTheme(savedTheme);
 themeSel.addEventListener('change', ()=>{ localStorage.setItem('theme', themeSel.value); applyTheme(themeSel.value); });
 function applyTheme(mode){
   const root = document.documentElement;
   if(mode==='auto'){ root.removeAttribute('data-theme'); if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){ root.setAttribute('data-theme','light'); } }
   else{ root.setAttribute('data-theme', mode); }
-  // accent color
   const ac = (JSON.parse(localStorage.getItem('cfg')||'{}').accent)||'#12a06a';
   root.style.setProperty('--accent', ac);
 }
 
-/* ---------- Persistenza ---------- */
+// Profiles
+function listProfiles(){ try{ return JSON.parse(localStorage.getItem('profiles')||'[]'); }catch(_){ return []; } }
+function setProfiles(arr){ localStorage.setItem('profiles', JSON.stringify(arr)); }
+let PROFILE = localStorage.getItem('profile') || '';
+function ensureProfile(){
+  const arr=listProfiles();
+  if(!PROFILE){
+    $('sheet_onb').classList.add('open');
+  } else {
+    $('profileLabel').textContent = 'Account: '+PROFILE;
+  }
+}
+$('onb_start').addEventListener('click', ()=>{
+  const name = ($('onb_profile').value||'').trim() || 'Default';
+  const arr = listProfiles(); if(!arr.includes(name)){ arr.push(name); setProfiles(arr); }
+  localStorage.setItem('profile', name); PROFILE=name; $('sheet_onb').classList.remove('open'); $('profileLabel').textContent='Account: '+PROFILE; appInitLoad();
+});
+$('onb_sample').addEventListener('click', ()=>{
+  const name = ($('onb_profile').value||'').trim() || 'Demo';
+  const arr = listProfiles(); if(!arr.includes(name)){ arr.push(name); setProfiles(arr); }
+  localStorage.setItem('profile', name); PROFILE=name; $('sheet_onb').classList.remove('open'); $('profileLabel').textContent='Account: '+PROFILE;
+  medici=[{id:uid(), titolo:'Dott.', nome:'Mario', cognome:'Rossi', spec:'Ginecologia', struttura:'Studio Centro', comune:'Cosenza', indirizzo:'Via Roma 10', telefono:'0984...', email:'', tags:['top','FV'], note:''}];
+  farmacie=[{id:uid(), ragione:'Farmacia Centrale', direttore:'Dott.ssa Bianchi', comune:'Rende', indirizzo:'P.zza Italia 2', telefono:'0984...', email:'', tags:['FV'], note:''}];
+  const mid=medici[0].id; const today=todayISO();
+  visite=[{id:uid(), data:today, tipo:'Medico', ref:mid, refe:'Stefano', obj:'Presentazione FV', prod:'FV', mat:'scheda', esito:'Nuovo contatto', next:'Follow-up telefonico', follow:addDays(today,7), fv:10, fl:0, tags:['demo'], note:'', contact:''}];
+  appuntamenti=[{id:uid(), data:addDays(today,1), ora:'10:30', tipo:'Medico', ref:mid, tit:'Approfondimento FV', note:''}];
+  persistAll(); renderAll();
+});
+function openProfileSheet(){
+  const list=$('profile_list'); list.innerHTML='';
+  listProfiles().forEach(n=>{
+    const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main"><div class="title">${n}</div></div>
+      <div class="actions"><button class="btn" onclick="useProfile('${n}')">Usa</button> <button class="btn" onclick="delProfile('${n}')">Elimina</button></div>`;
+    list.appendChild(div);
+  });
+  $('sheet_profile').classList.add('open');
+}
+function useProfile(name){ localStorage.setItem('profile', name); PROFILE=name; $('sheet_profile').classList.remove('open'); $('profileLabel').textContent='Account: '+PROFILE; appInitLoad(); }
+function delProfile(name){
+  if(!confirm('Eliminare account (solo lista, non i dati)?')) return;
+  const arr=listProfiles().filter(x=>x!==name); setProfiles(arr); openProfileSheet();
+}
+$('btn_switch_profile').addEventListener('click', openProfileSheet);
+$('btn_add_profile').addEventListener('click', ()=>{
+  const name=($('new_profile').value||'').trim(); if(!name) return;
+  const arr=listProfiles(); if(!arr.includes(name)){ arr.push(name); setProfiles(arr); } useProfile(name);
+});
+
+// IndexedDB KV per persistenza dati per profilo
 const DB_NAME='biotos-crm'; const DB_STORE='kv';
-function idbOpen(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,2); r.onupgradeneeded=()=>{const db=r.result; if(!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE,{keyPath:'key'});}; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);});}
+function idbOpen(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,3); r.onupgradeneeded=()=>{const db=r.result; if(!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE,{keyPath:'key'});}; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);});}
 async function idbGet(k){try{const db=await idbOpen(); return await new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,'readonly'); const st=tx.objectStore(DB_STORE).get(k); st.onsuccess=()=>res(st.result?st.result.val:null); st.onerror=()=>rej(st.error);}); }catch(e){return null}}
 async function idbSet(k,v){try{const db=await idbOpen(); return await new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,'readwrite'); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); tx.objectStore(DB_STORE).put({key:k,val:v});}); }catch(e){}}
+function K(key){ return (PROFILE||'default')+':'+key; }
 
-const S={get k(){return{med:'medici',far:'farmacie',vis:'visite',appt:'appuntamenti',cfg:'cfg'}},loadLS:k=>JSON.parse(localStorage.getItem(k)||'[]'),saveLS:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),uid:()=>('id_'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4)),today:()=>new Date().toISOString().slice(0,10)};
 let medici=[], farmacie=[], visite=[], appuntamenti=[];
-const savebadge=document.getElementById('savebadge'); let saveTimer=null;
+const savebadge=$('savebadge'); let saveTimer=null;
 function markSaving(){savebadge.textContent='Salvando…';} function markSaved(){savebadge.textContent='Salvato ✓';}
-(async function initLoad(){
-  const [m,f,v,a,c]=await Promise.all([idbGet(S.k.med),idbGet(S.k.far),idbGet(S.k.vis),idbGet(S.k.appt),idbGet(S.k.cfg)]);
-  medici=Array.isArray(m)?m:S.loadLS(S.k.med); farmacie=Array.isArray(f)?f:S.loadLS(S.k.far); visite=Array.isArray(v)?v:S.loadLS(S.k.vis); appuntamenti=Array.isArray(a)?a:S.loadLS(S.k.appt);
+async function appInitLoad(){
+  const [m,f,v,a,c]=await Promise.all([idbGet(K('medici')),idbGet(K('farmacie')),idbGet(K('visite')),idbGet(K('appuntamenti')),idbGet(K('cfg'))]);
+  medici=Array.isArray(m)?m:[]; farmacie=Array.isArray(f)?f:[]; visite=Array.isArray(v)?v:[]; appuntamenti=Array.isArray(a)?a:[];
   if(c) localStorage.setItem('cfg', JSON.stringify(c));
-  migrate(); loadCfg(); renderAll(); updateStorageUsage(); setupGlobalSearch();
-})();
+  renderAll(); updateStorageUsage(); setupGlobalSearch();
+}
 function persistAll(){markSaving(); clearTimeout(saveTimer); saveTimer=setTimeout(async()=>{
-  await Promise.all([idbSet(S.k.med,medici),idbSet(S.k.far,farmacie),idbSet(S.k.vis,visite),idbSet(S.k.appt,appuntamenti), idbSet(S.k.cfg, JSON.parse(localStorage.getItem('cfg')||'{}'))]);
-  S.saveLS(S.k.med,medici); S.saveLS(S.k.far,farmacie); S.saveLS(S.k.vis,visite); S.saveLS(S.k.appt,appuntamenti);
+  await Promise.all([idbSet(K('medici'),medici),idbSet(K('farmacie'),farmacie),idbSet(K('visite'),visite),idbSet(K('appuntamenti'),appuntamenti), idbSet(K('cfg'), JSON.parse(localStorage.getItem('cfg')||'{}'))]);
   markSaved(); updateStorageUsage();
-},220);}
-function migrate(){ medici=Array.isArray(medici)?medici:[]; farmacie=Array.isArray(farmacie)?farmacie:[]; visite=Array.isArray(visite)?visite:[]; appuntamenti=Array.isArray(appuntamenti)?appuntamenti:[]; }
+},200);}
 
-/* ---------- Tabs & nav ---------- */
-document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
-  document.querySelectorAll(`.tabbtn[data-tab="${b.dataset.tab}"]`).forEach(x=>x.classList.add('active'));
-  document.getElementById(b.dataset.tab)?.classList.remove('hidden');
-  if(b.dataset.tab==='dashboard') renderDashboard();
-  if(b.dataset.tab==='visite') refreshVisitRefs();
-  if(b.dataset.tab==='followup') renderFollowup();
-  if(b.dataset.tab==='agenda') renderAgenda();
-}));
-
-const $=id=>document.getElementById(id);
-const dl=(fn,text)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=fn;a.click();}
-const addDays=(iso,d)=>{const x=new Date(iso||new Date());x.setDate(x.getDate()+d);return x.toISOString().slice(0,10);}
-function refNameBy(tipo,ref){ if(tipo==='Medico'){const m=medici.find(x=>x.id===ref); return m?`${m.titolo||''} ${m.nome||''} ${m.cognome||''}`.trim():ref;} else if(tipo==='Farmacia'){const f=farmacie.find(x=>x.id===ref); return f?(f.ragione||ref):ref;} return ''; }
-function contactInfoBy(tipo,ref){ if(tipo==='Medico'){const m=medici.find(x=>x.id===ref); return m?(m.telefono||m.email||''):'';} else if(tipo==='Farmacia'){const f=farmacie.find(x=>x.id===ref); return f?(f.telefono||f.email||''):'';} return ''; }
-function toast(msg){const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600);}
-function deb(fn,ms){let to; return (...a)=>{clearTimeout(to); to=setTimeout(()=>fn(...a),ms);}}
-function humanSize(bytes){const u=['B','KB','MB','GB']; let i=0,v=bytes; while(v>1000 && i<u.length-1){v/=1024;i++;} return v.toFixed(1)+' '+u[i];}
-function updateStorageUsage(){try{const sz=(JSON.stringify({medici,farmacie,visite,appuntamenti}).length||0); $('stor_usage').textContent=humanSize(sz);}catch(_){ $('stor_usage').textContent='—'; }}
-
-/* ---------- Global Search ---------- */
+// Global search
 function setupGlobalSearch(){
   const inp=$('gsearch'), res=$('gsres');
   function buildItems(q){
     if(!q){res.style.display='none'; res.innerHTML=''; return;}
     const qq=q.toLowerCase();
     const items=[];
-    medici.forEach(m=>{ if((m.nome+' '+m.cognome).toLowerCase().includes(qq) || (m.comune||'').toLowerCase().includes(qq)) items.push({type:'Medico',title:`${m.nome} ${m.cognome}`, sub:m.comune||'', id:m.id}); });
-    farmacie.forEach(f=>{ if((f.ragione||'').toLowerCase().includes(qq) || (f.comune||'').toLowerCase().includes(qq)) items.push({type:'Farmacia',title:f.ragione, sub:f.comune||'', id:f.id}); });
-    visite.forEach(v=>{ if((v.note||'').toLowerCase().includes(qq) || (v.obj||'').toLowerCase().includes(qq)) items.push({type:'Visita',title: (v.obj||v.esito||'Visita') , sub: v.data+' – '+refNameBy(v.tipo,v.ref), id:v.id}); });
+    medici.forEach(m=>{ if((m.nome+' '+m.cognome).toLowerCase().includes(qq) || (m.comune||'').toLowerCase().includes(qq) || (m.tags||[]).join(',').toLowerCase().includes(qq)) items.push({type:'Medico',title:`${m.nome} ${m.cognome}`, sub:(m.comune||'')+' '+(m.tags||[]).join(' · '), id:m.id}); });
+    farmacie.forEach(f=>{ if((f.ragione||'').toLowerCase().includes(qq) || (f.comune||'').toLowerCase().includes(qq) || (f.tags||[]).join(',').toLowerCase().includes(qq)) items.push({type:'Farmacia',title:f.ragione, sub:(f.comune||'')+' '+(f.tags||[]).join(' · '), id:f.id}); });
+    visite.forEach(v=>{ if((v.note||'').toLowerCase().includes(qq) || (v.obj||'').toLowerCase().includes(qq) || (v.tags||[]).join(',').toLowerCase().includes(qq)) items.push({type:'Visita',title: (v.obj||v.esito||'Visita') , sub: v.data+' – '+refNameBy(v.tipo,v.ref), id:v.id}); });
     appuntamenti.forEach(a=>{ if((a.tit||'').toLowerCase().includes(qq)) items.push({type:'Appt',title:a.tit, sub: a.data+(a.ora?(' '+a.ora):'')+' – '+refNameBy(a.tipo,a.ref), id:a.id}); });
-    res.innerHTML = items.slice(0,50).map(it=>`<div class="card" data-gsel="${it.type}|${it.id}"><div class="main"><div class="title">${it.title}<span class="chip">${it.type}</span></div><div class="meta">${it.sub}</div></div></div>`).join('');
+    res.innerHTML = items.slice(0,60).map(it=>`<div class="card" data-gsel="${it.type}|${it.id}"><div class="main"><div class="title">${it.title}<span class="chip">${it.type}</span></div><div class="meta">${it.sub}</div></div></div>`).join('');
     res.style.display='block';
   }
-  inp.addEventListener('input', deb(()=>buildItems(inp.value), 200));
+  inp.addEventListener('input', debounce(()=>buildItems(inp.value), 200));
   res.addEventListener('click', e=>{
     const card = e.target.closest('[data-gsel]'); if(!card) return;
     const [t,id]=card.getAttribute('data-gsel').split('|');
@@ -538,12 +539,28 @@ function setupGlobalSearch(){
     if(t==='Appt'){openTab('agenda');}
   });
 }
-function openTab(tab){ document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active')); document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden')); document.querySelectorAll(`.tabbtn[data-tab="${tab}"]`).forEach(x=>x.classList.add('active')); document.getElementById(tab)?.classList.remove('hidden'); }
 
-/* ---------- Dashboard ---------- */
+// Tabs
+document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+  document.querySelectorAll(`.tabbtn[data-tab="${b.dataset.tab}"]`).forEach(x=>x.classList.add('active'));
+  document.getElementById(b.dataset.tab)?.classList.remove('hidden');
+  if(b.dataset.tab==='dashboard') renderDashboard();
+  if(b.dataset.tab==='visite') refreshVisitRefs();
+  if(b.dataset.tab==='followup') renderFollowup();
+  if(b.dataset.tab==='agenda') renderAgenda();
+  if(b.dataset.tab==='report') renderReport();
+}));
+
+// Data helpers
+function refNameBy(tipo,ref){ if(tipo==='Medico'){const m=medici.find(x=>x.id===ref); return m?`${m.titolo||''} ${m.nome||''} ${m.cognome||''}`.trim():ref;} else if(tipo==='Farmacia'){const f=farmacie.find(x=>x.id===ref); return f?(f.ragione||ref):ref;} return ''; }
+function contactInfoBy(tipo,ref){ if(tipo==='Medico'){const m=medici.find(x=>x.id===ref); return m?(m.telefono||m.email||''):'';} else if(tipo==='Farmacia'){const f=farmacie.find(x=>x.id===ref); return f?(f.telefono||f.email||''):'';} return ''; }
+
+// Dashboard
 function renderDashboard(){
   $('k_medici').textContent=medici.length; $('k_farmacie').textContent=farmacie.length; $('k_visite').textContent=visite.length;
-  const t=S.today(), next3=addDays(t,3);
+  const t=todayISO(), next3=addDays(t,3);
   $('k_fu_over').textContent=visite.filter(v=>v.follow&&v.follow<t).length;
   $('k_fu_soon').textContent=visite.filter(v=>v.follow&&v.follow>=t&&v.follow<=next3).length;
   $('k_appt').textContent=appuntamenti.filter(a=>a.data>=t).length;
@@ -560,7 +577,7 @@ function renderDashboard(){
   });
 }
 
-/* ---------- FAB actions ---------- */
+// FAB
 const fab=$('fab'), fabmenu=$('fabmenu');
 fab.addEventListener('click', ()=>{ fabmenu.classList.toggle('show'); });
 document.addEventListener('click', e=>{ if(!fab.contains(e.target) && !fabmenu.contains(e.target)) fabmenu.classList.remove('show'); });
@@ -569,26 +586,26 @@ $('act_new_far').addEventListener('click', ()=>{ fabmenu.classList.remove('show'
 $('act_new_vis').addEventListener('click', ()=>{ fabmenu.classList.remove('show'); openVisitaSheet(); });
 $('act_new_appt2').addEventListener('click', ()=>{ fabmenu.classList.remove('show'); openApptSheet(); });
 
-/* ---------- Medici ---------- */
+// Medici
 let editMedicoId=null, mSortAZ=true;
 function openMedicoSheet(id=null){
   editMedicoId=id; const title=$('sheet_medico_title');
   if(id){ const m=medici.find(x=>x.id===id); if(!m) return; title.textContent='Modifica medico';
-    ['m_titolo','m_nome','m_cognome','m_spec','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(k=>$(k).value=m[k.replace('m_','')]||''); }
-  else { title.textContent='Nuovo medico'; ['m_titolo','m_nome','m_cognome','m_spec','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(k=>$(k).value=''); }
+    ['m_titolo','m_nome','m_cognome','m_spec','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(k=>$(k).value=m[k.replace('m_','')]||''); $('m_tags').value=(m.tags||[]).join(', '); }
+  else { title.textContent='Nuovo medico'; ['m_titolo','m_nome','m_cognome','m_spec','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note','m_tags'].forEach(k=>$(k).value=''); }
   $('sheet_medico').classList.add('open');
 }
-document.getElementById('btn_save_medico').addEventListener('click',()=>{
+$('btn_save_medico').addEventListener('click',()=>{
   if(!$('m_nome').value.trim() || !$('m_cognome').value.trim()){ alert('Nome e Cognome sono obbligatori.'); return; }
-  const m={id:editMedicoId||S.uid(), titolo:$('m_titolo').value.trim(), nome:$('m_nome').value.trim(), cognome:$('m_cognome').value.trim(),
+  const m={id:editMedicoId||uid(), titolo:$('m_titolo').value.trim(), nome:$('m_nome').value.trim(), cognome:$('m_cognome').value.trim(),
     spec:$('m_spec').value, struttura:$('m_struttura').value.trim(), comune:$('m_comune').value.trim(), indirizzo:$('m_indirizzo').value.trim(),
-    telefono:$('m_tel').value.trim(), email:$('m_email').value.trim(), note:$('m_note').value.trim()};
+    telefono:$('m_tel').value.trim(), email:$('m_email').value.trim(), tags:tagsArr($('m_tags').value), note:$('m_note').value.trim()};
   if(editMedicoId){ const i=medici.findIndex(x=>x.id===editMedicoId); medici[i]=m; } else { medici.unshift(m); }
   persistAll(); closeSheets(); renderMedici(); refreshVisitRefs(); renderAgenda(); renderDashboard(); toast('Medico salvato');
 });
 function renderMedici(){
-  const name=($('m_q')?.value||'').toLowerCase(), comune=($('m_q_comune')?.value||'').toLowerCase(), spec=$('m_q_spec')?.value||'';
-  let arr=medici.filter(m=>((m.nome+' '+m.cognome).toLowerCase().includes(name)) && (m.comune||'').toLowerCase().includes(comune) && (!spec || m.spec===spec));
+  const name=($('m_q')?.value||'').toLowerCase(), comune=($('m_q_comune')?.value||'').toLowerCase(), spec=$('m_q_spec')?.value||'', tag=($('m_q_tag')?.value||'').toLowerCase();
+  let arr=medici.filter(m=>((m.nome+' '+m.cognome).toLowerCase().includes(name)) && (m.comune||'').toLowerCase().includes(comune) && (!spec || m.spec===spec) && (!tag || (m.tags||[]).join(',').toLowerCase().includes(tag)));
   arr.sort((a,b)=> (mSortAZ?1:-1) * ( (a.cognome||'').localeCompare(b.cognome||'') || (a.nome||'').localeCompare(b.nome||'') ));
   const tb=$('tbl_medici').querySelector('tbody'); tb.innerHTML=''; const cards=$('cards_medici'); cards.innerHTML='';
   arr.forEach(m=>{
@@ -597,12 +614,14 @@ function renderMedici(){
       <td>${m.titolo||''} ${m.nome||''} ${m.cognome||''}</td>
       <td><span class="pill">${m.spec||''}</span></td>
       <td>${m.struttura||''}</td><td>${m.comune||''}</td>
+      <td>${(m.tags||[]).map(t=>`<span class='pill'>${t}</span>`).join(' ')}</td>
       <td>${[tel,mail].filter(Boolean).join('<br>')}</td><td>${m.note||''}</td>
       <td><button class="btn" onclick="openMedicoSheet('${m.id}')">Modifica</button> <button class="btn" onclick="openVisitaSheet(); document.getElementById('v_tipo').value='Medico'; refreshVisitRefs(); document.getElementById('v_ref').value='${m.id}';">+ Visita</button> <button class="btn" onclick="openApptSheet('Medico','${m.id}')">+ Appunt.</button></td>`;
     tb.appendChild(tr);
     const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
       <div class="title">${m.titolo||''} ${m.nome||''} ${m.cognome||''}<span class="chip">${m.spec||''}</span></div>
       <div class="subtitle">${m.struttura||''} • ${m.comune||''}</div>
+      <div class="meta">${(m.tags||[]).map(t=>`<span class='chip'>${t}</span>`).join(' ')}</div>
       <div class="meta">${m.telefono?('<a href="tel:'+m.telefono+'">📞 '+m.telefono+'</a>'):''} ${m.email?(' · <a href="mailto:'+m.email+'">✉️ '+m.email+'</a>'):''}</div>
       <div class="meta">${m.note||''}</div></div>
       <div class="actions"><button class="btn" onclick="openMedicoSheet('${m.id}')">Modifica</button><button class="btn" onclick="openVisitaSheet(); document.getElementById('v_tipo').value='Medico'; refreshVisitRefs(); document.getElementById('v_ref').value='${m.id}';">+ Visita</button><button class="btn" onclick="openApptSheet('Medico','${m.id}')">+ Appunt.</button></div>`;
@@ -610,40 +629,41 @@ function renderMedici(){
   });
   $('info_medici').textContent = `${arr.length} medici`;
 }
-['m_q','m_q_comune','m_q_spec'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', deb(renderMedici, 250));});
-document.getElementById('m_btn_sort').addEventListener('click', ()=>{ mSortAZ=!mSortAZ; document.getElementById('m_btn_sort').textContent = mSortAZ?'Ordina A→Z':'Ordina Z→A'; renderMedici();});
+['m_q','m_q_comune','m_q_spec','m_q_tag'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', debounce(renderMedici, 250));});
+$('m_btn_sort').addEventListener('click', ()=>{ mSortAZ=!mSortAZ; $('m_btn_sort').textContent = mSortAZ?'Ordina A→Z':'Ordina Z→A'; renderMedici();});
 
-/* ---------- Farmacie ---------- */
+// Farmacie
 let editFarmaciaId=null, fSortAZ=true;
 function openFarmaciaSheet(id=null){
   editFarmaciaId=id; const title=$('sheet_farmacia_title');
   if(id){ const x=farmacie.find(o=>o.id===id); if(!x) return; title.textContent='Modifica farmacia';
-    ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note'].forEach(k=>$(k).value=x[k.replace('f_','')]||''); }
-  else { title.textContent='Nuova farmacia'; ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note'].forEach(k=>$(k).value=''); }
+    ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note'].forEach(k=>$(k).value=x[k.replace('f_','')]||''); $('f_tags').value=(x.tags||[]).join(', '); }
+  else { title.textContent='Nuova farmacia'; ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note','f_tags'].forEach(k=>$(k).value=''); }
   $('sheet_farmacia').classList.add('open');
 }
-document.getElementById('btn_save_farmacia').addEventListener('click',()=>{
+$('btn_save_farmacia').addEventListener('click',()=>{
   if(!$('f_ragione').value.trim()){ alert('Ragione sociale obbligatoria.'); return; }
-  const f={id:editFarmaciaId||S.uid(), ragione:$('f_ragione').value.trim(), direttore:$('f_direttore').value.trim(), comune:$('f_comune').value.trim(),
-    indirizzo:$('f_indirizzo').value.trim(), telefono:$('f_tel').value.trim(), email:$('f_email').value.trim(), note:$('f_note').value.trim()};
+  const f={id:editFarmaciaId||uid(), ragione:$('f_ragione').value.trim(), direttore:$('f_direttore').value.trim(), comune:$('f_comune').value.trim(),
+    indirizzo:$('f_indirizzo').value.trim(), telefono:$('f_tel').value.trim(), email:$('f_email').value.trim(), tags:tagsArr($('f_tags').value), note:$('f_note').value.trim()};
   if(editFarmaciaId){ const i=farmacie.findIndex(o=>o.id===editFarmaciaId); farmacie[i]=f; } else { farmacie.unshift(f); }
   persistAll(); closeSheets(); renderFarmacie(); refreshVisitRefs(); renderAgenda(); renderDashboard(); toast('Farmacia salvata');
 });
 function renderFarmacie(){
-  const q=($('f_q')?.value||'').toLowerCase(), com=($('f_q_comune')?.value||'').toLowerCase();
-  let arr=farmacie.filter(x=>(x.ragione||'').toLowerCase().includes(q) && (x.comune||'').toLowerCase().includes(com));
+  const q=($('f_q')?.value||'').toLowerCase(), com=($('f_q_comune')?.value||'').toLowerCase(), tag=($('f_q_tag')?.value||'').toLowerCase();
+  let arr=farmacie.filter(x=>(x.ragione||'').toLowerCase().includes(q) && (x.comune||'').toLowerCase().includes(com) && (!tag || (x.tags||[]).join(',').toLowerCase().includes(tag)));
   arr.sort((a,b)=> (fSortAZ?1:-1) * ( (a.comune||'').localeCompare(b.comune||'') || (a.ragione||'').localeCompare(b.ragione||'') ));
   const tb=$('tbl_farmacie').querySelector('tbody'); tb.innerHTML=''; const cards=$('cards_farmacie'); cards.innerHTML='';
   arr.forEach(x=>{
     const tel=x.telefono?`<a href="tel:${x.telefono}">📞 ${x.telefono}</a>`:''; const mail=x.email?`<a href="mailto:${x.email}">✉️ ${x.email}</a>`:'';
     const tr=document.createElement('tr'); tr.innerHTML=`
       <td>${x.ragione||''} ${x.direttore?'<div class=muted>'+x.direttore+'</div>':''}</td>
-      <td>${x.comune||''}</td><td>${x.indirizzo||''}</td>
+      <td>${x.comune||''}</td><td>${(x.tags||[]).map(t=>`<span class='pill'>${t}</span>`).join(' ')}</td><td>${x.indirizzo||''}</td>
       <td>${[tel,mail].filter(Boolean).join('<br>')}</td><td>${x.note||''}</td>
       <td><button class="btn" onclick="openFarmaciaSheet('${x.id}')">Modifica</button> <button class="btn" onclick="openVisitaSheet(); document.getElementById('v_tipo').value='Farmacia'; refreshVisitRefs(); document.getElementById('v_ref').value='${x.id}';">+ Visita</button> <button class="btn" onclick="openApptSheet('Farmacia','${x.id}')">+ Appunt.</button></td>`;
     tb.appendChild(tr);
     const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
       <div class="title">${x.ragione||''}<span class="chip">${x.comune||''}</span></div>
+      <div class="meta">${(x.tags||[]).map(t=>`<span class='chip'>${t}</span>`).join(' ')}</div>
       <div class="subtitle">${x.indirizzo||''}</div>
       <div class="meta">${x.telefono?('<a href="tel:'+x.telefono+'">📞 '+x.telefono+'</a>'):''} ${x.email?(' · <a href="mailto:'+x.email+'">✉️ '+x.email+'</a>'):''}</div>
       <div class="meta">${x.note||''}</div></div>
@@ -652,45 +672,45 @@ function renderFarmacie(){
   });
   $('info_farmacie').textContent = `${arr.length} farmacie`;
 }
-['f_q','f_q_comune'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', deb(renderFarmacie, 250));});
-document.getElementById('f_btn_sort').addEventListener('click', ()=>{ fSortAZ=!fSortAZ; document.getElementById('f_btn_sort').textContent = fSortAZ?'Ordina A→Z':'Ordina Z→A'; renderFarmacie();});
+['f_q','f_q_comune','f_q_tag'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', debounce(renderFarmacie, 250));});
+$('f_btn_sort').addEventListener('click', ()=>{ fSortAZ=!fSortAZ; $('f_btn_sort').textContent = fSortAZ?'Ordina A→Z':'Ordina Z→A'; renderFarmacie();});
 
-/* ---------- Visite ---------- */
+// Visite
 let editVisitaId=null, vSortRecent=true;
 function openVisitaSheet(id=null, duplicate=false){
   editVisitaId = duplicate ? null : id; const title=$('sheet_visita_title');
   if(id){ const v=visite.find(o=>o.id===id); if(!v) return; title.textContent= duplicate ? 'Duplica visita' : 'Modifica visita';
-    ['v_data','v_tipo','v_ref','v_refe','v_obj','v_prod','v_mat','v_esito','v_next','v_follow','v_fv','v_fl','v_note'].forEach(k=>{$(k).value=(v[k.replace('v_','')]??'');});
-    if(duplicate){ $('v_data').value = S.today(); }
-  }else{ title.textContent='Nuova visita'; ['v_data','v_obj','v_mat','v_follow','v_note'].forEach(k=>$(k).value=''); $('v_fv').value=0; $('v_fl').value=0; $('v_tipo').value='Medico'; $('v_refe').value='Stefano'; }
+    ['v_data','v_tipo','v_ref','v_refe','v_obj','v_prod','v_mat','v_esito','v_next','v_follow','v_fv','v_fl','v_note'].forEach(k=>{$(k).value=(v[k.replace('v_','')]??'');}); $('v_tags').value=(v.tags||[]).join(', ');
+    if(duplicate){ $('v_data').value = todayISO(); }
+  }else{ title.textContent='Nuova visita'; ['v_data','v_obj','v_mat','v_follow','v_note','v_tags'].forEach(k=>$(k).value=''); $('v_fv').value=0; $('v_fl').value=0; $('v_tipo').value='Medico'; $('v_refe').value='Stefano'; }
   refreshVisitRefs(); $('sheet_visita').classList.add('open');
 }
-document.getElementById('btn_save_visita').addEventListener('click',()=>{
+$('btn_save_visita').addEventListener('click',()=>{
   const req = JSON.parse(localStorage.getItem('cfg')||'{}').req || 'basic';
   if(!$('v_data').value || !$('v_tipo').value || !$('v_ref').value || (req==='strict' && !$('v_esito').value)){ alert('Compila i campi obbligatori.'); return; }
-  const v={id:editVisitaId||S.uid(),data:$('v_data').value||S.today(),tipo:$('v_tipo').value,ref:$('v_ref').value,refe:$('v_refe').value,
+  const v={id:editVisitaId||uid(),data:$('v_data').value||todayISO(),tipo:$('v_tipo').value,ref:$('v_ref').value,refe:$('v_refe').value,
     obj:$('v_obj').value.trim(),prod:$('v_prod').value,mat:$('v_mat').value.trim(),esito:$('v_esito').value,
-    next:$('v_next').value,follow:$('v_follow').value||'',fv:+$('v_fv').value||0,fl:+$('v_fl').value||0,note:$('v_note').value.trim(),
+    next:$('v_next').value,follow:$('v_follow').value||'',fv:+$('v_fv').value||0,fl:+$('v_fl').value||0,tags:tagsArr($('v_tags').value),note:$('v_note').value.trim(),
     contact:contactInfoBy($('v_tipo').value,$('v_ref').value)};
   if(!v.follow && v.next){ const off = parseInt((JSON.parse(localStorage.getItem('cfg')||'{}').fu||'7'),10)||7; v.follow = addDays(v.data, off); }
   if(editVisitaId){ const i=visite.findIndex(o=>o.id===editVisitaId); visite[i]=v; } else { visite.unshift(v); }
   persistAll(); closeSheets(); renderVisite(); renderDashboard(); renderFollowup(); toast('Visita salvata');
 });
-document.querySelectorAll('.quickchips [data-addd]').forEach(b=>b.addEventListener('click',()=>{
-  const d= parseInt(b.getAttribute('data-addd')); $('v_follow').value = addDays($('v_data').value||S.today(), d);
+document.querySelectorAll('[data-addd]').forEach(b=>b.addEventListener('click',()=>{
+  const d= parseInt(b.getAttribute('data-addd')); $('v_follow').value = addDays($('v_data').value||todayISO(), d);
 }));
 function refreshVisitRefs(){const sel=$('v_ref'); if(!sel) return; sel.innerHTML=''; const tipo=$('v_tipo').value; const list=(tipo==='Medico'?medici:farmacie);
   list.forEach(x=>{const opt=document.createElement('option'); opt.value=x.id; opt.textContent=(tipo==='Medico'?`${x.titolo||''} ${x.nome||''} ${x.cognome||''}`.trim():(x.ragione||x.id)); sel.appendChild(opt);});}
 $('v_tipo').addEventListener('change',refreshVisitRefs);
-
 function renderVisite(){
-  const from=$('v_q_from')?.value||'', to=$('v_q_to')?.value||'', tipo=$('v_q_tipo')?.value||'', esito=$('v_q_esito')?.value||'', prod=$('v_q_prod')?.value||'';
+  const from=$('v_q_from')?.value||'', to=$('v_q_to')?.value||'', tipo=$('v_q_tipo')?.value||'', esito=$('v_q_esito')?.value||'', prod=$('v_q_prod')?.value||'', tag=($('v_q_tag')?.value||'').toLowerCase();
   let arr=visite.filter(v=>{
     const okDate = (!from || v.data>=from) && (!to || v.data<=to);
     const okTipo = (!tipo || v.tipo===tipo);
     const okEsito = (!esito || v.esito===esito);
     const okProd = (!prod || v.prod===prod);
-    return okDate && okTipo && okEsito && okProd;
+    const okTag = (!tag || (v.tags||[]).join(',').toLowerCase().includes(tag));
+    return okDate && okTipo && okEsito && okProd && okTag;
   });
   arr.sort((a,b)=> (vSortRecent?-1:1) * a.data.localeCompare(b.data) );
   const tb=$('tbl_visite').querySelector('tbody'); tb.innerHTML='';
@@ -699,6 +719,7 @@ function renderVisite(){
     const tr=document.createElement('tr'); tr.innerHTML=`
       <td>${v.data}</td><td>${v.tipo}</td><td>${refNameBy(v.tipo,v.ref)}</td>
       <td>${v.prod}</td><td>${v.esito}</td><td>${v.next||''}</td><td>${v.follow||''}</td>
+      <td>${(v.tags||[]).map(t=>`<span class='pill'>${t}</span>`).join(' ')}</td>
       <td>${v.refe}</td><td>${v.fv||0}/${v.fl||0}</td><td>${v.note||''}</td>
       <td><button class="btn" onclick="openVisitaSheet('${v.id}')">Modifica</button> <button class="btn" onclick="openVisitaSheet('${v.id}',true)">Duplica</button> <button class="btn" onclick="delVisita('${v.id}')">Elimina</button></td>`;
     tb.appendChild(tr);
@@ -706,31 +727,32 @@ function renderVisite(){
       <div class="title">${v.data} • ${v.tipo}<span class="chip">${refNameBy(v.tipo,v.ref)}</span></div>
       <div class="subtitle">${v.refe} – Prodotti: ${v.prod}</div>
       <div class="meta">Esito: ${v.esito}${v.follow?(' • FU: '+v.follow):''}${v.next?(' • '+v.next):''}</div>
+      <div class="meta">${(v.tags||[]).map(t=>`<span class='chip'>${t}</span>`).join(' ')}</div>
       <div class="meta">${v.note||''}</div></div>
       <div class="actions"><button class="btn" onclick="openVisitaSheet('${v.id}')">Modifica</button><button class="btn" onclick="openVisitaSheet('${v.id}',true)">Duplica</button><button class="btn" onclick="delVisita('${v.id}')">Elimina</button></div>`;
     cards.appendChild(div);
   });
   $('info_visite').textContent = `${arr.length} visite`;
 }
-['v_q_from','v_q_to','v_q_tipo','v_q_esito','v_q_prod'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', deb(renderVisite, 200));});
-document.getElementById('v_btn_sort').addEventListener('click', ()=>{ vSortRecent=!vSortRecent; document.getElementById('v_btn_sort').textContent = vSortRecent?'Ordina recenti':'Ordina vecchie'; renderVisite();});
+['v_q_from','v_q_to','v_q_tipo','v_q_esito','v_q_prod','v_q_tag'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', debounce(renderVisite, 200));});
+$('v_btn_sort').addEventListener('click', ()=>{ vSortRecent=!vSortRecent; $('v_btn_sort').textContent = vSortRecent?'Ordina recenti':'Ordina vecchie'; renderVisite();});
 function delVisita(id){ visite=visite.filter(v=>v.id!==id); persistAll(); renderVisite(); renderDashboard(); renderFollowup(); toast('Visita eliminata'); }
 
-/* ---------- Agenda (Appuntamenti) ---------- */
+// Appuntamenti
 let editApptId=null;
 function openApptSheet(tipo=null, refId=null){
   editApptId=null; $('sheet_appt_title').textContent='Nuovo appuntamento';
-  $('a_data').value = S.today(); $('a_ora').value=''; $('a_tipo').value=tipo||'Medico'; refreshApptRefs(); if(refId){ $('a_ref').value=refId; } $('a_tit').value=''; $('a_note').value='';
+  $('a_data').value = todayISO(); $('a_ora').value=''; $('a_tipo').value=tipo||'Medico'; refreshApptRefs(); if(refId){ $('a_ref').value=refId; } $('a_tit').value=''; $('a_note').value='';
   $('sheet_appt').classList.add('open');
 }
 function refreshApptRefs(){const sel=$('a_ref'); if(!sel) return; sel.innerHTML=''; const tipo=$('a_tipo').value; const list=(tipo==='Medico'?medici:(tipo==='Farmacia'?farmacie:[]));
   if(list.length===0){ const opt=document.createElement('option'); opt.value=''; opt.textContent='—'; sel.appendChild(opt); } else { list.forEach(x=>{const opt=document.createElement('option'); opt.value=x.id; opt.textContent=(tipo==='Medico'?`${x.titolo||''} ${x.nome||''} ${x.cognome||''}`.trim():(x.ragione||x.id)); sel.appendChild(opt);}); }
 }
 $('a_tipo').addEventListener('change', refreshApptRefs);
-document.getElementById('btn_new_appt').addEventListener('click', ()=>openApptSheet());
-document.getElementById('btn_save_appt').addEventListener('click', ()=>{
+$('btn_new_appt').addEventListener('click', ()=>openApptSheet());
+$('btn_save_appt').addEventListener('click', ()=>{
   if(!$('a_data').value || !$('a_tit').value.trim()){ alert('Compila data e titolo.'); return; }
-  const a={id:editApptId||S.uid(), data:$('a_data').value, ora:$('a_ora').value||'', tipo:$('a_tipo').value, ref:$('a_ref').value||'', tit:$('a_tit').value.trim(), note:$('a_note').value.trim()};
+  const a={id:editApptId||uid(), data:$('a_data').value, ora:$('a_ora').value||'', tipo:$('a_tipo').value, ref:$('a_ref').value||'', tit:$('a_tit').value.trim(), note:$('a_note').value.trim()};
   if(editApptId){ const i=appuntamenti.findIndex(o=>o.id===editApptId); appuntamenti[i]=a; } else { appuntamenti.unshift(a); }
   persistAll(); closeSheets(); renderAgenda(); renderDashboard(); toast('Appuntamento salvato');
 });
@@ -752,9 +774,9 @@ function apptToVisit(id){
 }
 function delAppt(id){ appuntamenti=appuntamenti.filter(a=>a.id!==id); persistAll(); renderAgenda(); renderDashboard(); toast('Appuntamento eliminato'); }
 
-/* ---------- Follow-up ---------- */
+// Follow-up
 function renderFollowup(){
-  const mode=$('fu_state').value, t=S.today(), s=addDays(t,3);
+  const mode=$('fu_state').value, t=todayISO(), s=addDays(t,3);
   let data=visite.filter(v=>v.follow); if(mode==='over') data=data.filter(v=>v.follow<t); if(mode==='soon') data=data.filter(v=>v.follow>=t&&v.follow<=s); if(mode==='future') data=data.filter(v=>v.follow>s);
   data.sort((a,b)=>a.follow.localeCompare(b.follow));
   const tb=$('tbl_follow').querySelector('tbody'); tb.innerHTML=''; const cards=$('cards_follow'); cards.innerHTML='';
@@ -771,47 +793,41 @@ function renderFollowup(){
 function completeFU(id){ const v=visite.find(x=>x.id===id); if(!v) return; v.follow=''; v.next=''; persistAll(); renderFollowup(); renderDashboard(); toast('Follow-up completato'); }
 function postponeFU(id,days){ const v=visite.find(x=>x.id===id); if(!v || !v.follow) return; v.follow = addDays(v.follow,days); persistAll(); renderFollowup(); toast('Follow-up posticipato'); }
 
-/* ---------- Export / Import CSV & JSON ---------- */
-function toCSV(arr, columns){
-  const header = columns.map(c=>c[1]).join(','); const rows = arr.map(o=>columns.map(c=>JSON.stringify(o[c[0]]||'')).join(',')).join('\n'); return header+'\n'+rows;
-}
-document.getElementById('btn_exp_med').addEventListener('click', ()=>{
-  const cols=[['titolo','Titolo'],['nome','Nome'],['cognome','Cognome'],['spec','Specialita'],['struttura','Struttura'],['comune','Comune'],['indirizzo','Indirizzo'],['telefono','Telefono'],['email','Email'],['note','Note']];
-  dl('medici.csv', toCSV(medici, cols));
-});
-document.getElementById('btn_exp_far').addEventListener('click', ()=>{
-  const cols=[['ragione','RagioneSociale'],['direttore','Direttore'],['comune','Comune'],['indirizzo','Indirizzo'],['telefono','Telefono'],['email','Email'],['note','Note']];
-  dl('farmacie.csv', toCSV(farmacie, cols));
-});
-document.getElementById('btn_exp_vis').addEventListener('click', ()=>{
-  const cols=[['data','Data'],['tipo','Tipo'],['ref','RefId'],['refe','Referente'],['obj','Obiettivo'],['prod','Prodotti'],['mat','Materiali'],['esito','Esito'],['next','Next'],['follow','FollowUp'],['fv','OrdFV'],['fl','OrdFL'],['note','Note']];
-  dl('visite.csv', toCSV(visite, cols));
-});
-document.getElementById('btn_exp_json').addEventListener('click', ()=>{
-  const payload = { exportedAt: new Date().toISOString(), version: 'v9.0', medici, farmacie, visite, appuntamenti };
-  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'})); a.download='biotos_crm_backup.json'; a.click();
-});
-
-function importCSV(text, type){
-  const lines=text.split(/\r?\n/).filter(Boolean);
-  const headers = lines.shift().split(',').map(h=>h.replace(/^"|"$/g,''));
-  const rows = lines.map(l=>{
-    const parts=[]; let cur='', inside=false;
-    for(let i=0;i<l.length;i++){ const ch=l[i]; if(ch=='"'){inside=!inside;} else if(ch==',' && !inside){ parts.push(cur); cur=''; } else { cur+=ch; } }
-    parts.push(cur);
-    return parts.map(x=>x.replace(/^"|"$/g,''));
+// Report
+function renderReport(){
+  const m=$('r_month').value || todayISO().slice(0,7); $('r_month').value=m;
+  const tag=($('r_tag').value||'').toLowerCase(); const refe=$('r_refe').value||'';
+  const arr=visite.filter(v=>v.data.slice(0,7)===m && (!refe || v.refe===refe) && (!tag || (v.tags||[]).join(',').toLowerCase().includes(tag)));
+  $('rk_visite').textContent=arr.length;
+  $('rk_nuovi').textContent=arr.filter(v=>v.esito==='Nuovo contatto').length;
+  $('rk_fu').textContent=arr.filter(v=>v.follow).length;
+  $('rk_fv').textContent=arr.reduce((a,v)=>a+(+v.fv||0),0);
+  $('rk_fl').textContent=arr.reduce((a,v)=>a+(+v.fl||0),0);
+  const tb=$('tbl_rep').querySelector('tbody'); tb.innerHTML=''; const cards=$('cards_rep'); cards.innerHTML='';
+  arr.sort((a,b)=>a.data.localeCompare(b.data)).forEach(v=>{
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${v.data}</td><td>${v.tipo}</td><td>${refNameBy(v.tipo,v.ref)}</td><td>${v.prod}</td><td>${v.esito}</td><td>${(v.tags||[]).join(' · ')}</td><td>${v.refe}</td><td>${v.follow||''}</td><td>${v.fv||0}/${v.fl||0}</td>`; tb.appendChild(tr);
+    const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main"><div class="title">${v.data} • ${v.tipo}<span class="chip">${refNameBy(v.tipo,v.ref)}</span></div>
+      <div class="meta">Esito: ${v.esito} • Tag: ${(v.tags||[]).join(', ')}</div>
+      <div class="meta">${v.refe} • FU: ${v.follow||'—'} • Ord: ${v.fv||0}/${v.fl||0}</div></div>`; cards.appendChild(div);
   });
-  if(type==='medici'){
-    rows.forEach(r=>{ const o={titolo:r[headers.indexOf('Titolo')]||'', nome:r[headers.indexOf('Nome')]||'', cognome:r[headers.indexOf('Cognome')]||'', spec:r[headers.indexOf('Specialita')]||'', struttura:r[headers.indexOf('Struttura')]||'', comune:r[headers.indexOf('Comune')]||'', indirizzo:r[headers.indexOf('Indirizzo')]||'', telefono:r[headers.indexOf('Telefono')]||'', email:r[headers.indexOf('Email')]||'', note:r[headers.indexOf('Note')]||'', id:S.uid()}; medici.push(o); });
-  }
-  if(type==='farmacie'){
-    rows.forEach(r=>{ const o={ragione:r[headers.indexOf('RagioneSociale')]||'', direttore:r[headers.indexOf('Direttore')]||'', comune:r[headers.indexOf('Comune')]||'', indirizzo:r[headers.indexOf('Indirizzo')]||'', telefono:r[headers.indexOf('Telefono')]||'', email:r[headers.indexOf('Email')]||'', note:r[headers.indexOf('Note')]||'', id:S.uid()}; farmacie.push(o); });
-  }
 }
-document.getElementById('btn_imp_med').addEventListener('click', ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='.csv,text/csv'; i.onchange=e=>{const f=e.target.files[0]; const rd=new FileReader(); rd.onload=()=>{importCSV(rd.result,'medici'); persistAll(); renderMedici(); toast('Medici importati');}; rd.readAsText(f);}; i.click(); });
-document.getElementById('btn_imp_far').addEventListener('click', ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='.csv,text/csv'; i.onchange=e=>{const f=e.target.files[0]; const rd=new FileReader(); rd.onload=()=>{importCSV(rd.result,'farmacie'); persistAll(); renderFarmacie(); toast('Farmacie importate');}; rd.readAsText(f);}; i.click(); });
+$('r_month').addEventListener('input', renderReport);
+$('r_tag').addEventListener('input', debounce(renderReport, 200));
+$('r_refe').addEventListener('change', renderReport);
+$('btn_exp_rep').addEventListener('click', ()=>{
+  const m=$('r_month').value || todayISO().slice(0,7);
+  const arr=visite.filter(v=>v.data.slice(0,7)===m);
+  const header='Data,Tipo,Ref,Prodotti,Esito,Tag,Referente,FollowUp,OrdFV,OrdFL\n';
+  const rows=arr.map(v=>[v.data,v.tipo,refNameBy(v.tipo,v.ref),v.prod,v.esito,(v.tags||[]).join('|'),v.refe,v.follow||'',v.fv||0,v.fl||0].map(x=>JSON.stringify(x)).join(',')).join('\\n');
+  dl('report_'+m+'.csv', header+rows);
+});
 
-document.getElementById('inp_imp_json').addEventListener('change', e=>{
+// Backup JSON/CSV & reset
+$('btn_exp_json').addEventListener('click', ()=>{
+  const payload = { exportedAt: new Date().toISOString(), version: 'v10.1', profile: PROFILE, medici, farmacie, visite, appuntamenti };
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'})); a.download='biotos_crm_backup_'+PROFILE+'.json'; a.click();
+});
+$('inp_imp_json').addEventListener('change', e=>{
   const f = e.target.files[0]; if(!f) return;
   const rd = new FileReader(); rd.onload = () => {
     try{
@@ -820,15 +836,9 @@ document.getElementById('inp_imp_json').addEventListener('change', e=>{
     }catch(err){ alert('File non valido'); }
   }; rd.readAsText(f);
 });
-document.getElementById('btn_clear').addEventListener('click', ()=>{ if(!confirm('Cancellare tutti i dati?')) return; medici=[]; farmacie=[]; visite=[]; appuntamenti=[]; persistAll(); renderAll(); toast('Dati azzerati'); });
+$('btn_clear').addEventListener('click', ()=>{ if(!confirm('Cancellare tutti i dati (profilo corrente)?')) return; medici=[]; farmacie=[]; visite=[]; appuntamenti=[]; persistAll(); renderAll(); toast('Dati azzerati'); });
 
-/* ---------- Config ---------- */
-function saveCfg(cfg){ localStorage.setItem('cfg', JSON.stringify(cfg)); idbSet(S.k.cfg,cfg); applyTheme(localStorage.getItem('theme')||'auto'); }
-function loadCfg(){ try{ const cfg = JSON.parse(localStorage.getItem('cfg')||'{}'); document.getElementById('cfg_accent').value = cfg.accent || '#12a06a'; document.getElementById('cfg_req').value = cfg.req || 'basic'; document.getElementById('cfg_fu').value = cfg.fu || 7; }catch(_){ } }
-document.getElementById('btn_save_cfg').addEventListener('click', ()=>{
-  const cfg={accent:$('cfg_accent').value, req:$('cfg_req').value, fu: parseInt($('cfg_fu').value||'7',10)}; saveCfg(cfg); toast('Impostazioni salvate'); });
-
-/* ---------- Soft Sync via GitHub ---------- */
+// Sync soft GitHub
 function saveGhCfg(cfg){ localStorage.setItem('gh_cfg', JSON.stringify(cfg)); }
 function loadGhCfg(){ try{ const cfg = JSON.parse(localStorage.getItem('gh_cfg')||'null'); if(!cfg) return;
   $('gh_owner').value=cfg.owner||''; $('gh_repo').value=cfg.repo||''; $('gh_branch').value=cfg.branch||'main'; $('gh_path').value=cfg.path||'biotos_crm_data.json'; $('gh_token').value=cfg.token||''; }catch(_){ } }
@@ -846,7 +856,7 @@ async function ghPull(){
   try{
     const meta = await ghGetFileMeta(cfg);
     if(!meta){ alert('File non trovato nel repo/branch indicati.'); return; }
-    const txt = atob(meta.content.replace(/\n/g,''));
+    const txt = atob(meta.content.replace(/\\n/g,''));
     const obj = JSON.parse(txt);
     medici = obj.medici||[]; farmacie = obj.farmacie||[]; visite = obj.visite||[]; appuntamenti = obj.appuntamenti||[];
     persistAll(); renderAll(); toast('Sync pull completato');
@@ -858,7 +868,7 @@ async function ghPush(){
     const meta = await ghGetFileMeta(cfg);
     const sha = meta? meta.sha : undefined;
     const body = {
-      message: 'Update from Biotos CRM v9.0',
+      message: 'Update from Biotos CRM v10.1 ('+PROFILE+')',
       content: btoa(unescape(encodeURIComponent(JSON.stringify({medici,farmacie,visite,appuntamenti},null,2)))),
       branch: cfg.branch
     };
@@ -869,31 +879,21 @@ async function ghPush(){
     toast('Sync push completato');
   }catch(e){ alert('Push fallito: '+e.message); }
 }
-document.getElementById('btn_pull').addEventListener('click', ghPull);
-document.getElementById('btn_push').addEventListener('click', ghPush);
+$('btn_pull').addEventListener('click', ghPull);
+$('btn_push').addEventListener('click', ghPush);
 
-/* ---------- Helpers ---------- */
+// Sheets & misc
 function closeSheets(){ document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open')); }
 document.querySelectorAll('.sheet .close').forEach(b=>b.addEventListener('click',()=>{ closeSheets(); }));
 window.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSheets(); });
-document.getElementById('btn_reload').addEventListener('click', ()=>{ window.location.reload(); });
+$('btn_reload').addEventListener('click', ()=>{ window.location.reload(); });
 
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(reg=>{
-    if(reg.waiting){ document.getElementById('upd').classList.add('show'); }
-    reg.addEventListener('updatefound', ()=>{
-      const sw = reg.installing;
-      sw.addEventListener('statechange', ()=>{
-        if(sw.state==='installed' && navigator.serviceWorker.controller){
-          document.getElementById('upd').classList.add('show');
-        }
-      });
-    });
-  }).catch(()=>{});
-}
+document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{ if(window.scrollY>0) window.scrollTo({top:0,behavior:'smooth'}); }));
 
-/* ---------- Init ---------- */
-function renderAll(){ renderMedici(); renderFarmacie(); refreshVisitRefs(); renderVisite(); renderAgenda(); renderDashboard(); renderFollowup(); }
+function renderAll(){ renderMedici(); renderFarmacie(); refreshVisitRefs(); renderVisite(); renderAgenda(); renderDashboard(); renderFollowup(); renderReport(); }
+function updateStorageUsage(){try{const sz=(JSON.stringify({medici,farmacie,visite,appuntamenti}).length||0); $('stor_usage').textContent=(sz/1024).toFixed(1)+' KB';}catch(_){ $('stor_usage').textContent='—'; }}
+
+ensureProfile(); appInitLoad();
 </script>
 </body>
 </html>

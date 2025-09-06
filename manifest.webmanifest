@@ -1,7 +1,7 @@
 {
   "name": "Biotos CRM – Field App",
   "short_name": "Biotos CRM",
-  "description": "Schedario medici e farmacie, visite, appuntamenti, follow-up. Offline-ready.",
+  "description": "Schedario medici e farmacie, visite, appuntamenti, follow‑up, report mensili. Offline‑ready, multi‑account.",
   "display": "standalone",
   "start_url": "./",
   "scope": "./",
