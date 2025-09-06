@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no, email=no, address=no">
-  <title>Biotos CRM – v3</title>
+  <title>Biotos CRM – v4</title>
   <meta name="theme-color" content="#0b6b3f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -15,10 +15,11 @@
     :root{--bg:#0b1f16;--panel:#0e261b;--muted:#b7c7bf;--text:#eef6f2;--accent:#0b6b3f;--line:#174a33;--warn:#ffd166;--err:#ff6b6b}
     *{box-sizing:border-box}
     html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    header{position:sticky;top:0;background:linear-gradient(180deg,var(--bg) 0%,#0b1f16dd 70%,transparent);backdrop-filter:saturate(1.2) blur(6px);z-index:10}
-    .wrap{max-width:1100px;margin:0 auto;padding:12px}
-    h1{font-size:18px;margin:6px 0 10px;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
-    h1 img{width:28px;height:28px;border-radius:6px;border:1px solid var(--line);background:#fff}
+    /* Header più sobrio e fluido */
+    header{position:sticky;top:0;background:#0b1f16;z-index:10;padding-top:calc(6px + env(safe-area-inset-top));border-bottom:1px solid rgba(23,74,51,.35)}
+    .wrap{max-width:1100px;margin:0 auto;padding:10px 12px}
+    h1{font-size:18px;margin:0 0 6px;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
+    h1 img{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:#fff}
     .grid{display:grid;gap:12px}
     .pan{background:var(--panel);padding:12px;border-radius:14px;border:1px solid var(--line)}
     .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -30,7 +31,7 @@
     th,td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
     th{position:sticky;top:0;background:#0a1f17;color:#d8eee3;text-align:left}
     tr:hover{background:#0b231a}
-    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#0d2219;color:var(--text);padding:12px 14px;border-radius:12px;cursor:pointer;min-height:44px;font-size:16px}
+    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#0d2219;color:var(--text);padding:12px 14px;border-radius:12px;cursor:pointer;min-height:44px;font-size:16px;-webkit-tap-highlight-color:transparent}
     .btn.primary{border-color:#138a52;background:#0f2e22;box-shadow:inset 0 0 0 1px #138a5222}
     .btn.block{width:100%;justify-content:center}
     .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:#cfe}
@@ -42,21 +43,20 @@
     .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
     .kpis .pan{padding:10px} .kpis h3{margin:6px 0 4px;font-size:12px;color:#cfe8dc} .kpis .value{font-size:20px;font-weight:700}
     .help{font-size:12px;color:#9fb3a9}
-    .tablewrap{max-height:48vh;overflow:auto;border:1px solid var(--line);border-radius:12px}
-    .install-hint{display:none;margin:0 0 10px;padding:10px;border-radius:10px;border:1px dashed #1d7b4f;background:#0e281e;color:#bfe5cf}
-    .standalone .install-hint{display:none}
-    .bottomnav{position:fixed;bottom:0;left:0;right:0;background:#0b1f16cc;backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;gap:6px;padding:10px env(safe-area-inset-right) calc(10px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:15}
-    .bottomnav button{flex:1;border:1px solid var(--line);background:#0d2219;color:var(--text);padding:12px;border-radius:12px;min-height:44px;font-size:15px}
+    .tablewrap{max-height:48vh;overflow:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+    /* Bottom nav con safe-area e tocco più compatto */
+    .bottomnav{position:fixed;bottom:0;left:0;right:0;background:#0b1f16;/* niente blur per fluidità */border-top:1px solid var(--line);display:flex;gap:6px;padding:8px env(safe-area-inset-right) calc(8px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:15}
+    .bottomnav button{flex:1;border:1px solid var(--line);background:#0d2219;color:#e8f3ee;padding:10px;border-radius:12px;min-height:42px;font-size:15px}
     .bottomnav button.active{border-color:#138a52;background:#0f2e22;box-shadow:inset 0 0 0 1px #138a5222}
-    @media (max-width:768px){.wrap{padding-bottom:90px}}
+    @media (max-width:768px){.wrap{padding-bottom:86px}}
+    :focus-visible{outline:2px solid #12a263;outline-offset:2px}
   </style>
 </head>
 <body>
-<header><div class="wrap"><h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span style="color:#9bdab6">v3</span></h1></div></header>
+<header><div class="wrap"><h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span style="color:#9bdab6">v4</span></h1></div></header>
 
 <main class="wrap">
-  <p class="install-hint">Suggerimento: apri in Safari e usa <b>Condividi → Aggiungi a Home</b> per l’uso a schermo intero e offline.</p>
-
+  <!-- niente 'suggerimento' per iPhone -->
   <!-- DASHBOARD -->
   <section id="dashboard" class="grid">
     <div class="kpis">
@@ -204,9 +204,9 @@
     </div>
     <div class="pan">
       <h3 style="margin:0 0 8px">Info</h3>
-      <p>Versione app: <b>v3</b> – build 2025-09-06</p>
+      <p>Versione app: <b>v4</b> – build 2025-09-06</p>
       <ul>
-        <li>I dati restano sul dispositivo (localStorage). Per iPhone: Safari → <b>Aggiungi a Home</b>.</li>
+        <li>I dati restano sul dispositivo (localStorage).</li>
         <li>HTTPS + service worker = offline dopo il primo caricamento.</li>
         <li>GDPR: inserisci solo dati professionali (no dati sanitari personali).</li>
       </ul>
@@ -225,14 +225,11 @@
 </nav>
 
 <script>
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-  document.body.classList.add('standalone');
-} else {
-  const hint = document.querySelector('.install-hint'); if (hint) hint.style.display = 'block';
-}
+// Niente install-hint; solo aggiustamenti safe-area top già in CSS
 const S={get k(){return{med:'medici',far:'farmacie',vis:'visite'}},load:k=>JSON.parse(localStorage.getItem(k)||'[]'),save:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),uid:()=>('id_'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4)),today:()=>new Date().toISOString().slice(0,10)};
 let medici=S.load(S.k.med), farmacie=S.load(S.k.far), visite=S.load(S.k.vis);
 
+// Tabs
 document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
@@ -244,10 +241,12 @@ document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
   if(b.dataset.tab==='followup') renderFollowup();
 }));
 
+// Utils
 const $=id=>document.getElementById(id);
 const dl=(fn,text)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=fn;a.click();}
 const addDays=(iso,d)=>{const x=new Date(iso);x.setDate(x.getDate()+d);return x.toISOString().slice(0,10);}
 
+// Dashboard
 function renderDashboard(){
   $('k_medici').textContent=medici.length;
   $('k_farmacie').textContent=farmacie.length;
@@ -265,15 +264,26 @@ function renderDashboard(){
     tb.appendChild(tr);
   });
 }
-function refName(v){ if(v.tipo==='Medico'){const m=medici.find(x=>x.id===v.ref); return m?`${m.titolo||''} ${m.nome||''} ${m.cognome||''}`.trim():v.ref;}
-  else {const f=farmacie.find(x=>x.id===v.ref); return f?(f.ragione||v.ref):v.ref;} }
-function contactInfo(v){ if(v.tipo==='Medico'){const m=medici.find(x=>x.id===v.ref); return m?(m.telefono||m.email||''):'';}
-  else {const f=farmacie.find(x=>x.id===v.ref); return f?(f.telefono||f.email||''):'';} }
-function addDays2(iso,days){ const d=new Date(iso); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
-function dueFollowups(mode){ const t=S.today(), s=addDays(t,3);
-  return visite.filter(v=>v.follow).filter(v=>mode==='over'?v.follow<t:mode==='soon'?v.follow>=t&&v.follow<=s:mode==='future'?v.follow>s:true).sort((a,b)=>a.follow.localeCompare(b.follow));
+function refName(v){
+  if(v.tipo==='Medico'){
+    const m=medici.find(x=>x.id===v.ref);
+    return m?`${m.titolo||''} ${m.nome||''} ${m.cognome||''}`.trim():v.ref;
+  }else{
+    const f=farmacie.find(x=>x.id===v.ref);
+    return f?(f.ragione||v.ref):v.ref;
+  }
+}
+function contactInfo(v){
+  if(v.tipo==='Medico'){
+    const m=medici.find(x=>x.id===v.ref);
+    return m?(m.telefono||m.email||''):'';
+  }else{
+    const f=farmacie.find(x=>x.id===v.ref);
+    return f?(f.telefono||f.email||''):'';
+  }
 }
 
+// Medici
 function renderMedici(f=''){const tb=$('tbl_medici').querySelector('tbody'); tb.innerHTML='';
   medici.filter(m=>(`${m.nome} ${m.cognome} ${m.comune||''} ${m.spec||''}`).toLowerCase().includes(f.toLowerCase()))
   .forEach(m=>{
@@ -297,12 +307,14 @@ document.getElementById('btn_add_medico').addEventListener('click',()=>{
   const m={id:S.uid(),titolo:$('m_titolo').value.trim(),nome:$('m_nome').value.trim(),cognome:$('m_cognome').value.trim(),
     spec:$('m_spec').value,struttura:$('m_struttura').value.trim(),comune:$('m_comune').value.trim(),
     indirizzo:$('m_indirizzo').value.trim(),telefono:$('m_tel').value.trim(),email:$('m_email').value.trim(),note:$('m_note').value.trim()};
+  medici.append?0:0; // noop
   medici.push(m); S.save(S.k.med,medici);
   ['m_titolo','m_nome','m_cognome','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(i=>$(i).value='');
   renderMedici($('m_filter').value); refreshVisitRefs(); renderDashboard();
 });
 $('m_filter').addEventListener('input',e=>renderMedici(e.target.value));
 
+// Farmacie
 function renderFarmacie(f=''){const tb=$('tbl_farmacie').querySelector('tbody'); tb.innerHTML='';
   farmacie.filter(x=>(`${x.ragione} ${x.comune||''}`).toLowerCase().includes(f.toLowerCase())).forEach(x=>{
     const tel=x.telefono?`<a href="tel:${x.telefono}">${x.telefono}</a>`:''; const mail=x.email?`<a href="mailto:${x.email}">${x.email}</a>`:'';
@@ -329,6 +341,7 @@ document.getElementById('btn_add_farmacia').addEventListener('click',()=>{
 });
 $('f_filter').addEventListener('input',e=>renderFarmacie(e.target.value));
 
+// Visite
 function refreshVisitRefs(){const sel=$('v_ref'); sel.innerHTML=''; const tipo=$('v_tipo').value; const list=(tipo==='Medico'?medici:farmacie);
   list.forEach(x=>{const opt=document.createElement('option'); opt.value=x.id; opt.textContent=(tipo==='Medico'?`${x.titolo||''} ${x.nome||''} ${x.cognome||''}`.trim():(x.ragione||x.id)); sel.appendChild(opt);});}
 $('v_tipo').addEventListener('change',refreshVisitRefs);
@@ -356,6 +369,7 @@ document.getElementById('btn_add_visita').addEventListener('click',()=>{
 });
 $('v_filter').addEventListener('input',e=>renderVisite(e.target.value));
 
+// Follow-up
 function renderFollowup(){const mode=$('fu_state').value, t=S.today(), s=addDays(t,3);
   let data=visite.filter(v=>v.follow); if(mode==='over') data=data.filter(v=>v.follow<t); if(mode==='soon') data=data.filter(v=>v.follow>=t&&v.follow<=s); if(mode==='future') data=data.filter(v=>v.follow>s);
   data.sort((a,b)=>a.follow.localeCompare(b.follow)); const tb=$('tbl_follow').querySelector('tbody'); tb.innerHTML='';
@@ -364,8 +378,9 @@ function renderFollowup(){const mode=$('fu_state').value, t=S.today(), s=addDays
       <td><button class="btn" onclick="completeFU('${v.id}')">✓ Fatto</button></td>`; tb.appendChild(tr);});
 }
 function completeFU(id){ const v=visite.find(x=>x.id===id); if(!v) return; v.follow=''; v.next=''; S.save(S.k.vis,visite); renderFollowup(); renderDashboard(); }
-$('fu_state').addEventListener('change',renderFollowup);
+document.getElementById('fu_state').addEventListener('change',renderFollowup);
 
+// Export ICS
 document.getElementById('btn_exp_ics').addEventListener('click',()=>{
   const evs=visite.filter(v=>v.follow); const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Biotos CRM//FollowUps//IT'];
   const ts=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
@@ -374,8 +389,9 @@ document.getElementById('btn_exp_ics').addEventListener('click',()=>{
   L.push('END:VCALENDAR'); dl('biotos_followups.ics',L.join('\r\n'));
 });
 
+// Backup JSON / Restore / Reset
 document.getElementById('btn_exp_json').addEventListener('click', ()=>{
-  const payload = { exportedAt: new Date().toISOString(), version: 'v3', medici, farmacie, visite };
+  const payload = { exportedAt: new Date().toISOString(), version: 'v4', medici, farmacie, visite };
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
   a.download='biotos_crm_backup.json'; a.click();
@@ -401,6 +417,7 @@ document.getElementById('btn_clear').addEventListener('click', ()=>{
   renderMedici(); renderFarmacie(); renderVisite(); renderDashboard(); refreshVisitRefs(); renderFollowup();
 });
 
+// CSV helpers
 function toCSV(arr, cols){
   const esc = s => (''+s).replace(/"/g,'""');
   const header = cols.join(',');
@@ -420,11 +437,11 @@ function fromCSV(text){
       cur+=ch;
     }
     cells.push(cur);
-    const obj={}; cols.forEach((c,i)=>obj[c]=cells[i]||'');
-    return obj;
+    const obj={}; cols.forEach((c,i)=>obj[c]=cells[i]||''); return obj;
   });
 }
 
+// CSV export
 document.getElementById('btn_exp_med').addEventListener('click', ()=>{
   const cols = ["id","titolo","nome","cognome","spec","struttura","comune","indirizzo","telefono","email","note"];
   dl('medici.csv', toCSV(medici, cols));
@@ -438,6 +455,7 @@ document.getElementById('btn_exp_vis').addEventListener('click', ()=>{
   dl('visite.csv', toCSV(visite, cols));
 });
 
+// CSV import
 document.getElementById('imp_med').addEventListener('change', e=>{
   const f=e.target.files[0]; if(!f) return;
   const rd=new FileReader(); rd.onload=()=>{
@@ -481,9 +499,11 @@ document.getElementById('imp_vis').addEventListener('change', e=>{
   }; rd.readAsText(f);
 });
 
+// Init
 function init(){renderMedici('');renderFarmacie('');refreshVisitRefs();renderVisite('');renderDashboard();renderFollowup();}
 init();
 
+// SW
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 </script>
 </body>
