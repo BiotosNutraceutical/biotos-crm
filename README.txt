@@ -1,10 +1,7 @@
-Biotos CRM – v1.1
-- Fix navigazione tab (delegazione eventi): funzionante su iOS/Safari.
-- Fix aggiunta rapida di Medici/Farmacie/Visite/Appuntamenti (sheet minime incluse).
-- Bottoni con type="button" evitando reload indesiderati.
-- PWA cache aggiornata (biotos-crm-v1-1).
-- Backup/Restore JSON in Dati.
-
-Istruzioni:
-1) Carica su GitHub Pages/hosting statico.
-2) Apri su iPhone Safari → Condividi → Aggiungi a Home.
+Biotos CRM – v1.2 (Full)
+Aggiornamenti principali:
+- IndexedDB + LocalStorage fallback: dati persistenti e veloci.
+- Export/Import CSV per Medici, Farmacie, Visite.
+- UI mobile ottimizzata (nav orizzontale scrollabile, FAB stabile).
+- Follow-up con export iCal; agenda → visita 1-click; KPI mensili.
+Istruzioni: carica su GitHub Pages, apri con Safari iPhone, Aggiungi a Home.
