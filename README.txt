@@ -1,10 +1,11 @@
-Biotos CRM – v7.1 (bugfix & polish)
+Biotos CRM – v8.0 (UX/Perf/Design)
 Build: 2025-09-06
 
-- Mobile-first, FAB rialzata (safe-area), liste più leggibili.
-- CSV export (medici/farmacie/visite), ICS export (follow-up).
-- Sync soft via GitHub con token Bearer e config locale.
-- IndexedDB + LocalStorage per dati offline.
-- SW: cache 'biotos-crm-v7-1' con skipWaiting + clients.claim.
+Novità principali:
+- Fluidità: rendering a chunk, ricerche debounced, UI contain/paint.
+- Grafica: dark/light auto, tipografia leggibile, contrasti migliorati, toast e banner update PWA.
+- Funzionalità: quick-chips follow-up (+1/+3/+7/+14), ordinamenti rapidi, undo “soft”, usage storage.
+- PWA: cache v8.0, prompt aggiornamento quando esce una nuova build.
+- Dati: IndexedDB + LocalStorage; backup JSON; iCal follow-up con contatto.
 
-Deploy: carica i file su GitHub Pages o altro hosting statico, apri l'URL su iPhone e 'Aggiungi a Home'.
+Deploy: carica su GitHub Pages/hosting statico. Aggiungi alla Home su iPhone.

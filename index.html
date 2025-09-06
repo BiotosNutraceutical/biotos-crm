@@ -4,55 +4,64 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no, email=no, address=no">
-  <title>Biotos CRM – v7.1</title>
-  <meta name="theme-color" content="#13a263">
+  <title>Biotos CRM – v8.0</title>
+  <meta name="theme-color" content="#12a06a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Biotos CRM">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
   <style>
-    :root{--bg:#08160f;--panel:#0e261b;--panel2:#0b1f16;--muted:#bed6cc;--text:#f6fff9;--accent:#13a263;--line:#1a563b}
+    :root{
+      --bg:#07130e; --panel:#0c2319; --panel2:#0a1c15; --muted:#bfe6d5; --text:#f7fff9; --accent:#12a06a; --line:#1a563b;
+      --error:#ff6a6a; --warn:#ffb84d; --ok:#28d07e;
+    }
+    [data-theme="light"]{
+      --bg:#f6fffa; --panel:#ffffff; --panel2:#f4fbf8; --muted:#315a49; --text:#0c2019; --accent:#12a06a; --line:#cfe7dc;
+    }
     *{box-sizing:border-box}
-    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:17px/1.48 -apple-system,BlinkMacSystemFont,system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    a{color:#b7ffdf;text-decoration:none}
-    header{position:sticky;top:0;background:#08160f;z-index:20;padding-top:calc(6px + env(safe-area-inset-top));border-bottom:1px solid rgba(23,86,59,.35)}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16.5px/1.52 -apple-system,BlinkMacSystemFont,system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:#a6ffd8;text-decoration:none}
+    header{position:sticky;top:0;background:var(--bg);z-index:30;padding-top:calc(6px + env(safe-area-inset-top));border-bottom:1px solid rgba(23,86,59,.35);backdrop-filter:saturate(1.2) blur(4px)}
     .wrap{max-width:1100px;margin:0 auto;padding:10px 12px}
     h1{font-size:18px;margin:0 0 4px;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
     h1 img{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:#fff}
     .savebadge{margin-left:auto;font-size:12px;color:#bfe5cf}
-    .bottomnav{position:fixed;bottom:0;left:0;right:0;background:#08160f;border-top:1px solid var(--line);
-      display:flex;gap:6px;padding:10px env(safe-area-inset-right) calc(10px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:30}
-    .bottomnav button{flex:1;border:1px solid var(--line);background:#0d2219;color:#f0fff7;padding:12px;border-radius:12px;min-height:44px;font-size:15px}
-    .bottomnav button.active{border-color:#13a263;background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
+    .theme{margin-left:8px}
+    .theme select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px}
+    .bottomnav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--line);
+      display:flex;gap:6px;padding:10px env(safe-area-inset-right) calc(10px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:25}
+    .bottomnav button{flex:1;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:12px;border-radius:12px;min-height:44px;font-size:15px}
+    .bottomnav button.active{border-color:var(--accent);background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
     .topnav{display:none;gap:8px;margin-top:8px}
-    .topnav button{border:1px solid var(--line);background:#0d2219;color:#f0fff7;padding:10px 12px;border-radius:12px;min-height:40px;font-size:15px}
-    .topnav button.active{border-color:#13a263;background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
-    .grid{display:grid;gap:12px}
+    .topnav button{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 12px;border-radius:12px;min-height:40px;font-size:15px}
+    .topnav button.active{border-color:var(--accent);background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
+    .grid{display:grid;gap:12px;contain:paint}
     .pan{background:var(--panel);padding:12px;border-radius:14px;border:1px solid var(--line)}
     .row{display:flex;gap:8px;flex-wrap:wrap}
     .row>*{flex:1 1 280px}
     label{display:block;font-size:12px;color:#cde3d9;margin-bottom:6px}
     input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:44px;font-size:16px}
-    input:invalid,select:invalid,textarea:invalid{border-color:#ff8a8a; box-shadow:0 0 0 1px #ff8a8a22 inset}
+    input:invalid,select:invalid,textarea:invalid{border-color:var(--error); box-shadow:0 0 0 1px #ff8a8a22 inset}
     .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#103024;color:var(--text);padding:12px 14px;border-radius:12px;cursor:pointer;min-height:44px;font-size:16px;-webkit-tap-highlight-color:transparent}
-    .btn.primary{border-color:#13a263;background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
+    .btn.primary{border-color:var(--accent);background:#0f2e22;box-shadow:inset 0 0 0 1px #13a26322}
     .btn.block{width:100%;justify-content:center}
+    .btn.ghost{background:transparent}
     .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:#0b2b1e;color:#cfe}
     .muted{color:var(--muted)} .right{margin-left:auto} .hidden{display:none!important}
     .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
     .kpis .pan{padding:10px} .kpis h3{margin:6px 0 4px;font-size:12px;color:#cfe8dc} .kpis .value{font-size:22px;font-weight:700}
     .tablewrap{max-height:60vh;overflow:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
-    .cards{display:grid;gap:10px}
+    .cards{display:grid;gap:10px;contain:paint}
     .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:flex-start}
-    .card .main{flex:1}
-    .card .title{font-weight:800; letter-spacing:.2px}
-    .card .subtitle{color:#d6eee4; font-size:13px;margin-top:2px}
-    .card .meta{font-size:13px;color:#b7c7bf;margin-top:6px}
+    .card .main{flex:1;min-width:0}
+    .card .title{font-weight:800; letter-spacing:.2px; overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .card .subtitle{color:#d6eee4; font-size:13px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .card .meta{font-size:13px;color:#b7c7bf;margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .actions{display:flex;gap:8px;margin-top:10px}
     .chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);margin-left:6px;background:#0b2b1e;color:#d9ffe9}
     .fab{position:fixed;right:16px;bottom:calc(110px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center;background:#13a263;color:#07170f;font-weight:800;border:0;z-index:25;box-shadow:0 8px 24px rgba(0,0,0,.42)}
+      display:flex;align-items:center;justify-content:center;background:var(--accent);color:#07170f;font-weight:800;border:0;z-index:24;box-shadow:0 8px 24px rgba(0,0,0,.42)}
     .sheet{position:fixed;inset:0;display:none;background:rgba(0,0,0,.5);z-index:40}
     .sheet.open{display:block}
     .sheet .panel{position:absolute;left:0;right:0;bottom:0;background:#0c2219;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid var(--line);
@@ -63,6 +72,13 @@
     details{background:#0b241a;border:1px solid var(--line);border-radius:12px;padding:8px 10px}
     details>summary{cursor:pointer;font-weight:700}
     details[open]{box-shadow:inset 0 0 0 1px #13a26322}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(70px + env(safe-area-inset-bottom));background:#0f2e22;border:1px solid var(--line);padding:10px 14px;border-radius:12px;z-index:50;display:none}
+    .toast.show{display:block}
+    .update{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(120px + env(safe-area-inset-bottom));background:#1a2f27;border:1px solid var(--line);padding:10px 14px;border-radius:12px;z-index:50;display:none}
+    .update.show{display:flex;gap:8px;align-items:center}
+    .quickchips{display:flex;gap:6px;flex-wrap:wrap}
+    .quickchips button{border:1px dashed var(--line);background:transparent;color:#cfe;padding:6px 10px;border-radius:10px}
+    .stat{font-variant-numeric:tabular-nums}
     @media (min-width:900px){
       .bottomnav{display:none}
       .topnav{display:flex}
@@ -81,7 +97,10 @@
 <body>
 <header>
   <div class="wrap">
-    <h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span style="color:#9bdab6">v7.1</span><span class="savebadge" id="savebadge">Salvato ✓</span></h1>
+    <h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span class="muted">v8.0</span>
+      <span class="savebadge" id="savebadge">Salvato ✓</span>
+      <span class="theme"><select id="themeSel"><option value="auto">Tema: Auto</option><option value="dark">Scuro</option><option value="light">Chiaro</option></select></span>
+    </h1>
     <div class="topnav">
       <button class="tabbtn active" data-tab="dashboard">Dashboard</button>
       <button class="tabbtn" data-tab="medici">Medici</button>
@@ -96,12 +115,12 @@
 <main class="wrap">
   <section id="dashboard" class="grid">
     <div class="kpis">
-      <div class="pan"><h3>Medici schedati</h3><div class="value" id="k_medici">0</div></div>
-      <div class="pan"><h3>Farmacie schedate</h3><div class="value" id="k_farmacie">0</div></div>
-      <div class="pan"><h3>Visite totali</h3><div class="value" id="k_visite">0</div></div>
-      <div class="pan"><h3>Follow-up scaduti</h3><div class="value" id="k_fu_over">0</div></div>
-      <div class="pan"><h3>Follow-up prossimi 3 gg</h3><div class="value" id="k_fu_soon">0</div></div>
-      <div class="pan"><h3>Ordini stimati FV / FL</h3><div class="value"><span id="k_ord_fv">0</span> / <span id="k_ord_fl">0</span></div></div>
+      <div class="pan"><h3>Medici schedati</h3><div class="value stat" id="k_medici">0</div></div>
+      <div class="pan"><h3>Farmacie schedate</h3><div class="value stat" id="k_farmacie">0</div></div>
+      <div class="pan"><h3>Visite totali</h3><div class="value stat" id="k_visite">0</div></div>
+      <div class="pan"><h3>Follow-up scaduti</h3><div class="value stat" id="k_fu_over">0</div></div>
+      <div class="pan"><h3>Follow-up prossimi 3 gg</h3><div class="value stat" id="k_fu_soon">0</div></div>
+      <div class="pan"><h3>Ordini stimati FV / FL</h3><div class="value stat"><span id="k_ord_fv">0</span> / <span id="k_ord_fl">0</span></div></div>
     </div>
     <div class="pan">
       <h3 style="margin:0 0 8px">Follow-up imminenti</h3>
@@ -117,18 +136,23 @@
       <details>
         <summary>Ricerca avanzata</summary>
         <div class="row">
-          <div><label>Nome/Cognome</label><input id="m_q"></div>
-          <div><label>Comune</label><input id="m_q_comune"></div>
+          <div><label>Nome/Cognome</label><input id="m_q" placeholder="es. Rossi Mario"></div>
+          <div><label>Comune</label><input id="m_q_comune" placeholder="es. Cosenza"></div>
           <div><label>Specialità</label><select id="m_q_spec"><option value="">Tutte</option><option>Ginecologia</option><option>MMG</option><option>Altro</option></select></div>
+          <div class="right"><label>&nbsp;</label><button class="btn ghost" id="m_btn_sort">Ordina A→Z</button></div>
         </div>
       </details>
-      <div class="row"><div class="right"><button class="btn" id="btn_exp_med">⬇️ Export CSV</button></div></div>
+      <div class="row">
+        <div class="right">
+          <button class="btn" id="btn_exp_med">⬇️ Export CSV</button>
+        </div>
+      </div>
       <div class="tablewrap"><table id="tbl_medici"><thead><tr>
         <th>Nome</th><th>Specialità</th><th>Studio</th><th>Comune</th><th>Contatti</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
       <div class="cards" id="cards_medici"></div>
       <div class="right muted" id="info_medici"></div>
-      <button class="fab" id="fab_medico">＋</button>
+      <button class="fab" id="fab_medico" title="Nuovo medico">＋</button>
     </div>
   </section>
 
@@ -137,17 +161,22 @@
       <details>
         <summary>Ricerca avanzata</summary>
         <div class="row">
-          <div><label>Ragione Sociale</label><input id="f_q"></div>
-          <div><label>Comune</label><input id="f_q_comune"></div>
+          <div><label>Ragione Sociale</label><input id="f_q" placeholder="es. Farmacia Centrale"></div>
+          <div><label>Comune</label><input id="f_q_comune" placeholder="es. Rende"></div>
+          <div class="right"><label>&nbsp;</label><button class="btn ghost" id="f_btn_sort">Ordina A→Z</button></div>
         </div>
       </details>
-      <div class="row"><div class="right"><button class="btn" id="btn_exp_far">⬇️ Export CSV</button></div></div>
+      <div class="row">
+        <div class="right">
+          <button class="btn" id="btn_exp_far">⬇️ Export CSV</button>
+        </div>
+      </div>
       <div class="tablewrap"><table id="tbl_farmacie"><thead><tr>
         <th>Ragione Sociale</th><th>Comune</th><th>Indirizzo</th><th>Contatti</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
       <div class="cards" id="cards_farmacie"></div>
       <div class="right muted" id="info_farmacie"></div>
-      <button class="fab" id="fab_farmacia">＋</button>
+      <button class="fab" id="fab_farmacia" title="Nuova farmacia">＋</button>
     </div>
   </section>
 
@@ -161,15 +190,18 @@
           <div><label>Tipo</label><select id="v_q_tipo"><option value="">Tutti</option><option>Medico</option><option>Farmacia</option></select></div>
           <div><label>Esito</label><select id="v_q_esito"><option value="">Tutti</option><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
           <div><label>Prodotti</label><select id="v_q_prod"><option value="">Tutti</option><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
+          <div class="right"><label>&nbsp;</label><button class="btn ghost" id="v_btn_sort">Ordina recenti</button></div>
         </div>
       </details>
-      <div class="row"><div class="right"><button class="btn" id="btn_exp_vis">⬇️ Export CSV</button></div></div>
+      <div class="row">
+        <div class="right"><button class="btn" id="btn_exp_vis">⬇️ Export CSV</button></div>
+      </div>
       <div class="tablewrap"><table id="tbl_visite"><thead><tr>
         <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prodotti</th><th>Esito</th><th>Next</th><th>Follow-up</th><th>Ref.</th><th>Ord FV/FL</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
       <div class="cards" id="cards_visite"></div>
       <div class="right muted" id="info_visite"></div>
-      <button class="fab" id="fab_visita">＋</button>
+      <button class="fab" id="fab_visita" title="Nuova visita">＋</button>
     </div>
   </section>
 
@@ -201,7 +233,7 @@
         <input type="file" id="inp_imp_json" accept="application/json" class="btn">
         <button class="btn" id="btn_clear" title="Cancella tutti i dati (usa con cautela)">🗑️ Reset dati</button>
       </div>
-      <p class="muted">I dati restano sul dispositivo (IndexedDB + LocalStorage).</p>
+      <p class="muted">I dati restano sul dispositivo (IndexedDB + LocalStorage). Uso attuale: <span id="stor_usage">–</span></p>
     </div>
     <div class="pan">
       <h3 style="margin:0 8px 8px">Sync “soft” via GitHub (opzionale)</h3>
@@ -230,7 +262,6 @@
   <button class="tabbtn" data-tab="io">Dati</button>
 </nav>
 
-<!-- SHEETS -->
 <div class="sheet" id="sheet_medico">
   <div class="panel">
     <button class="close" data-close="sheet_medico">✕</button>
@@ -249,10 +280,10 @@
       <div><label>Indirizzo</label><input id="m_indirizzo"></div>
     </div>
     <div class="row">
-      <div><label>Telefono</label><input id="m_tel" type="tel" inputmode="tel"></div>
+      <div><label>Telefono</label><input id="m_tel" type="tel" inputmode="tel" pattern="[0-9+\s()-]{6,}"></div>
       <div><label>Email</label><input id="m_email" type="email" inputmode="email" autocapitalize="none"></div>
     </div>
-    <div class="row"><div><label>Note</label><input id="m_note"></div></div>
+    <div class="row"><div><label>Note</label><input id="m_note" maxlength="240"></div></div>
     <div class="row"><button class="btn primary block" id="btn_save_medico">Salva</button></div>
   </div>
 </div>
@@ -268,9 +299,9 @@
       <div><label>Indirizzo</label><input id="f_indirizzo"></div>
     </div>
     <div class="row">
-      <div><label>Telefono</label><input id="f_tel" type="tel" inputmode="tel"></div>
+      <div><label>Telefono</label><input id="f_tel" type="tel" inputmode="tel" pattern="[0-9+\s()-]{6,}"></div>
       <div><label>Email</label><input id="f_email" type="email" inputmode="email" autocapitalize="none"></div>
-      <div><label>Note</label><input id="f_note"></div>
+      <div><label>Note</label><input id="f_note" maxlength="240"></div>
     </div>
     <div class="row"><button class="btn primary block" id="btn_save_farmacia">Salva</button></div>
   </div>
@@ -287,26 +318,47 @@
       <div><label>Referente</label><select id="v_refe"><option>Stefano</option><option>Mariangela</option></select></div>
     </div>
     <div class="row">
-      <div><label>Obiettivo visita</label><input id="v_obj" placeholder="es. presentazione FV, riordino FL..."></div>
+      <div><label>Obiettivo visita</label><input id="v_obj" maxlength="140" placeholder="es. presentazione FV, riordino FL..."></div>
       <div><label>Prodotti</label><select id="v_prod"><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
-      <div><label>Materiali consegnati</label><input id="v_mat" placeholder="folder, scheda, locandina..."></div>
+      <div><label>Materiali consegnati</label><input id="v_mat" maxlength="140" placeholder="folder, scheda, locandina..."></div>
     </div>
     <div class="row">
       <div><label>Esito</label><select id="v_esito"><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
       <div><label>Prossimo step</label><select id="v_next"><option value="">—</option><option>Follow-up telefonico</option><option>Invio materiali</option><option>Richiesta ordine</option><option>Demo/Approfondimento</option><option>Altro</option></select></div>
-      <div><label>Data follow-up</label><input type="date" id="v_follow"></div>
+      <div><label>Data follow-up</label>
+        <input type="date" id="v_follow">
+        <div class="quickchips">
+          <button type="button" data-addd="1">+1g</button>
+          <button type="button" data-addd="3">+3g</button>
+          <button type="button" data-addd="7">+7g</button>
+          <button type="button" data-addd="14">+14g</button>
+        </div>
+      </div>
     </div>
     <div class="row">
       <div><label>Ordine stimato FV</label><input id="v_fv" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
       <div><label>Ordine stimato FL</label><input id="v_fl" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
-      <div><label>Note esito</label><input id="v_note"></div>
+      <div><label>Note esito</label><input id="v_note" maxlength="240"></div>
     </div>
     <div class="row"><button class="btn primary block" id="btn_save_visita">Salva</button></div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+<div class="update" id="upd"><span>Nuova versione disponibile</span><button class="btn" id="btn_reload">Aggiorna</button></div>
+
 <script>
-/* ---------- Persistenza: IndexedDB + LocalStorage ---------- */
+const themeSel = document.getElementById('themeSel');
+const savedTheme = localStorage.getItem('theme') || 'auto';
+themeSel.value = savedTheme;
+applyTheme(savedTheme);
+themeSel.addEventListener('change', ()=>{ localStorage.setItem('theme', themeSel.value); applyTheme(themeSel.value); });
+function applyTheme(mode){
+  const root = document.documentElement;
+  if(mode==='auto'){ root.removeAttribute('data-theme'); if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){ root.setAttribute('data-theme','light'); } }
+  else{ root.setAttribute('data-theme', mode); }
+}
+
 const DB_NAME='biotos-crm'; const DB_STORE='kv';
 function idbOpen(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1); r.onupgradeneeded=()=>{const db=r.result; if(!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE,{keyPath:'key'});}; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);});}
 async function idbGet(k){try{const db=await idbOpen(); return await new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,'readonly'); const st=tx.objectStore(DB_STORE).get(k); st.onsuccess=()=>res(st.result?st.result.val:null); st.onerror=()=>rej(st.error);}); }catch(e){return null}}
@@ -316,10 +368,10 @@ const S={get k(){return{med:'medici',far:'farmacie',vis:'visite',cfg:'cfg'}},loa
 let medici=[], farmacie=[], visite=[];
 const savebadge=document.getElementById('savebadge'); let saveTimer=null;
 function markSaving(){savebadge.textContent='Salvando…';} function markSaved(){savebadge.textContent='Salvato ✓';}
-(async function initLoad(){const [m,f,v]=await Promise.all([idbGet(S.k.med),idbGet(S.k.far),idbGet(S.k.vis)]); medici=Array.isArray(m)?m:S.loadLS(S.k.med); farmacie=Array.isArray(f)?f:S.loadLS(S.k.far); visite=Array.isArray(v)?v:S.loadLS(S.k.vis); loadCfg(); renderAll();})();
-function persistAll(){markSaving(); clearTimeout(saveTimer); saveTimer=setTimeout(async()=>{await Promise.all([idbSet(S.k.med,medici),idbSet(S.k.far,farmacie),idbSet(S.k.vis,visite)]); S.saveLS(S.k.med,medici); S.saveLS(S.k.far,farmacie); S.saveLS(S.k.vis,visite); markSaved();},300);}
+(async function initLoad(){const [m,f,v]=await Promise.all([idbGet(S.k.med),idbGet(S.k.far),idbGet(S.k.vis)]); medici=Array.isArray(m)?m:S.loadLS(S.k.med); farmacie=Array.isArray(f)?f:S.loadLS(S.k.far); visite=Array.isArray(v)?v:S.loadLS(S.k.vis); migrate(); loadCfg(); renderAll(); updateStorageUsage();})();
+function persistAll(){markSaving(); clearTimeout(saveTimer); saveTimer=setTimeout(async()=>{await Promise.all([idbSet(S.k.med,medici),idbSet(S.k.far,farmacie),idbSet(S.k.vis,visite)]); S.saveLS(S.k.med,medici); S.saveLS(S.k.far,farmacie); S.saveLS(S.k.vis,visite); markSaved(); updateStorageUsage();},250);}
+function migrate(){ medici=Array.isArray(medici)?medici:[]; farmacie=Array.isArray(farmacie)?farmacie:[]; visite=Array.isArray(visite)?visite:[]; }
 
-/* ---------- Tabs ---------- */
 document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
@@ -330,7 +382,6 @@ document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
   if(b.dataset.tab==='followup') renderFollowup();
 }));
 
-/* ---------- Utils ---------- */
 const $=id=>document.getElementById(id);
 const dl=(fn,text)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=fn;a.click();}
 const addDays=(iso,d)=>{const x=new Date(iso||new Date());x.setDate(x.getDate()+d);return x.toISOString().slice(0,10);}
@@ -338,8 +389,11 @@ function refName(v){ if(v.tipo==='Medico'){const m=medici.find(x=>x.id===v.ref);
   else {const f=farmacie.find(x=>x.id===v.ref); return f?(f.ragione||v.ref):v.ref;} }
 function contactInfo(v){ if(v.tipo==='Medico'){const m=medici.find(x=>x.id===v.ref); return m?(m.telefono||m.email||''):'';}
   else {const f=farmacie.find(x=>x.id===v.ref); return f?(f.telefono||f.email||''):'';} }
+function toast(msg){const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600);}
+function deb(fn,ms){let to; return (...a)=>{clearTimeout(to); to=setTimeout(()=>fn(...a),ms);}}
+function humanSize(bytes){const u=['B','KB','MB','GB']; let i=0,v=bytes; while(v>1000 && i<u.length-1){v/=1024;i++;} return v.toFixed(1)+' '+u[i];}
+function updateStorageUsage(){try{const sz=(JSON.stringify({medici,farmacie,visite}).length||0); $('stor_usage').textContent=humanSize(sz);}catch(_){ $('stor_usage').textContent='—'; }}
 
-/* ---------- Dashboard & Follow-up cards ---------- */
 function renderDashboard(){
   $('k_medici').textContent=medici.length; $('k_farmacie').textContent=farmacie.length; $('k_visite').textContent=visite.length;
   const t=S.today(), s=addDays(t,3);
@@ -347,7 +401,7 @@ function renderDashboard(){
   $('k_fu_soon').textContent=visite.filter(v=>v.follow&&v.follow>=t&&v.follow<=s).length;
   $('k_ord_fv').textContent=visite.reduce((a,v)=>a+(+v.fv||0),0); $('k_ord_fl').textContent=visite.reduce((a,v)=>a+(+v.fl||0),0);
   const tb=$('tbl_fu').querySelector('tbody'); tb.innerHTML=''; const cards=$('cards_fu'); cards.innerHTML='';
-  visite.filter(v=>v.follow&&v.follow>=t&&v.follow<=s).sort((a,b)=>a.follow.localeCompare(b.follow)).slice(0,30).forEach(v=>{
+  chunk(visite.filter(v=>v.follow&&v.follow>=t&&v.follow<=s).sort((a,b)=>a.follow.localeCompare(b.follow)).slice(0,200), 30, (v)=>{
     const tr=document.createElement('tr'); tr.innerHTML=`<td>${v.follow}</td><td>${v.tipo}</td><td>${refName(v)}</td><td>${v.next||''}</td><td>${v.contact||''}</td>`; tb.appendChild(tr);
     const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
       <div class="title">${v.follow} • ${v.tipo}<span class="chip">${refName(v)}</span></div>
@@ -357,8 +411,17 @@ function renderDashboard(){
   });
 }
 
-/* ---------- Medici ---------- */
-let editMedicoId=null;
+function chunk(arr, size, renderFn, doneFn){
+  let i=0;
+  function step(){
+    const t=performance.now();
+    for(let c=0;c<size && i<arr.length;c++,i++){ renderFn(arr[i]); if(performance.now()-t>12) break; }
+    if(i<arr.length) requestAnimationFrame(step); else if(doneFn) doneFn();
+  }
+  requestAnimationFrame(step);
+}
+
+let editMedicoId=null, mSortAZ=true, undoStack=[];
 function openMedicoSheet(id=null){
   editMedicoId=id; const title=$('sheet_medico_title');
   if(id){ const m=medici.find(x=>x.id===id); if(!m) return; title.textContent='Modifica medico';
@@ -374,13 +437,16 @@ document.getElementById('btn_save_medico').addEventListener('click',()=>{
     spec:$('m_spec').value, struttura:$('m_struttura').value.trim(), comune:$('m_comune').value.trim(), indirizzo:$('m_indirizzo').value.trim(),
     telefono:$('m_tel').value.trim(), email:$('m_email').value.trim(), note:$('m_note').value.trim()};
   if(editMedicoId){ const i=medici.findIndex(x=>x.id===editMedicoId); medici[i]=m; } else { medici.unshift(m); }
-  persistAll(); closeSheets(); renderMedici(); refreshVisitRefs(); renderDashboard();
+  persistAll(); closeSheets(); renderMedici();
+  refreshVisitRefs(); renderDashboard(); toast('Medico salvato');
 });
 function renderMedici(){
   const name=($('m_q')?.value||'').toLowerCase(), comune=($('m_q_comune')?.value||'').toLowerCase(), spec=$('m_q_spec')?.value||'';
-  const arr=medici.filter(m=>((m.nome+' '+m.cognome).toLowerCase().includes(name)) && (m.comune||'').toLowerCase().includes(comune) && (!spec || m.spec===spec));
+  let arr=medici.filter(m=>((m.nome+' '+m.cognome).toLowerCase().includes(name)) && (m.comune||'').toLowerCase().includes(comune) && (!spec || m.spec===spec));
+  arr.sort((a,b)=> (mSortAZ?1:-1) * ( (a.cognome||'').localeCompare(b.cognome||'') || (a.nome||'').localeCompare(b.nome||'') ));
   const tb=$('tbl_medici').querySelector('tbody'); tb.innerHTML='';
-  arr.forEach(m=>{
+  const cards=$('cards_medici'); cards.innerHTML='';
+  chunk(arr, 40, (m)=>{
     const tel=m.telefono?`<a href="tel:${m.telefono}">📞 ${m.telefono}</a>`:''; const mail=m.email?`<a href="mailto:${m.email}">✉️ ${m.email}</a>`:'';
     const tr=document.createElement('tr'); tr.innerHTML=`
       <td>${m.titolo||''} ${m.nome||''} ${m.cognome||''}</td>
@@ -389,9 +455,6 @@ function renderMedici(){
       <td>${[tel,mail].filter(Boolean).join('<br>')}</td><td>${m.note||''}</td>
       <td><button class="btn" onclick="openMedicoSheet('${m.id}')">Modifica</button> <button class="btn" onclick="quickVisitForMedico('${m.id}')">+ Visita</button> <button class="btn" onclick="delMedico('${m.id}')">Elimina</button></td>`;
     tb.appendChild(tr);
-  });
-  const cards=$('cards_medici'); cards.innerHTML='';
-  arr.forEach(m=>{
     const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
       <div class="title">${m.titolo||''} ${m.nome||''} ${m.cognome||''}<span class="chip">${m.spec||''}</span></div>
       <div class="subtitle">${m.struttura||''} • ${m.comune||''}</div>
@@ -399,22 +462,19 @@ function renderMedici(){
       <div class="meta">${m.note||''}</div></div>
       <div class="actions"><button class="btn" onclick="openMedicoSheet('${m.id}')">Modifica</button><button class="btn" onclick="quickVisitForMedico('${m.id}')">+ Visita</button><button class="btn" onclick="delMedico('${m.id}')">Elimina</button></div>`;
     cards.appendChild(div);
-  });
-  $('info_medici').textContent = `${arr.length} medici`;
+  }, ()=>{ $('info_medici').textContent = `${arr.length} medici`; });
 }
-['m_q','m_q_comune','m_q_spec'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input',renderMedici);});
-document.getElementById('btn_exp_med').addEventListener('click',()=>{
-  const cols=["id","titolo","nome","cognome","spec","struttura","comune","indirizzo","telefono","email","note"];
-  const esc=s=>(''+(s??'')).replace(/"/g,'""'); 
-  const csv=[cols.join(',')].concat(medici.map(o=>cols.map(k=>`"${esc(o[k])}"`).join(','))).join('\n');
-  dl('medici.csv',csv);
-});
+['m_q','m_q_comune','m_q_spec'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', deb(renderMedici, 250));});
+document.getElementById('m_btn_sort').addEventListener('click', ()=>{ mSortAZ=!mSortAZ; document.getElementById('m_btn_sort').textContent = mSortAZ?'Ordina A→Z':'Ordina Z→A'; renderMedici();});
 function delMedico(id){ if(!confirm('Eliminare il medico e le visite collegate?')) return;
-  medici=medici.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Medico'&&v.ref===id)); persistAll(); renderMedici(); renderVisite(); renderDashboard(); refreshVisitRefs();
+  const backup={type:'medico', data: medici.find(x=>x.id===id), visits: visite.filter(v=>v.tipo==='Medico'&&v.ref===id)};
+  undoStack.push(backup);
+  medici=medici.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Medico'&&v.ref===id));
+  persistAll(); renderMedici(); renderVisite(); renderDashboard(); refreshVisitRefs(); toast('Medico eliminato. Annulla?');
+  setTimeout(()=>undoStack.shift(), 7000);
 }
 
-/* ---------- Farmacie ---------- */
-let editFarmaciaId=null;
+let editFarmaciaId=null, fSortAZ=true;
 function openFarmaciaSheet(id=null){
   editFarmaciaId=id; const title=$('sheet_farmacia_title');
   if(id){ const x=farmacie.find(o=>o.id===id); if(!x) return; title.textContent='Modifica farmacia';
@@ -429,13 +489,14 @@ document.getElementById('btn_save_farmacia').addEventListener('click',()=>{
   const f={id:editFarmaciaId||S.uid(), ragione:$('f_ragione').value.trim(), direttore:$('f_direttore').value.trim(), comune:$('f_comune').value.trim(),
     indirizzo:$('f_indirizzo').value.trim(), telefono:$('f_tel').value.trim(), email:$('f_email').value.trim(), note:$('f_note').value.trim()};
   if(editFarmaciaId){ const i=farmacie.findIndex(o=>o.id===editFarmaciaId); farmacie[i]=f; } else { farmacie.unshift(f); }
-  persistAll(); closeSheets(); renderFarmacie(); refreshVisitRefs(); renderDashboard();
+  persistAll(); closeSheets(); renderFarmacie(); refreshVisitRefs(); renderDashboard(); toast('Farmacia salvata');
 });
 function renderFarmacie(){
   const q=($('f_q')?.value||'').toLowerCase(), com=($('f_q_comune')?.value||'').toLowerCase();
-  const arr=farmacie.filter(x=>(x.ragione||'').toLowerCase().includes(q) && (x.comune||'').toLowerCase().includes(com));
-  const tb=$('tbl_farmacie').querySelector('tbody'); tb.innerHTML='';
-  arr.forEach(x=>{
+  let arr=farmacie.filter(x=>(x.ragione||'').toLowerCase().includes(q) && (x.comune||'').toLowerCase().includes(com));
+  arr.sort((a,b)=> (fSortAZ?1:-1) * ( (a.comune||'').localeCompare(b.comune||'') || (a.ragione||'').localeCompare(b.ragione||'') ));
+  const tb=$('tbl_farmacie').querySelector('tbody'); tb.innerHTML=''; const cards=$('cards_farmacie'); cards.innerHTML='';
+  chunk(arr, 40, (x)=>{
     const tel=x.telefono?`<a href="tel:${x.telefono}">📞 ${x.telefono}</a>`:''; const mail=x.email?`<a href="mailto:${x.email}">✉️ ${x.email}</a>`:'';
     const tr=document.createElement('tr'); tr.innerHTML=`
       <td>${x.ragione||''} ${x.direttore?'<div class=muted>'+x.direttore+'</div>':''}</td>
@@ -443,9 +504,6 @@ function renderFarmacie(){
       <td>${[tel,mail].filter(Boolean).join('<br>')}</td><td>${x.note||''}</td>
       <td><button class="btn" onclick="openFarmaciaSheet('${x.id}')">Modifica</button> <button class="btn" onclick="quickVisitForFarmacia('${x.id}')">+ Visita</button> <button class="btn" onclick="delFarmacia('${x.id}')">Elimina</button></td>`;
     tb.appendChild(tr);
-  });
-  const cards=$('cards_farmacie'); cards.innerHTML='';
-  arr.forEach(x=>{
     const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
       <div class="title">${x.ragione||''}<span class="chip">${x.comune||''}</span></div>
       <div class="subtitle">${x.indirizzo||''}</div>
@@ -453,22 +511,19 @@ function renderFarmacie(){
       <div class="meta">${x.note||''}</div></div>
       <div class="actions"><button class="btn" onclick="openFarmaciaSheet('${x.id}')">Modifica</button><button class="btn" onclick="quickVisitForFarmacia('${x.id}')">+ Visita</button><button class="btn" onclick="delFarmacia('${x.id}')">Elimina</button></div>`;
     cards.appendChild(div);
-  });
-  $('info_farmacie').textContent = `${arr.length} farmacie`;
+  }, ()=>{ $('info_farmacie').textContent = `${arr.length} farmacie`; });
 }
-['f_q','f_q_comune'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input',renderFarmacie);});
-document.getElementById('btn_exp_far').addEventListener('click',()=>{
-  const cols=["id","ragione","direttore","comune","indirizzo","telefono","email","note"];
-  const esc=s=>(''+(s??'')).replace(/"/g,'""');
-  const csv=[cols.join(',')].concat(farmacie.map(o=>cols.map(k=>`"${esc(o[k])}"`).join(','))).join('\n');
-  dl('farmacie.csv',csv);
-});
+['f_q','f_q_comune'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', deb(renderFarmacie, 250));});
+document.getElementById('f_btn_sort').addEventListener('click', ()=>{ fSortAZ=!fSortAZ; document.getElementById('f_btn_sort').textContent = fSortAZ?'Ordina A→Z':'Ordina Z→A'; renderFarmacie();});
 function delFarmacia(id){ if(!confirm('Eliminare la farmacia e le visite collegate?')) return;
-  farmacie=farmacie.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Farmacia'&&v.ref===id)); persistAll(); renderFarmacie(); renderVisite(); renderDashboard(); refreshVisitRefs();
+  const backup={type:'farmacia', data: farmacie.find(x=>x.id===id), visits: visite.filter(v=>v.tipo==='Farmacia'&&v.ref===id)};
+  undoStack.push(backup);
+  farmacie=farmacie.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Farmacia'&&v.ref===id));
+  persistAll(); renderFarmacie(); renderVisite(); renderDashboard(); refreshVisitRefs(); toast('Farmacia eliminata. Annulla?');
+  setTimeout(()=>undoStack.shift(), 7000);
 }
 
-/* ---------- Visite (duplica + validazioni + follow-up auto + export) ---------- */
-let editVisitaId=null;
+let editVisitaId=null, vSortRecent=true;
 function openVisitaSheet(id=null, duplicate=false){
   editVisitaId = duplicate ? null : id; const title=$('sheet_visita_title');
   if(id){ const v=visite.find(o=>o.id===id); if(!v) return; title.textContent= duplicate ? 'Duplica visita' : 'Modifica visita';
@@ -486,33 +541,34 @@ document.getElementById('btn_save_visita').addEventListener('click',()=>{
     contact:contactInfo({tipo:$('v_tipo').value,ref:$('v_ref').value})};
   if(!v.follow && v.next){ v.follow = addDays(v.data,7); }
   if(editVisitaId){ const i=visite.findIndex(o=>o.id===editVisitaId); visite[i]=v; } else { visite.unshift(v); }
-  persistAll(); closeSheets(); renderVisite(); renderDashboard(); renderFollowup();
+  persistAll(); closeSheets(); renderVisite(); renderDashboard(); renderFollowup(); toast('Visita salvata');
 });
+document.querySelectorAll('.quickchips [data-addd]').forEach(b=>b.addEventListener('click',()=>{
+  const d= parseInt(b.getAttribute('data-addd')); $('v_follow').value = addDays($('v_data').value||S.today(), d);
+}));
 function refreshVisitRefs(){const sel=$('v_ref'); if(!sel) return; sel.innerHTML=''; const tipo=$('v_tipo').value; const list=(tipo==='Medico'?medici:farmacie);
   list.forEach(x=>{const opt=document.createElement('option'); opt.value=x.id; opt.textContent=(tipo==='Medico'?`${x.titolo||''} ${x.nome||''} ${x.cognome||''}`.trim():(x.ragione||x.id)); sel.appendChild(opt);});}
 $('v_tipo').addEventListener('change',refreshVisitRefs);
 
 function renderVisite(){
   const from=$('v_q_from')?.value||'', to=$('v_q_to')?.value||'', tipo=$('v_q_tipo')?.value||'', esito=$('v_q_esito')?.value||'', prod=$('v_q_prod')?.value||'';
-  const arr=visite.filter(v=>{
+  let arr=visite.filter(v=>{
     const okDate = (!from || v.data>=from) && (!to || v.data<=to);
     const okTipo = (!tipo || v.tipo===tipo);
     const okEsito = (!esito || v.esito===esito);
     const okProd = (!prod || v.prod===prod);
     return okDate && okTipo && okEsito && okProd;
-  }).sort((a,b)=>b.data.localeCompare(a.data));
-
+  });
+  arr.sort((a,b)=> (vSortRecent?-1:1) * a.data.localeCompare(b.data) );
   const tb=$('tbl_visite').querySelector('tbody'); tb.innerHTML='';
-  arr.forEach(v=>{
+  const cards=$('cards_visite'); cards.innerHTML='';
+  chunk(arr, 50, (v)=>{
     const tr=document.createElement('tr'); tr.innerHTML=`
       <td>${v.data}</td><td>${v.tipo}</td><td>${refName(v)}</td>
       <td>${v.prod}</td><td>${v.esito}</td><td>${v.next||''}</td><td>${v.follow||''}</td>
       <td>${v.refe}</td><td>${v.fv||0}/${v.fl||0}</td><td>${v.note||''}</td>
       <td><button class="btn" onclick="openVisitaSheet('${v.id}')">Modifica</button> <button class="btn" onclick="openVisitaSheet('${v.id}',true)">Duplica</button> <button class="btn" onclick="delVisita('${v.id}')">Elimina</button></td>`;
     tb.appendChild(tr);
-  });
-  const cards=$('cards_visite'); cards.innerHTML='';
-  arr.forEach(v=>{
     const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
       <div class="title">${v.data} • ${v.tipo}<span class="chip">${refName(v)}</span></div>
       <div class="subtitle">${v.refe} – Prodotti: ${v.prod}</div>
@@ -520,25 +576,18 @@ function renderVisite(){
       <div class="meta">${v.note||''}</div></div>
       <div class="actions"><button class="btn" onclick="openVisitaSheet('${v.id}')">Modifica</button><button class="btn" onclick="openVisitaSheet('${v.id}',true)">Duplica</button><button class="btn" onclick="delVisita('${v.id}')">Elimina</button></div>`;
     cards.appendChild(div);
-  });
-  $('info_visite').textContent = `${arr.length} visite`;
+  }, ()=>{ $('info_visite').textContent = `${arr.length} visite`; });
 }
-['v_q_from','v_q_to','v_q_tipo','v_q_esito','v_q_prod'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input',renderVisite);});
-document.getElementById('btn_exp_vis').addEventListener('click',()=>{
-  const cols=["id","data","tipo","ref","refe","obj","prod","mat","esito","next","follow","fv","fl","note"];
-  const esc=s=>(''+(s??'')).replace(/"/g,'""');
-  const csv=[cols.join(',')].concat(visite.map(o=>cols.map(k=>`"${esc(o[k])}"`).join(','))).join('\n');
-  dl('visite.csv',csv);
-});
-function delVisita(id){ visite=visite.filter(v=>v.id!==id); persistAll(); renderVisite(); renderDashboard(); renderFollowup(); }
+['v_q_from','v_q_to','v_q_tipo','v_q_esito','v_q_prod'].forEach(id=>{const el=$(id); if(el) el.addEventListener('input', deb(renderVisite, 200));});
+document.getElementById('v_btn_sort').addEventListener('click', ()=>{ vSortRecent=!vSortRecent; document.getElementById('v_btn_sort').textContent = vSortRecent?'Ordina recenti':'Ordina vecchie'; renderVisite();});
+function delVisita(id){ visite=visite.filter(v=>v.id!==id); persistAll(); renderVisite(); renderDashboard(); renderFollowup(); toast('Visita eliminata'); }
 
-/* ---------- Follow-up (tab) ---------- */
 function renderFollowup(){
   const mode=$('fu_state').value, t=S.today(), s=addDays(t,3);
   let data=visite.filter(v=>v.follow); if(mode==='over') data=data.filter(v=>v.follow<t); if(mode==='soon') data=data.filter(v=>v.follow>=t&&v.follow<=s); if(mode==='future') data=data.filter(v=>v.follow>s);
   data.sort((a,b)=>a.follow.localeCompare(b.follow));
   const tb=$('tbl_follow').querySelector('tbody'); tb.innerHTML=''; const cards=$('cards_follow'); cards.innerHTML='';
-  data.forEach(v=>{
+  chunk(data, 50, (v)=>{
     const tr=document.createElement('tr'); tr.innerHTML=`<td>${v.follow}</td><td>${v.tipo}</td><td>${refName(v)}</td><td>${v.next||''}</td><td>${v.contact||''}</td><td>${v.note||''}</td>
       <td><button class="btn" onclick="completeFU('${v.id}')">✓ Fatto</button> <button class="btn" onclick="postponeFU('${v.id}',1)">+1g</button> <button class="btn" onclick="postponeFU('${v.id}',3)">+3g</button> <button class="btn" onclick="postponeFU('${v.id}',7)">+7g</button></td>`; tb.appendChild(tr);
     const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
@@ -548,17 +597,16 @@ function renderFollowup(){
     cards.appendChild(div);
   });
 }
-function completeFU(id){ const v=visite.find(x=>x.id===id); if(!v) return; v.follow=''; v.next=''; persistAll(); renderFollowup(); renderDashboard(); }
-function postponeFU(id,days){ const v=visite.find(x=>x.id===id); if(!v || !v.follow) return; v.follow = addDays(v.follow,days); persistAll(); renderFollowup(); }
+function completeFU(id){ const v=visite.find(x=>x.id===id); if(!v) return; v.follow=''; v.next=''; persistAll(); renderFollowup(); renderDashboard(); toast('Follow-up completato'); }
+function postponeFU(id,days){ const v=visite.find(x=>x.id===id); if(!v || !v.follow) return; v.follow = addDays(v.follow,days); persistAll(); renderFollowup(); toast('Follow-up posticipato'); }
 
-/* ---------- Export ICS & Backup ---------- */
 document.getElementById('btn_exp_ics').addEventListener('click',()=>{
   const evs=visite.filter(v=>v.follow); const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Biotos CRM//FollowUps//IT']; const ts=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
-  evs.forEach(v=>{const dt=(v.follow||'').replace(/-/g,''); const s='Follow-up: '+(refName(v)||'')+(v.next?(' – '+v.next):''); L.push('BEGIN:VEVENT','UID:'+v.id+'@biotoscrm','DTSTAMP:'+ts,'DTSTART;VALUE=DATE:'+dt,'SUMMARY:'+s,'END:VEVENT');});
+  evs.forEach(v=>{const dt=(v.follow||'').replace(/-/g,''); const s='Follow-up: '+(refName(v)||'')+(v.next?(' – '+v.next):''); const d='Contatto: '+(v.contact||''); L.push('BEGIN:VEVENT','UID:'+v.id+'@biotoscrm','DTSTAMP:'+ts,'DTSTART;VALUE=DATE:'+dt,'SUMMARY:'+s,'DESCRIPTION:'+d,'END:VEVENT');});
   L.push('END:VCALENDAR'); dl('biotos_followups.ics',L.join('\r\n'));
 });
 document.getElementById('btn_exp_json').addEventListener('click', ()=>{
-  const payload = { exportedAt: new Date().toISOString(), version: 'v7.1', medici, farmacie, visite };
+  const payload = { exportedAt: new Date().toISOString(), version: 'v8.0', medici, farmacie, visite };
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'})); a.download='biotos_crm_backup.json'; a.click();
 });
 document.getElementById('inp_imp_json').addEventListener('change', e=>{
@@ -570,9 +618,8 @@ document.getElementById('inp_imp_json').addEventListener('change', e=>{
     }catch(err){ alert('File non valido'); }
   }; rd.readAsText(f);
 });
-document.getElementById('btn_clear').addEventListener('click', ()=>{ if(!confirm('Cancellare tutti i dati?')) return; medici=[]; farmacie=[]; visite=[]; persistAll(); renderAll(); });
+document.getElementById('btn_clear').addEventListener('click', ()=>{ if(!confirm('Cancellare tutti i dati?')) return; medici=[]; farmacie=[]; visite=[]; persistAll(); renderAll(); toast('Dati azzerati'); });
 
-/* ---------- Soft Sync via GitHub ---------- */
 function saveCfg(cfg){ localStorage.setItem('gh_cfg', JSON.stringify(cfg)); }
 function loadCfg(){ try{ const cfg = JSON.parse(localStorage.getItem('gh_cfg')||'null'); if(!cfg) return;
   $('gh_owner').value=cfg.owner||''; $('gh_repo').value=cfg.repo||''; $('gh_branch').value=cfg.branch||'main'; $('gh_path').value=cfg.path||'biotos_crm_data.json'; $('gh_token').value=cfg.token||''; }catch(_){ } }
@@ -592,7 +639,7 @@ async function ghPull(){
     const txt = atob(meta.content.replace(/\n/g,''));
     const obj = JSON.parse(txt);
     medici = obj.medici||[]; farmacie = obj.farmacie||[]; visite = obj.visite||[];
-    persistAll(); renderAll(); alert('Sync pull completato');
+    persistAll(); renderAll(); toast('Sync pull completato');
   }catch(e){ alert('Pull fallito: '+e.message); }
 }
 async function ghPush(){
@@ -601,7 +648,7 @@ async function ghPush(){
     const meta = await ghGetFileMeta(cfg);
     const sha = meta? meta.sha : undefined;
     const body = {
-      message: 'Update from Biotos CRM v7.1',
+      message: 'Update from Biotos CRM v8.0',
       content: btoa(unescape(encodeURIComponent(JSON.stringify({medici,farmacie,visite},null,2)))),
       branch: cfg.branch
     };
@@ -609,22 +656,32 @@ async function ghPush(){
     const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
     const r = await fetch(url, {method:'PUT', headers:{'Authorization': 'Bearer '+cfg.token, 'Accept':'application/vnd.github+json'}, body: JSON.stringify(body)});
     if(!r.ok) throw new Error('Errore PUT: '+r.status);
-    alert('Sync push completato');
+    toast('Sync push completato');
   }catch(e){ alert('Push fallito: '+e.message); }
 }
 document.getElementById('btn_pull').addEventListener('click', ghPull);
 document.getElementById('btn_push').addEventListener('click', ghPush);
 
-/* ---------- Helpers ---------- */
 function closeSheets(){ document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open')); }
 document.querySelectorAll('.sheet .close').forEach(b=>b.addEventListener('click',()=>{ closeSheets(); }));
 window.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSheets(); });
+document.getElementById('btn_reload').addEventListener('click', ()=>{ window.location.reload(); });
 
-/* ---------- Init render ---------- */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(reg=>{
+    if(reg.waiting){ document.getElementById('upd').classList.add('show'); }
+    reg.addEventListener('updatefound', ()=>{
+      const sw = reg.installing;
+      sw.addEventListener('statechange', ()=>{
+        if(sw.state==='installed' && navigator.serviceWorker.controller){
+          document.getElementById('upd').classList.add('show');
+        }
+      });
+    });
+  }).catch(()=>{});
+}
+
 function renderAll(){ renderMedici(); renderFarmacie(); refreshVisitRefs(); renderVisite(); renderDashboard(); renderFollowup(); }
-
-/* ---------- SW ---------- */
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 </script>
 </body>
 </html>
