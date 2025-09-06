@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no, email=no, address=no">
-  <title>Biotos CRM – v5</title>
+  <title>Biotos CRM – v6</title>
   <meta name="theme-color" content="#0b6b3f">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,68 +12,78 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.webmanifest">
   <style>
-    :root{--bg:#0b1f16;--panel:#0e261b;--panel2:#0a1a13;--muted:#b7c7bf;--text:#f2fbf7;--accent:#0b6b3f;--line:#1a563b;--warn:#ffd166;--err:#ff6b6b;--navh:70px}
+    :root{--bg:#0b1f16;--panel:#0e261b;--panel2:#0a1a13;--muted:#b7c7bf;--text:#f2fbf7;--accent:#0b6b3f;--line:#1a563b;--warn:#ffd166;--err:#ff6b6b}
     *{box-sizing:border-box}
     html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:17px/1.45 -apple-system,BlinkMacSystemFont,system-ui,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    html{scroll-padding-top:calc(10px + env(safe-area-inset-top));scroll-padding-bottom:140px}
-    /* Header mobile/desktop */
-    header{position:sticky;top:0;background:#0b1f16;z-index:10;padding-top:calc(6px + env(safe-area-inset-top));border-bottom:1px solid rgba(23,86,59,.35)}
-    .wrap{max-width:1200px;margin:0 auto;padding:10px 12px}
-    h1{font-size:18px;margin:0 0 6px;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
+    header{position:sticky;top:0;background:#0b1f16;z-index:20;padding-top:calc(6px + env(safe-area-inset-top));border-bottom:1px solid rgba(23,86,59,.35)}
+    .wrap{max-width:1100px;margin:0 auto;padding:10px 12px}
+    h1{font-size:18px;margin:0 0 4px;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
     h1 img{width:26px;height:26px;border-radius:6px;border:1px solid var(--line);background:#fff}
     .savebadge{margin-left:auto;font-size:12px;color:#bfe5cf}
-    /* Top nav (desktop >= 900px) */
+    /* Mobile-first nav */
+    .bottomnav{position:fixed;bottom:0;left:0;right:0;background:#0b1f16;border-top:1px solid var(--line);
+      display:flex;gap:6px;padding:8px env(safe-area-inset-right) calc(8px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:30}
+    .bottomnav button{flex:1;border:1px solid var(--line);background:#0d2219;color:#e8f3ee;padding:10px;border-radius:12px;min-height:42px;font-size:15px}
+    .bottomnav button.active{border-color:#138a52;background:#0f2e22;box-shadow:inset 0 0 0 1px #138a5222}
+    /* Desktop top-nav */
     .topnav{display:none;gap:8px;margin-top:8px}
     .topnav button{border:1px solid var(--line);background:#0d2219;color:#e8f3ee;padding:10px 12px;border-radius:12px;min-height:40px;font-size:15px}
     .topnav button.active{border-color:#138a52;background:#0f2e22;box-shadow:inset 0 0 0 1px #138a5222}
-    /* Layout */
     .grid{display:grid;gap:12px}
     .pan{background:var(--panel);padding:12px;border-radius:14px;border:1px solid var(--line)}
     .row{display:flex;gap:8px;flex-wrap:wrap}
     .row>*{flex:1 1 280px}
     label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
     input,select,textarea{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:44px;font-size:16px}
-    select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#7ac09b 50%),linear-gradient(135deg,#7ac09b 50%,transparent 50%);background-position:calc(100% - 18px) calc(1em + 2px),calc(100% - 13px) calc(1em + 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat}
-    table{width:100%;border-collapse:collapse;font-size:15px}
-    th,td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
-    th{background:#0a1f17;color:#d8eee3;text-align:left}
-    tr:hover{background:#0b231a}
+    select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#7ac09b 50%),linear-gradient(135deg,#7ac09b 50%,transparent 50%);background-position:calc(100% - 18px) calc(1.2em),calc(100% - 13px) calc(1.2em);background-size:5px 5px,5px 5px;background-repeat:no-repeat}
     .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:#0d2219;color:var(--text);padding:12px 14px;border-radius:12px;cursor:pointer;min-height:44px;font-size:16px;-webkit-tap-highlight-color:transparent}
     .btn.primary{border-color:#138a52;background:#0f2e22;box-shadow:inset 0 0 0 1px #138a5222}
     .btn.block{width:100%;justify-content:center}
     .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:#cfe}
-    .badge{padding:2px 6px;border-radius:6px;font-size:12px}
-    .ok{background:#11331f;color:#b0f5c3;border:1px solid #1d6c3e}
-    .warn{background:#332a11;color:#ffe2a6;border:1px solid #8a6d1a}
-    .err{background:#3a1818;color:#ffc9c9;border:1px solid #7a2b2b}
     .muted{color:var(--muted)} .right{margin-left:auto} .hidden{display:none!important}
-    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
     .kpis .pan{padding:10px} .kpis h3{margin:6px 0 4px;font-size:12px;color:#cfe8dc} .kpis .value{font-size:22px;font-weight:700}
-    .help{font-size:12px;color:#9fb3a9}
-    .tablewrap{max-height:54vh;overflow:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
-    /* Pagination */
-    .pager{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:8px}
-    .pager button{padding:8px 12px;min-height:36px;font-size:14px}
-    .pager .info{font-size:13px;color:#cfe}
-    /* Bottom nav (mobile) */
-    .bottomnav{position:fixed;bottom:0;left:0;right:0;background:#0b1f16;border-top:1px solid var(--line);display:flex;gap:6px;padding:10px env(safe-area-inset-right) calc(10px + env(safe-area-inset-bottom)) env(safe-area-inset-left);z-index:15}
-    .bottomnav button{flex:1;border:1px solid var(--line);background:#0d2219;color:#e8f3ee;padding:12px;border-radius:12px;min-height:44px;font-size:15px}
-    .bottomnav button.active{border-color:#138a52;background:#0f2e22;box-shadow:inset 0 0 0 1px #138a5222}
-    @media (max-width:900px){.wrap{padding-bottom:110px} th{position:initial}}
+    .tablewrap{max-height:58vh;overflow:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+    /* Cards (mobile lists) */
+    .cards{display:grid;gap:10px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+    .card .main{flex:1}
+    .card .title{font-weight:700}
+    .card .subtitle{color:#cfe; font-size:13px;margin-top:2px}
+    .card .meta{font-size:13px;color:#b7c7bf;margin-top:6px}
+    .actions{display:flex;gap:8px;margin-top:10px}
+    .chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);margin-left:6px;color:#cfe}
+    /* FAB */
+    .fab{position:fixed;right:16px;bottom:calc(74px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;background:#12a263;color:#04170f;font-weight:800;border:0;z-index:25;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+    /* Sheet (bottom modal) */
+    .sheet{position:fixed;inset:0;display:none;background:rgba(0,0,0,.5);z-index:40}
+    .sheet.open{display:block}
+    .sheet .panel{position:absolute;left:0;right:0;bottom:0;background:#0c2219;border-top-left-radius:16px;border-top-right-radius:16px;border:1px solid var(--line);
+      padding:14px 12px calc(16px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
+    .sheet h3{margin:4px 4px 10px}
+    .sheet .row>*{flex:1 1 240px}
+    .sheet .close{position:absolute;right:10px;top:8px;background:transparent;border:0;color:#dfe; font-size:24px}
+    /* Desktop view */
     @media (min-width:900px){
       .bottomnav{display:none}
       .topnav{display:flex}
       .wrap{padding-bottom:24px}
-      main .grid .row>*{flex:1 1 320px}
-      .tablewrap{max-height:62vh}
+      .cards{display:none}
+      .tablewrap{display:block}
     }
-    :focus-visible{outline:2px solid #12a263;outline-offset:2px}
+    /* Mobile view */
+    @media (max-width:899px){
+      .wrap{padding-bottom:110px}
+      .tablewrap{display:none}
+      .cards{display:grid}
+    }
   </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span style="color:#9bdab6">v5</span><span class="savebadge" id="savebadge">Salvato ✓</span></h1>
+    <h1><img src="icons/icon-192.png" alt="logo"> Biotos CRM <span style="color:#9bdab6">v6</span><span class="savebadge" id="savebadge">Salvato ✓</span></h1>
     <div class="topnav">
       <button class="tabbtn active" data-tab="dashboard">Dashboard</button>
       <button class="tabbtn" data-tab="medici">Medici</button>
@@ -102,6 +112,7 @@
       <div class="tablewrap"><table id="tbl_fu"><thead><tr>
         <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prossimo step</th><th>Contatto</th>
       </tr></thead><tbody></tbody></table></div>
+      <div class="cards" id="cards_fu"></div>
     </div>
   </section>
 
@@ -109,29 +120,16 @@
   <section id="medici" class="grid hidden">
     <div class="pan">
       <div class="row">
-        <div><label>Titolo</label><input id="m_titolo" placeholder="Dott./Dott.ssa" autocapitalize="words"></div>
-        <div><label>Nome</label><input id="m_nome" autocapitalize="words"></div>
-        <div><label>Cognome</label><input id="m_cognome" autocapitalize="words"></div>
-        <div><label>Specialità</label>
-          <select id="m_spec"><option>Ginecologia</option><option>MMG</option><option>Altro</option></select>
-        </div>
+        <div style="flex:2"><label>Cerca</label><input id="m_filter" placeholder="Nome, Cognome, Comune, Specialità" autocapitalize="none"></div>
+        <div class="right"><label>&nbsp;</label><button class="btn" id="btn_exp_med">⬇️ Export CSV</button></div>
       </div>
-      <div class="row">
-        <div><label>Studio/Struttura</label><input id="m_struttura" autocapitalize="words"></div>
-        <div><label>Comune</label><input id="m_comune" autocapitalize="words"></div>
-        <div><label>Indirizzo</label><input id="m_indirizzo" autocapitalize="words"></div>
-        <div><label>Telefono</label><input id="m_tel" type="tel" inputmode="tel"></div>
-        <div><label>Email</label><input id="m_email" type="email" inputmode="email" autocapitalize="none"></div>
-      </div>
-      <div class="row">
-        <div><label>Note</label><input id="m_note"></div>
-        <div class="right"><label>&nbsp;</label><button class="btn primary" id="btn_add_medico">+ Aggiungi medico</button></div>
-      </div>
-      <div class="row"><div><label>Filtro</label><input id="m_filter" placeholder="cerca per nome, cognome, comune, specialità..." autocapitalize="none"></div></div>
       <div class="tablewrap"><table id="tbl_medici"><thead><tr>
-        <th>ID</th><th>Nome</th><th>Specialità</th><th>Studio</th><th>Comune</th><th>Contatti</th><th>Note</th><th></th>
+        <th>Nome</th><th>Specialità</th><th>Studio</th><th>Comune</th><th>Contatti</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
-      <div class="pager" id="pg_medici"><span class="info"></span><button class="btn" data-act="prev">◀</button><button class="btn" data-act="next">▶</button></div>
+      <div class="cards" id="cards_medici"></div>
+      <div style="height:2px"></div>
+      <div class="right muted" id="info_medici"></div>
+      <button class="fab" id="fab_medico">＋</button>
     </div>
   </section>
 
@@ -139,22 +137,15 @@
   <section id="farmacie" class="grid hidden">
     <div class="pan">
       <div class="row">
-        <div><label>Ragione Sociale</label><input id="f_ragione" autocapitalize="words"></div>
-        <div><label>Direttore</label><input id="f_direttore" autocapitalize="words"></div>
-        <div><label>Comune</label><input id="f_comune" autocapitalize="words"></div>
-        <div><label>Indirizzo</label><input id="f_indirizzo" autocapitalize="words"></div>
-        <div><label>Telefono</label><input id="f_tel" type="tel" inputmode="tel"></div>
-        <div><label>Email</label><input id="f_email" type="email" inputmode="email" autocapitalize="none"></div>
+        <div style="flex:2"><label>Cerca</label><input id="f_filter" placeholder="Ragione sociale, Comune" autocapitalize="none"></div>
+        <div class="right"><label>&nbsp;</label><button class="btn" id="btn_exp_far">⬇️ Export CSV</button></div>
       </div>
-      <div class="row">
-        <div><label>Note</label><input id="f_note"></div>
-        <div class="right"><label>&nbsp;</label><button class="btn primary" id="btn_add_farmacia">+ Aggiungi farmacia</button></div>
-      </div>
-      <div class="row"><div><label>Filtro</label><input id="f_filter" placeholder="cerca per ragione sociale, comune..." autocapitalize="none"></div></div>
       <div class="tablewrap"><table id="tbl_farmacie"><thead><tr>
-        <th>ID</th><th>Ragione Sociale</th><th>Comune</th><th>Indirizzo</th><th>Contatti</th><th>Note</th><th></th>
+        <th>Ragione Sociale</th><th>Comune</th><th>Indirizzo</th><th>Contatti</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
-      <div class="pager" id="pg_farmacie"><span class="info"></span><button class="btn" data-act="prev">◀</button><button class="btn" data-act="next">▶</button></div>
+      <div class="cards" id="cards_farmacie"></div>
+      <div class="right muted" id="info_farmacie"></div>
+      <button class="fab" id="fab_farmacia">＋</button>
     </div>
   </section>
 
@@ -162,33 +153,17 @@
   <section id="visite" class="grid hidden">
     <div class="pan">
       <div class="row">
-        <div><label>Data</label><input type="date" id="v_data"></div>
-        <div><label>Tipo visita</label><select id="v_tipo"><option>Medico</option><option>Farmacia</option></select></div>
-        <div><label>Riferimento</label><select id="v_ref"></select></div>
-        <div><label>Referente</label><select id="v_refe"><option>Stefano</option><option>Mariangela</option></select></div>
+        <div style="flex:2"><label>Filtro</label><input id="v_filter" placeholder="Referente, obiettivo, esito, note" autocapitalize="none"></div>
+        <div class="right">
+          <label>&nbsp;</label><button class="btn" id="btn_exp_vis">⬇️ Export CSV</button>
+        </div>
       </div>
-      <div class="row">
-        <div><label>Obiettivo visita</label><input id="v_obj" placeholder="es. presentazione FV, riordino FL..." autocapitalize="sentences"></div>
-        <div><label>Prodotti presentati</label><select id="v_prod"><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
-        <div><label>Materiali consegnati</label><input id="v_mat" placeholder="folder, scheda, locandina..." autocapitalize="sentences"></div>
-      </div>
-      <div class="row">
-        <div><label>Esito</label><select id="v_esito"><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
-        <div><label>Prossimo step</label><select id="v_next"><option>Follow-up telefonico</option><option>Invio materiali</option><option>Richiesta ordine</option><option>Demo/Approfondimento</option><option>Altro</option></select></div>
-        <div><label>Data follow-up</label><input type="date" id="v_follow"></div>
-        <div><label>Tempo (min)</label><input id="v_time" type="number" min="0" step="5" value="15" inputmode="numeric"></div>
-      </div>
-      <div class="row">
-        <div><label>Ordine stimato FV</label><input id="v_fv" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
-        <div><label>Ordine stimato FL</label><input id="v_fl" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
-        <div><label>Note esito</label><input id="v_note" autocapitalize="sentences"></div>
-      </div>
-      <div class="row"><button class="btn primary block" id="btn_add_visita">+ Registra visita</button></div>
-      <div class="row"><div><label>Filtro</label><input id="v_filter" placeholder="cerca per referente, obiettivo, esito..." autocapitalize="none"></div></div>
       <div class="tablewrap"><table id="tbl_visite"><thead><tr>
         <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prodotti</th><th>Esito</th><th>Next</th><th>Follow-up</th><th>Ref.</th><th>Ord FV/FL</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
-      <div class="pager" id="pg_visite"><span class="info"></span><button class="btn" data-act="prev">◀</button><button class="btn" data-act="next">▶</button></div>
+      <div class="cards" id="cards_visite"></div>
+      <div class="right muted" id="info_visite"></div>
+      <button class="fab" id="fab_visita">＋</button>
     </div>
   </section>
 
@@ -209,10 +184,11 @@
       <div class="tablewrap"><table id="tbl_follow"><thead><tr>
         <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prossimo step</th><th>Contatto</th><th>Note</th><th></th>
       </tr></thead><tbody></tbody></table></div>
+      <div class="cards" id="cards_follow"></div>
     </div>
   </section>
 
-  <!-- DATI / BACKUP -->
+  <!-- DATI -->
   <section id="io" class="grid hidden">
     <div class="pan">
       <h3 style="margin:0 0 8px">Backup & Dati</h3>
@@ -221,27 +197,11 @@
         <input type="file" id="inp_imp_json" accept="application/json" class="btn">
         <button class="btn" id="btn_clear" title="Cancella tutti i dati (usa con cautela)">🗑️ Reset dati</button>
       </div>
-      <hr style="border-color:#174a33">
-      <div class="row">
-        <button class="btn" id="btn_exp_med">⬇️ Esporta Medici CSV</button>
-        <button class="btn" id="btn_exp_far">⬇️ Esporta Farmacie CSV</button>
-        <button class="btn" id="btn_exp_vis">⬇️ Esporta Visite CSV</button>
-      </div>
-      <div class="row">
-        <div><label>Importa Medici CSV</label><input type="file" id="imp_med" accept=".csv"></div>
-        <div><label>Importa Farmacie CSV</label><input type="file" id="imp_far" accept=".csv"></div>
-        <div><label>Importa Visite CSV</label><input type="file" id="imp_vis" accept=".csv"></div>
-      </div>
-      <p class="help">Suggerimento: esporta i fogli dal tuo Excel e importali qui. I campi non riconosciuti vengono ignorati.</p>
+      <p class="muted">I dati sono salvati in IndexedDB (con copia su LocalStorage) e restano sul dispositivo.</p>
     </div>
     <div class="pan">
       <h3 style="margin:0 0 8px">Info</h3>
-      <p>Versione app: <b>v5</b> – build 2025-09-06</p>
-      <ul>
-        <li>Persistenza su IndexedDB + LocalStorage (fallback).</li>
-        <li>Offline dopo il primo caricamento (Service Worker).</li>
-        <li>GDPR: inserisci solo dati professionali (no dati sanitari personali).</li>
-      </ul>
+      <p>Versione app: <b>v6</b> – build 2025-09-06</p>
     </div>
   </section>
 </main>
@@ -256,54 +216,104 @@
   <button class="tabbtn" data-tab="io">Dati</button>
 </nav>
 
+<!-- SHEETS (bottom modals) -->
+<div class="sheet" id="sheet_medico">
+  <div class="panel">
+    <button class="close" data-close="sheet_medico">✕</button>
+    <h3 id="sheet_medico_title">Nuovo medico</h3>
+    <div class="row">
+      <div><label>Titolo</label><input id="m_titolo"></div>
+      <div><label>Nome</label><input id="m_nome"></div>
+      <div><label>Cognome</label><input id="m_cognome"></div>
+      <div><label>Specialità</label>
+        <select id="m_spec"><option>Ginecologia</option><option>MMG</option><option>Altro</option></select>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Studio/Struttura</label><input id="m_struttura"></div>
+      <div><label>Comune</label><input id="m_comune"></div>
+      <div><label>Indirizzo</label><input id="m_indirizzo"></div>
+    </div>
+    <div class="row">
+      <div><label>Telefono</label><input id="m_tel" type="tel" inputmode="tel"></div>
+      <div><label>Email</label><input id="m_email" type="email" inputmode="email" autocapitalize="none"></div>
+    </div>
+    <div class="row">
+      <div><label>Note</label><input id="m_note"></div>
+    </div>
+    <div class="row"><button class="btn primary block" id="btn_save_medico">Salva</button></div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet_farmacia">
+  <div class="panel">
+    <button class="close" data-close="sheet_farmacia">✕</button>
+    <h3 id="sheet_farmacia_title">Nuova farmacia</h3>
+    <div class="row">
+      <div><label>Ragione Sociale</label><input id="f_ragione"></div>
+      <div><label>Direttore</label><input id="f_direttore"></div>
+      <div><label>Comune</label><input id="f_comune"></div>
+      <div><label>Indirizzo</label><input id="f_indirizzo"></div>
+    </div>
+    <div class="row">
+      <div><label>Telefono</label><input id="f_tel" type="tel" inputmode="tel"></div>
+      <div><label>Email</label><input id="f_email" type="email" inputmode="email" autocapitalize="none"></div>
+      <div><label>Note</label><input id="f_note"></div>
+    </div>
+    <div class="row"><button class="btn primary block" id="btn_save_farmacia">Salva</button></div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet_visita">
+  <div class="panel">
+    <button class="close" data-close="sheet_visita">✕</button>
+    <h3 id="sheet_visita_title">Nuova visita</h3>
+    <div class="row">
+      <div><label>Data</label><input type="date" id="v_data"></div>
+      <div><label>Tipo visita</label><select id="v_tipo"><option>Medico</option><option>Farmacia</option></select></div>
+      <div><label>Riferimento</label><select id="v_ref"></select></div>
+      <div><label>Referente</label><select id="v_refe"><option>Stefano</option><option>Mariangela</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Obiettivo visita</label><input id="v_obj" placeholder="es. presentazione FV, riordino FL..."></div>
+      <div><label>Prodotti</label><select id="v_prod"><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
+      <div><label>Materiali consegnati</label><input id="v_mat" placeholder="folder, scheda, locandina..."></div>
+    </div>
+    <div class="row">
+      <div><label>Esito</label><select id="v_esito"><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
+      <div><label>Prossimo step</label><select id="v_next"><option>Follow-up telefonico</option><option>Invio materiali</option><option>Richiesta ordine</option><option>Demo/Approfondimento</option><option>Altro</option></select></div>
+      <div><label>Data follow-up</label><input type="date" id="v_follow"></div>
+      <div><label>Tempo (min)</label><input id="v_time" type="number" min="0" step="5" value="15" inputmode="numeric"></div>
+    </div>
+    <div class="row">
+      <div><label>Ordine stimato FV</label><input id="v_fv" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
+      <div><label>Ordine stimato FL</label><input id="v_fl" type="number" min="0" step="1" value="0" inputmode="numeric"></div>
+      <div><label>Note esito</label><input id="v_note"></div>
+    </div>
+    <div class="row"><button class="btn primary block" id="btn_save_visita">Salva</button></div>
+  </div>
+</div>
+
 <script>
-/* ---------- Persistenza: IndexedDB + LocalStorage fallback ---------- */
+/* ---------- Persistenza: IndexedDB + LocalStorage ---------- */
 const DB_NAME='biotos-crm'; const DB_STORE='kv';
 function idbOpen(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1); r.onupgradeneeded=()=>{const db=r.result; if(!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE,{keyPath:'key'});}; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);});}
 async function idbGet(k){try{const db=await idbOpen(); return await new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,'readonly'); const st=tx.objectStore(DB_STORE).get(k); st.onsuccess=()=>res(st.result?st.result.val:null); st.onerror=()=>rej(st.error);}); }catch(e){return null}}
-async function idbSet(k,v){try{const db=await idbOpen(); return await new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,'readwrite'); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); tx.objectStore(DB_STORE).put({key:k,val:v});}); }catch(e){/* ignore */}}
+async function idbSet(k,v){try{const db=await idbOpen(); return await new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,'readwrite'); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); tx.objectStore(DB_STORE).put({key:k,val:v});}); }catch(e){}}
 
-const S={
-  get k(){return{med:'medici',far:'farmacie',vis:'visite'}},
-  loadLS:k=>JSON.parse(localStorage.getItem(k)||'[]'),
-  saveLS:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
-  uid:()=>('id_'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4)),
-  today:()=>new Date().toISOString().slice(0,10)
-};
-
+const S={get k(){return{med:'medici',far:'farmacie',vis:'visite'}},loadLS:k=>JSON.parse(localStorage.getItem(k)||'[]'),saveLS:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),uid:()=>('id_'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4)),today:()=>new Date().toISOString().slice(0,10)};
 let medici=[], farmacie=[], visite=[];
-const savebadge=document.getElementById('savebadge');
-let saveTimer=null;
-function markSaving(){savebadge.textContent='Salvando…';}
-function markSaved(){savebadge.textContent='Salvato ✓';}
-
-/* Caricamento iniziale: preferisci IndexedDB, altrimenti LocalStorage */
-(async function initLoad(){
-  const [m,f,v]=await Promise.all([idbGet(S.k.med),idbGet(S.k.far),idbGet(S.k.vis)]);
-  medici = Array.isArray(m)?m:S.loadLS(S.k.med);
-  farmacie = Array.isArray(f)?f:S.loadLS(S.k.far);
-  visite = Array.isArray(v)?v:S.loadLS(S.k.vis);
-  renderAll();
-})();
-
-function persistAll(){
-  markSaving();
-  // salva sia su IDB che su LS (debounce)
-  if(saveTimer) clearTimeout(saveTimer);
-  saveTimer=setTimeout(async()=>{
-    await Promise.all([idbSet(S.k.med,medici), idbSet(S.k.far,farmacie), idbSet(S.k.vis,visite)]);
-    S.saveLS(S.k.med,medici); S.saveLS(S.k.far,farmacie); S.saveLS(S.k.vis,visite);
-    markSaved();
-  }, 300);
-}
+const savebadge=document.getElementById('savebadge'); let saveTimer=null;
+function markSaving(){savebadge.textContent='Salvando…';} function markSaved(){savebadge.textContent='Salvato ✓';}
+(async function initLoad(){const [m,f,v]=await Promise.all([idbGet(S.k.med),idbGet(S.k.far),idbGet(S.k.vis)]); medici=Array.isArray(m)?m:S.loadLS(S.k.med); farmacie=Array.isArray(f)?f:S.loadLS(S.k.far); visite=Array.isArray(v)?v:S.loadLS(S.k.vis); renderAll();})();
+function persistAll(){markSaving(); clearTimeout(saveTimer); saveTimer=setTimeout(async()=>{await Promise.all([idbSet(S.k.med,medici),idbSet(S.k.far,farmacie),idbSet(S.k.vis,visite)]); S.saveLS(S.k.med,medici); S.saveLS(S.k.far,farmacie); S.saveLS(S.k.vis,visite); markSaved();},300);}
 
 /* ---------- Tabs ---------- */
 document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
-  document.querySelectorAll(`.tabbtn[data-tab="${b.dataset.tab}"]`).forEach(x=>x.classList.add('active')); // sync top/bottom
-  const sec=document.getElementById(b.dataset.tab);
-  if (sec) sec.classList.remove('hidden');
+  document.querySelectorAll(`.tabbtn[data-tab="${b.dataset.tab}"]`).forEach(x=>x.classList.add('active'));
+  document.getElementById(b.dataset.tab)?.classList.remove('hidden');
   if(b.dataset.tab==='dashboard') renderDashboard();
   if(b.dataset.tab==='visite') refreshVisitRefs();
   if(b.dataset.tab==='followup') renderFollowup();
@@ -313,274 +323,228 @@ document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click',()=>{
 const $=id=>document.getElementById(id);
 const dl=(fn,text)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=fn;a.click();}
 const addDays=(iso,d)=>{const x=new Date(iso);x.setDate(x.getDate()+d);return x.toISOString().slice(0,10);}
-
-/* ---------- Dashboard ---------- */
-function renderDashboard(){
-  $('k_medici').textContent=medici.length;
-  $('k_farmacie').textContent=farmacie.length;
-  $('k_visite').textContent=visite.length;
-  const today=S.today(), soon=addDays(today,3);
-  const over=visite.filter(v=>v.follow&&v.follow<today).length;
-  const soonN=visite.filter(v=>v.follow&&v.follow>=today&&v.follow<=soon).length;
-  $('k_fu_over').textContent=over; $('k_fu_soon').textContent=soonN;
-  $('k_ord_fv').textContent=visite.reduce((a,v)=>a+(+v.fv||0),0);
-  $('k_ord_fl').textContent=visite.reduce((a,v)=>a+(+v.fl||0),0);
-  const tb=$('tbl_fu').querySelector('tbody'); tb.innerHTML='';
-  visite.filter(v=>v.follow&&v.follow>=today&&v.follow<=soon).sort((a,b)=>a.follow.localeCompare(b.follow)).slice(0,30).forEach(v=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${v.follow||''}</td><td>${v.tipo}</td><td>${refName(v)}</td><td>${v.next||''}</td><td>${v.contact||''}</td>`;
-    tb.appendChild(tr);
-  });
-}
 function refName(v){ if(v.tipo==='Medico'){const m=medici.find(x=>x.id===v.ref); return m?`${m.titolo||''} ${m.nome||''} ${m.cognome||''}`.trim():v.ref;}
   else {const f=farmacie.find(x=>x.id===v.ref); return f?(f.ragione||v.ref):v.ref;} }
 function contactInfo(v){ if(v.tipo==='Medico'){const m=medici.find(x=>x.id===v.ref); return m?(m.telefono||m.email||''):'';}
   else {const f=farmacie.find(x=>x.id===v.ref); return f?(f.telefono||f.email||''):'';} }
 
-/* ---------- Pagination helpers ---------- */
-const PAGE=25; let mPage=1,fPage=1,vPage=1;
-function paginate(arr,page){const start=(page-1)*PAGE; return [arr.slice(start,start+PAGE), Math.ceil(arr.length/PAGE)]}
-function setupPager(id, pageGetter, pageSetter, renderFn, totalItems){
-  const el=$((id)); const info=el.querySelector('.info'); const [_,pages]=paginate(Array(totalItems), pageGetter());
-  info.textContent=`Pagina ${pageGetter()} di ${Math.max(1,pages)}`;
-  el.querySelector('[data-act="prev"]').onclick=()=>{ if(pageGetter()>1){ pageSetter(pageGetter()-1); renderFn(); } };
-  el.querySelector('[data-act="next"]').onclick=()=>{ if(pageGetter()<pages){ pageSetter(pageGetter()+1); renderFn(); } };
+/* ---------- Dashboard & Follow-up cards ---------- */
+function renderDashboard(){
+  $('k_medici').textContent=medici.length; $('k_farmacie').textContent=farmacie.length; $('k_visite').textContent=visite.length;
+  const today=S.today(), soon=addDays(today,3);
+  const over=visite.filter(v=>v.follow&&v.follow<today).length;
+  const soonN=visite.filter(v=>v.follow&&v.follow>=today&&v.follow<=soon).length;
+  $('k_fu_over').textContent=over; $('k_fu_soon').textContent=soonN;
+  $('k_ord_fv').textContent=visite.reduce((a,v)=>a+(+v.fv||0),0); $('k_ord_fl').textContent=visite.reduce((a,v)=>a+(+v.fl||0),0);
+
+  const tb=$('tbl_fu').querySelector('tbody'); tb.innerHTML='';
+  const cards=$('cards_fu'); cards.innerHTML='';
+  visite.filter(v=>v.follow&&v.follow>=today&&v.follow<=soon).sort((a,b)=>a.follow.localeCompare(b.follow)).slice(0,30).forEach(v=>{
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${v.follow}</td><td>${v.tipo}</td><td>${refName(v)}</td><td>${v.next||''}</td><td>${v.contact||''}</td>`; tb.appendChild(tr);
+    const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
+      <div class="title">${v.follow} • ${v.tipo}<span class="chip">${refName(v)}</span></div>
+      <div class="meta">${v.next||''}</div><div class="meta">${v.contact||''}</div></div>
+      <div class="actions"><button class="btn" onclick="completeFU('${v.id}')">✓ Fatto</button></div>`; cards.appendChild(div);
+  });
 }
 
-/* ---------- Medici ---------- */
+/* ---------- Medici (cards + table) ---------- */
+function mediciToCSV(){const cols=["id","titolo","nome","cognome","spec","struttura","comune","indirizzo","telefono","email","note"]; const esc=s=>(''+s).replace(/"/g,'""'); return [cols.join(',')].concat(medici.map(o=>cols.map(k=>`"${esc(o[k]??'')}"`).join(','))).join('\n');}
+document.getElementById('btn_exp_med').addEventListener('click',()=>dl('medici.csv', mediciToCSV()));
+let editMedicoId=null;
+function openMedicoSheet(id=null){
+  editMedicoId=id; const title=$('sheet_medico_title');
+  if(id){ const m=medici.find(x=>x.id===id); if(!m) return; title.textContent='Modifica medico'; ['m_titolo','m_nome','m_cognome','m_spec','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(k=>$(k).value=m[k.replace('m_','')]||''); }
+  else { title.textContent='Nuovo medico'; ['m_titolo','m_nome','m_cognome','m_spec','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(k=>$(k).value=''); }
+  $('sheet_medico').classList.add('open');
+}
+$('fab_medico').addEventListener('click',()=>openMedicoSheet());
+$('btn_save_medico').addEventListener('click',()=>{
+  const m={id:editMedicoId||S.uid(), titolo:$('m_titolo').value.trim(), nome:$('m_nome').value.trim(), cognome:$('m_cognome').value.trim(),
+    spec:$('m_spec').value, struttura:$('m_struttura').value.trim(), comune:$('m_comune').value.trim(), indirizzo:$('m_indirizzo').value.trim(),
+    telefono:$('m_tel').value.trim(), email:$('m_email').value.trim(), note:$('m_note').value.trim()};
+  if(editMedicoId){ const i=medici.findIndex(x=>x.id===editMedicoId); medici[i]=m; } else { medici.unshift(m); }
+  persistAll(); closeSheets(); renderMedici($('m_filter').value); refreshVisitRefs(); renderDashboard();
+});
 function renderMedici(f=''){
-  const tb=$('tbl_medici').querySelector('tbody'); tb.innerHTML='';
   const arr=medici.filter(m=>(`${m.nome} ${m.cognome} ${m.comune||''} ${m.spec||''}`).toLowerCase().includes(f.toLowerCase()));
-  const [pageArr,pages]=paginate(arr,mPage); if(mPage>pages){mPage=pages||1;}
-  pageArr.forEach(m=>{
+  // table
+  const tb=$('tbl_medici').querySelector('tbody'); tb.innerHTML=''; arr.forEach(m=>{
     const tel=m.telefono?`<a href="tel:${m.telefono}">${m.telefono}</a>`:''; const mail=m.email?`<a href="mailto:${m.email}">${m.email}</a>`:'';
     const tr=document.createElement('tr'); tr.innerHTML=`
-      <td class="muted">${m.id}</td>
       <td>${m.titolo||''} ${m.nome||''} ${m.cognome||''}</td>
       <td><span class="pill">${m.spec||''}</span></td>
-      <td>${m.struttura||''}</td>
-      <td>${m.comune||''}</td>
-      <td>${[tel,mail].filter(Boolean).join('<br>')}</td>
-      <td>${m.note||''}</td>
-      <td><button class="btn" onclick="delMedico('${m.id}')">Elimina</button></td>`;
+      <td>${m.struttura||''}</td><td>${m.comune||''}</td>
+      <td>${[tel,mail].filter(Boolean).join('<br>')}</td><td>${m.note||''}</td>
+      <td><button class="btn" onclick="openMedicoSheet('${m.id}')">Modifica</button> <button class="btn" onclick="delMedico('${m.id}')">Elimina</button></td>`;
     tb.appendChild(tr);
   });
-  const pg=$('pg_medici'); pg.querySelector('.info').textContent=`${arr.length} record — Pagina ${mPage} di ${Math.max(1,Math.ceil(arr.length/PAGE))}`;
+  // cards
+  const cards=$('cards_medici'); cards.innerHTML='';
+  arr.forEach(m=>{
+    const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
+      <div class="title">${m.titolo||''} ${m.nome||''} ${m.cognome||''}<span class="chip">${m.spec||''}</span></div>
+      <div class="subtitle">${m.struttura||''} • ${m.comune||''}</div>
+      <div class="meta">${m.telefono?('<a href="tel:'+m.telefono+'">📞 '+m.telefono+'</a>'):''} ${m.email?(' · <a href="mailto:'+m.email+'">✉️ '+m.email+'</a>'):''}</div>
+      <div class="meta">${m.note||''}</div></div>
+      <div class="actions"><button class="btn" onclick="openMedicoSheet('${m.id}')">Modifica</button><button class="btn" onclick="delMedico('${m.id}')">Elimina</button></div>`;
+    cards.appendChild(div);
+  });
+  $('info_medici').textContent = `${arr.length} medici`;
 }
 function delMedico(id){ if(!confirm('Eliminare il medico e le visite collegate?')) return;
-  medici=medici.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Medico'&&v.ref===id));
-  persistAll(); renderMedici($('m_filter').value); renderVisite($('v_filter').value); renderDashboard(); refreshVisitRefs();
+  medici=medici.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Medico'&&v.ref===id)); persistAll(); renderMedici($('m_filter').value); renderVisite($('v_filter').value); renderDashboard(); refreshVisitRefs();
 }
-document.getElementById('btn_add_medico').addEventListener('click',()=>{
-  const m={id:S.uid(),titolo:$('m_titolo').value.trim(),nome:$('m_nome').value.trim(),cognome:$('m_cognome').value.trim(),
-    spec:$('m_spec').value,struttura:$('m_struttura').value.trim(),comune:$('m_comune').value.trim(),
-    indirizzo:$('m_indirizzo').value.trim(),telefono:$('m_tel').value.trim(),email:$('m_email').value.trim(),note:$('m_note').value.trim()};
-  medici.push(m); persistAll();
-  ['m_titolo','m_nome','m_cognome','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(i=>$(i).value='');
-  mPage=1; renderMedici($('m_filter').value); refreshVisitRefs(); renderDashboard();
-});
-$('m_filter').addEventListener('input',e=>{mPage=1; renderMedici(e.target.value)});
-$('pg_medici').querySelector('[data-act="prev"]').onclick=()=>{ if(mPage>1){mPage--; renderMedici($('m_filter').value);} };
-$('pg_medici').querySelector('[data-act="next"]').onclick=()=>{ mPage++; renderMedici($('m_filter').value); };
+$('m_filter').addEventListener('input',e=>renderMedici(e.target.value));
 
 /* ---------- Farmacie ---------- */
+function farmacieToCSV(){const cols=["id","ragione","direttore","comune","indirizzo","telefono","email","note"]; const esc=s=>(''+s).replace(/"/g,'""'); return [cols.join(',')].concat(farmacie.map(o=>cols.map(k=>`"${esc(o[k]??'')}"`).join(','))).join('\n');}
+document.getElementById('btn_exp_far').addEventListener('click',()=>dl('farmacie.csv', farmacieToCSV()));
+let editFarmaciaId=null;
+function openFarmaciaSheet(id=null){
+  editFarmaciaId=id; const title=$('sheet_farmacia_title');
+  if(id){ const x=farmacie.find(o=>o.id===id); if(!x) return; title.textContent='Modifica farmacia';
+    ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note'].forEach(k=>$(k).value=x[k.replace('f_','')]||''); }
+  else { title.textContent='Nuova farmacia'; ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note'].forEach(k=>$(k).value=''); }
+  $('sheet_farmacia').classList.add('open');
+}
+$('fab_farmacia').addEventListener('click',()=>openFarmaciaSheet());
+$('btn_save_farmacia').addEventListener('click',()=>{
+  const f={id:editFarmaciaId||S.uid(), ragione:$('f_ragione').value.trim(), direttore:$('f_direttore').value.trim(), comune:$('f_comune').value.trim(),
+    indirizzo:$('f_indirizzo').value.trim(), telefono:$('f_tel').value.trim(), email:$('f_email').value.trim(), note:$('f_note').value.trim()};
+  if(editFarmaciaId){ const i=farmacie.findIndex(o=>o.id===editFarmaciaId); farmacie[i]=f; } else { farmacie.unshift(f); }
+  persistAll(); closeSheets(); renderFarmacie($('f_filter').value); refreshVisitRefs(); renderDashboard();
+});
 function renderFarmacie(f=''){
-  const tb=$('tbl_farmacie').querySelector('tbody'); tb.innerHTML='';
   const arr=farmacie.filter(x=>(`${x.ragione} ${x.comune||''}`).toLowerCase().includes(f.toLowerCase()));
-  const [pageArr,pages]=paginate(arr,fPage); if(fPage>pages){fPage=pages||1;}
-  pageArr.forEach(x=>{
+  const tb=$('tbl_farmacie').querySelector('tbody'); tb.innerHTML='';
+  arr.forEach(x=>{
     const tel=x.telefono?`<a href="tel:${x.telefono}">${x.telefono}</a>`:''; const mail=x.email?`<a href="mailto:${x.email}">${x.email}</a>`:'';
     const tr=document.createElement('tr'); tr.innerHTML=`
-      <td class="muted">${x.id}</td>
       <td>${x.ragione||''} ${x.direttore?'<div class=muted>'+x.direttore+'</div>':''}</td>
-      <td>${x.comune||''}</td>
-      <td>${x.indirizzo||''}</td>
-      <td>${[tel,mail].filter(Boolean).join('<br>')}</td>
-      <td>${x.note||''}</td>
-      <td><button class="btn" onclick="delFarmacia('${x.id}')">Elimina</button></td>`;
+      <td>${x.comune||''}</td><td>${x.indirizzo||''}</td>
+      <td>${[tel,mail].filter(Boolean).join('<br>')}</td><td>${x.note||''}</td>
+      <td><button class="btn" onclick="openFarmaciaSheet('${x.id}')">Modifica</button> <button class="btn" onclick="delFarmacia('${x.id}')">Elimina</button></td>`;
     tb.appendChild(tr);
   });
-  const pg=$('pg_farmacie'); pg.querySelector('.info').textContent=`${arr.length} record — Pagina ${fPage} di ${Math.max(1,Math.ceil(arr.length/PAGE))}`;
+  const cards=$('cards_farmacie'); cards.innerHTML='';
+  arr.forEach(x=>{
+    const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
+      <div class="title">${x.ragione||''}<span class="chip">${x.comune||''}</span></div>
+      <div class="subtitle">${x.indirizzo||''}</div>
+      <div class="meta">${x.telefono?('<a href="tel:'+x.telefono+'">📞 '+x.telefono+'</a>'):''} ${x.email?(' · <a href="mailto:'+x.email+'">✉️ '+x.email+'</a>'):''}</div>
+      <div class="meta">${x.note||''}</div></div>
+      <div class="actions"><button class="btn" onclick="openFarmaciaSheet('${x.id}')">Modifica</button><button class="btn" onclick="delFarmacia('${x.id}')">Elimina</button></div>`;
+    cards.appendChild(div);
+  });
+  $('info_farmacie').textContent = `${arr.length} farmacie`;
 }
 function delFarmacia(id){ if(!confirm('Eliminare la farmacia e le visite collegate?')) return;
-  farmacie=farmacie.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Farmacia'&&v.ref===id));
-  persistAll(); renderFarmacie($('f_filter').value); renderVisite($('v_filter').value); renderDashboard(); refreshVisitRefs();
+  farmacie=farmacie.filter(x=>x.id!==id); visite=visite.filter(v=>!(v.tipo==='Farmacia'&&v.ref===id)); persistAll(); renderFarmacie($('f_filter').value); renderVisite($('v_filter').value); renderDashboard(); refreshVisitRefs();
 }
-document.getElementById('btn_add_farmacia').addEventListener('click',()=>{
-  const f={id:S.uid(),ragione:$('f_ragione').value.trim(),direttore:$('f_direttore').value.trim(),comune:$('f_comune').value.trim(),
-    indirizzo:$('f_indirizzo').value.trim(),telefono:$('f_tel').value.trim(),email:$('f_email').value.trim(),note:$('f_note').value.trim()};
-  farmacie.push(f); persistAll();
-  ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note'].forEach(i=>$(i).value='');
-  fPage=1; renderFarmacie($('f_filter').value); refreshVisitRefs(); renderDashboard();
-});
-$('f_filter').addEventListener('input',e=>{fPage=1; renderFarmacie(e.target.value)});
-$('pg_farmacie').querySelector('[data-act="prev"]').onclick=()=>{ if(fPage>1){fPage--; renderFarmacie($('f_filter').value);} };
-$('pg_farmacie').querySelector('[data-act="next"]').onclick=()=>{ fPage++; renderFarmacie($('f_filter').value); };
+$('f_filter').addEventListener('input',e=>renderFarmacie(e.target.value));
 
 /* ---------- Visite ---------- */
-function refreshVisitRefs(){const sel=$('v_ref'); sel.innerHTML=''; const tipo=$('v_tipo').value; const list=(tipo==='Medico'?medici:farmacie);
+function visiteToCSV(){const cols=["id","data","tipo","ref","refe","obj","prod","mat","esito","next","follow","time","fv","fl","note"]; const esc=s=>(''+s).replace(/"/g,'""'); return [cols.join(',')].concat(visite.map(o=>cols.map(k=>`"${esc(o[k]??'')}"`).join(','))).join('\n');}
+document.getElementById('btn_exp_vis').addEventListener('click',()=>dl('visite.csv', visiteToCSV()));
+let editVisitaId=null;
+function openVisitaSheet(id=null){
+  editVisitaId=id; const title=$('sheet_visita_title');
+  if(id){ const v=visite.find(o=>o.id===id); if(!v) return; title.textContent='Modifica visita';
+    ['v_data','v_tipo','v_ref','v_refe','v_obj','v_prod','v_mat','v_esito','v_next','v_follow','v_time','v_fv','v_fl','v_note'].forEach(k=>{$(k).value=(v[k.replace('v_','')]??'');});
+  }else{ title.textContent='Nuova visita'; ['v_data','v_obj','v_mat','v_follow','v_note'].forEach(k=>$(k).value=''); $('v_time').value=15; $('v_fv').value=0; $('v_fl').value=0; $('v_tipo').value='Medico'; }
+  refreshVisitRefs();
+  $('sheet_visita').classList.add('open');
+}
+$('fab_visita').addEventListener('click',()=>openVisitaSheet());
+$('btn_save_visita').addEventListener('click',()=>{
+  const v={id:editVisitaId||S.uid(),data:$('v_data').value||S.today(),tipo:$('v_tipo').value,ref:$('v_ref').value,refe:$('v_refe').value,
+    obj:$('v_obj').value.trim(),prod:$('v_prod').value,mat:$('v_mat').value.trim(),esito:$('v_esito').value,next:$('v_next').value,
+    follow:$('v_follow').value||'',time:+$('v_time').value||0,fv:+$('v_fv').value||0,fl:+$('v_fl').value||0,note:$('v_note').value.trim(),
+    contact:contactInfo({tipo:$('v_tipo').value,ref:$('v_ref').value})};
+  if(editVisitaId){ const i=visite.findIndex(o=>o.id===editVisitaId); visite[i]=v; } else { visite.unshift(v); }
+  persistAll(); closeSheets(); renderVisite($('v_filter').value); renderDashboard(); renderFollowup();
+});
+
+function refreshVisitRefs(){const sel=$('v_ref'); if(!sel) return; sel.innerHTML=''; const tipo=$('v_tipo').value; const list=(tipo==='Medico'?medici:farmacie);
   list.forEach(x=>{const opt=document.createElement('option'); opt.value=x.id; opt.textContent=(tipo==='Medico'?`${x.titolo||''} ${x.nome||''} ${x.cognome||''}`.trim():(x.ragione||x.id)); sel.appendChild(opt);});}
 $('v_tipo').addEventListener('change',refreshVisitRefs);
 
 function renderVisite(f=''){
+  const arr=visite.filter(v=>(`${v.refe} ${v.obj} ${v.esito} ${v.next} ${v.note||''}`).toLowerCase().includes(f.toLowerCase())).sort((a,b)=>b.data.localeCompare(a.data));
   const tb=$('tbl_visite').querySelector('tbody'); tb.innerHTML='';
-  const arr=visite.filter(v=>(`${v.refe} ${v.obj} ${v.esito} ${v.next} ${v.note||''}`).toLowerCase().includes(f.toLowerCase()))
-  .sort((a,b)=>b.data.localeCompare(a.data));
-  const [pageArr,pages]=paginate(arr,vPage); if(vPage>pages){vPage=pages||1;}
-  pageArr.forEach(v=>{
+  arr.forEach(v=>{
     const tr=document.createElement('tr'); tr.innerHTML=`
       <td>${v.data}</td><td>${v.tipo}</td><td>${refName(v)}</td>
       <td>${v.prod}</td><td>${v.esito}</td><td>${v.next||''}</td><td>${v.follow||''}</td>
       <td>${v.refe}</td><td>${v.fv||0}/${v.fl||0}</td><td>${v.note||''}</td>
-      <td><button class="btn" onclick="delVisita('${v.id}')">Elimina</button></td>`;
+      <td><button class="btn" onclick="openVisitaSheet('${v.id}')">Modifica</button> <button class="btn" onclick="delVisita('${v.id}')">Elimina</button></td>`;
     tb.appendChild(tr);
   });
-  const pg=$('pg_visite'); pg.querySelector('.info').textContent=`${arr.length} record — Pagina ${vPage} di ${Math.max(1,Math.ceil(arr.length/PAGE))}`;
+  const cards=$('cards_visite'); cards.innerHTML='';
+  arr.forEach(v=>{
+    const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
+      <div class="title">${v.data} • ${v.tipo}<span class="chip">${refName(v)}</span></div>
+      <div class="subtitle">${v.refe} – Prodotti: ${v.prod}</div>
+      <div class="meta">Esito: ${v.esito}${v.follow?(' • FU: '+v.follow):''}${v.next?(' • '+v.next):''}</div>
+      <div class="meta">${v.note||''}</div></div>
+      <div class="actions"><button class="btn" onclick="openVisitaSheet('${v.id}')">Modifica</button><button class="btn" onclick="delVisita('${v.id}')">Elimina</button></div>`;
+    cards.appendChild(div);
+  });
+  $('info_visite').textContent = `${arr.length} visite`;
 }
 function delVisita(id){ visite=visite.filter(v=>v.id!==id); persistAll(); renderVisite($('v_filter').value); renderDashboard(); renderFollowup(); }
-document.getElementById('btn_add_visita').addEventListener('click',()=>{
-  const v={id:S.uid(),data:$('v_data').value||S.today(),tipo:$('v_tipo').value,ref:$('v_ref').value,refe:$('v_refe').value,
-    obj:$('v_obj').value.trim(),prod:$('v_prod').value,mat:$('v_mat').value.trim(),esito:$('v_esito').value,
-    next:$('v_next').value,follow:$('v_follow').value||'',time:+$('v_time').value||0,fv:+$('v_fv').value||0,fl:+$('v_fl').value||0,
-    note:$('v_note').value.trim(),contact:contactInfo({tipo:$('v_tipo').value,ref:$('v_ref').value})};
-  visite.push(v); persistAll();
-  ['v_obj','v_mat','v_note'].forEach(i=>$(i).value=''); $('v_fv').value=0; $('v_fl').value=0;
-  vPage=1; renderVisite($('v_filter').value); renderDashboard(); renderFollowup();
-});
-$('v_filter').addEventListener('input',e=>{vPage=1; renderVisite(e.target.value)});
-$('pg_visite').querySelector('[data-act="prev"]').onclick=()=>{ if(vPage>1){vPage--; renderVisite($('v_filter').value);} };
-$('pg_visite').querySelector('[data-act="next"]').onclick=()=>{ vPage++; renderVisite($('v_filter').value); };
+$('v_filter').addEventListener('input',e=>renderVisite(e.target.value));
 
-/* ---------- Follow-up ---------- */
-function renderFollowup(){const mode=$('fu_state').value, t=S.today(), s=addDays(t,3);
+/* ---------- Follow-up (tab) ---------- */
+function renderFollowup(){
+  const mode=$('fu_state').value, t=S.today(), s=addDays(t,3);
   let data=visite.filter(v=>v.follow); if(mode==='over') data=data.filter(v=>v.follow<t); if(mode==='soon') data=data.filter(v=>v.follow>=t&&v.follow<=s); if(mode==='future') data=data.filter(v=>v.follow>s);
-  data.sort((a,b)=>a.follow.localeCompare(b.follow)); const tb=$('tbl_follow').querySelector('tbody'); tb.innerHTML='';
-  data.forEach(v=>{const cls=v.follow<t?'badge err':(v.follow<=s?'badge warn':'badge ok'); const tr=document.createElement('tr'); tr.innerHTML=`
-      <td><span class="${cls}">${v.follow}</span></td><td>${v.tipo}</td><td>${refName(v)}</td><td>${v.next||''}</td><td>${v.contact||''}</td><td>${v.note||''}</td>
-      <td><button class="btn" onclick="completeFU('${v.id}')">✓ Fatto</button></td>`; tb.appendChild(tr);});
+  data.sort((a,b)=>a.follow.localeCompare(b.follow));
+  const tb=$('tbl_follow').querySelector('tbody'); tb.innerHTML='';
+  const cards=$('cards_follow'); cards.innerHTML='';
+  data.forEach(v=>{
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${v.follow}</td><td>${v.tipo}</td><td>${refName(v)}</td><td>${v.next||''}</td><td>${v.contact||''}</td><td>${v.note||''}</td>
+      <td><button class="btn" onclick="completeFU('${v.id}')">✓ Fatto</button></td>`; tb.appendChild(tr);
+    const div=document.createElement('div'); div.className='card'; div.innerHTML=`<div class="main">
+      <div class="title">${v.follow} • ${v.tipo}<span class="chip">${refName(v)}</span></div>
+      <div class="meta">${v.next||''}</div><div class="meta">${v.contact||''}</div><div class="meta">${v.note||''}</div></div>
+      <div class="actions"><button class="btn" onclick="completeFU('${v.id}')">✓ Fatto</button></div>`; cards.appendChild(div);
+  });
 }
 function completeFU(id){ const v=visite.find(x=>x.id===id); if(!v) return; v.follow=''; v.next=''; persistAll(); renderFollowup(); renderDashboard(); }
 document.getElementById('fu_state').addEventListener('change',renderFollowup);
 
-/* ---------- Export ICS ---------- */
+/* ---------- Export ICS & Backup ---------- */
 document.getElementById('btn_exp_ics').addEventListener('click',()=>{
-  const evs=visite.filter(v=>v.follow); const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Biotos CRM//FollowUps//IT'];
-  const ts=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
-  evs.forEach(v=>{const dt=(v.follow||'').replace(/-/g,''); const s='Follow-up: '+(refName(v)||'')+(v.next?(' – '+v.next):'');
-    L.push('BEGIN:VEVENT','UID:'+v.id+'@biotoscrm','DTSTAMP:'+ts,'DTSTART;VALUE=DATE:'+dt,'SUMMARY:'+s,'END:VEVENT');});
+  const evs=visite.filter(v=>v.follow); const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Biotos CRM//FollowUps//IT']; const ts=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';
+  evs.forEach(v=>{const dt=(v.follow||'').replace(/-/g,''); const s='Follow-up: '+(refName(v)||'')+(v.next?(' – '+v.next):''); L.push('BEGIN:VEVENT','UID:'+v.id+'@biotoscrm','DTSTAMP:'+ts,'DTSTART;VALUE=DATE:'+dt,'SUMMARY:'+s,'END:VEVENT');});
   L.push('END:VCALENDAR'); dl('biotos_followups.ics',L.join('\r\n'));
 });
-
-/* ---------- Backup JSON / Restore / Reset ---------- */
 document.getElementById('btn_exp_json').addEventListener('click', ()=>{
-  const payload = { exportedAt: new Date().toISOString(), version: 'v5', medici, farmacie, visite };
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
-  a.download='biotos_crm_backup.json'; a.click();
+  const payload = { exportedAt: new Date().toISOString(), version: 'v6', medici, farmacie, visite };
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'})); a.download='biotos_crm_backup.json'; a.click();
 });
 document.getElementById('inp_imp_json').addEventListener('change', e=>{
   const f = e.target.files[0]; if(!f) return;
-  const rd = new FileReader();
-  rd.onload = () => {
+  const rd = new FileReader(); rd.onload = () => {
     try{
-      const obj = JSON.parse(rd.result);
-      medici = obj.medici||[]; farmacie = obj.farmacie||[]; visite = obj.visite||[];
-      persistAll(); renderAll();
-      alert('Backup importato con successo');
+      const obj = JSON.parse(rd.result); medici = obj.medici||[]; farmacie = obj.farmacie||[]; visite = obj.visite||[];
+      persistAll(); renderAll(); alert('Backup importato con successo');
     }catch(err){ alert('File non valido'); }
-  };
-  rd.readAsText(f);
+  }; rd.readAsText(f);
 });
-document.getElementById('btn_clear').addEventListener('click', ()=>{
-  if(!confirm('Cancellare tutti i dati?')) return;
-  medici = []; farmacie = []; visite = [];
-  persistAll(); renderAll();
-});
+document.getElementById('btn_clear').addEventListener('click', ()=>{ if(!confirm('Cancellare tutti i dati?')) return; medici=[]; farmacie=[]; visite=[]; persistAll(); renderAll(); });
 
-/* ---------- CSV helpers ---------- */
-function toCSV(arr, cols){
-  const esc = s => (''+s).replace(/"/g,'""');
-  const header = cols.join(',');
-  const rows = arr.map(o=>cols.map(k=>`"${esc(o[k]??'')}"`).join(','));
-  return [header].concat(rows).join('\n');
-}
-function fromCSV(text){
-  const lines = text.trim().split(/\r?\n/);
-  const cols = lines.shift().split(',').map(s=>s.replace(/^"|"$/g,''));
-  return lines.map(line=>{
-    const cells = []; let cur = ''; let inq=false;
-    for(let i=0;i<line.length;i++){
-      const ch=line[i], nx=line[i+1];
-      if(ch=='"' && nx=='"'){ cur+='"'; i++; continue; }
-      if(ch=='"'){ inq=!inq; continue; }
-      if(ch==',' && !inq){ cells.push(cur); cur=''; continue; }
-      cur+=ch;
-    }
-    cells.push(cur);
-    const obj={}; cols.forEach((c,i)=>obj[c]=cells[i]||''); return obj;
-  });
-}
-
-/* ---------- CSV export/import ---------- */
-document.getElementById('btn_exp_med').addEventListener('click', ()=>{
-  const cols = ["id","titolo","nome","cognome","spec","struttura","comune","indirizzo","telefono","email","note"];
-  dl('medici.csv', toCSV(medici, cols));
-});
-document.getElementById('btn_exp_far').addEventListener('click', ()=>{
-  const cols = ["id","ragione","direttore","comune","indirizzo","telefono","email","note"];
-  dl('farmacie.csv', toCSV(farmacie, cols));
-});
-document.getElementById('btn_exp_vis').addEventListener('click', ()=>{
-  const cols = ["id","data","tipo","ref","refe","obj","prod","mat","esito","next","follow","time","fv","fl","note"];
-  dl('visite.csv', toCSV(visite, cols));
-});
-document.getElementById('imp_med').addEventListener('change', e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const rd=new FileReader(); rd.onload=()=>{
-    const rows=fromCSV(rd.result);
-    rows.forEach(r=>{
-      medici.push({
-        id:r.id||S.uid(), titolo:r.titolo||'', nome:r.nome||'', cognome:r.cognome||'',
-        spec:r.spec||'', struttura:r.struttura||'', comune:r.comune||'', indirizzo:r.indirizzo||'',
-        telefono:r.telefono||'', email:r.email||'', note:r.note||''
-      });
-    });
-    persistAll(); renderMedici(); refreshVisitRefs(); renderDashboard();
-  }; rd.readAsText(f);
-});
-document.getElementById('imp_far').addEventListener('change', e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const rd=new FileReader(); rd.onload=()=>{
-    const rows=fromCSV(rd.result);
-    rows.forEach(r=>{
-      farmacie.push({
-        id:r.id||S.uid(), ragione:r.ragione||'', direttore:r.direttore||'', comune:r.comune||'',
-        indirizzo:r.indirizzo||'', telefono:r.telefono||'', email:r.email||'', note:r.note||''
-      });
-    });
-    persistAll(); renderFarmacie(); refreshVisitRefs(); renderDashboard();
-  }; rd.readAsText(f);
-});
-document.getElementById('imp_vis').addEventListener('change', e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const rd=new FileReader(); rd.onload=()=>{
-    const rows=fromCSV(rd.result);
-    rows.forEach(r=>{
-      visite.push({
-        id:r.id||S.uid(), data:r.data||S.today(), tipo:r.tipo||'Medico', ref:r.ref||'',
-        refe:r.refe||'', obj:r.obj||'', prod:r.prod||'—', mat:r.mat||'', esito:r.esito||'',
-        next:r.next||'', follow:r.follow||'', time:+r.time||0, fv:+r.fv||0, fl:+r.fl||0, note:r.note||'',
-        contact: contactInfo({tipo:r.tipo||'Medico', ref:r.ref||''})
-      });
-    });
-    persistAll(); renderVisite(); renderDashboard(); renderFollowup();
-  }; rd.readAsText(f);
-});
+/* ---------- Helpers ---------- */
+function closeSheets(){ document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('open')); }
+document.querySelectorAll('.sheet .close').forEach(b=>b.addEventListener('click',()=>{ closeSheets(); }));
+window.addEventListener('keydown',e=>{ if(e.key==='Escape') closeSheets(); });
 
 /* ---------- Init render ---------- */
 function renderAll(){ renderMedici(''); renderFarmacie(''); refreshVisitRefs(); renderVisite(''); renderDashboard(); renderFollowup(); }
 
-/* ---------- Service Worker ---------- */
+/* ---------- SW ---------- */
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 </script>
 </body>
