@@ -1,14 +1,17 @@
-Biotos CRM – v9.0 (UX/Color/Agenda/Debug)
-Build: 2025-09-06
+Biotos CRM – v1.0
 
-Novità principali:
-- Barra sezioni compatta (50–58px), icone + testo, safe-area ottimizzata iPhone.
-- FAB con menu azioni contestuali e posizionamento che non si sovrappone ai contenuti.
-- Palette migliorata (Tema Scuro/Chiaro/Contrasto alto) + accento personalizzabile.
-- Nuova **Agenda** per appuntamenti (converti → Visita in 1 tap).
-- Global Search su tutto: medici, farmacie, visite, appuntamenti.
-- Import/Export CSV per Medici e Farmacie; backup JSON esteso.
-- Validazioni configurabili, default follow-up, migliorata leggibilità/contrasto.
-- Debug & performance: liste più fluide, cache PWA v9.0, vari fix input/scroll.
+Cosa include
+- Mobile-first con navbar orizzontale a scorrimento (drag) e FAB senza sovrapposizioni.
+- Palette chiara/scura con contrasto rivisto (verde su chiaro leggibile) + modalità high-contrast.
+- Dati su dispositivo (IndexedDB + LocalStorage); export/import JSON, CSV e iCal (FU).
+- Account locali con password hash (SHA-256) e ruoli (master/utente); il master può creare utenti, resettare PW, impersonare.
+- Profili per separare aree/territori.
+- Medici/Farmacie, Visite con follow-up, Agenda, Report mensile, Ricerca avanzata, Duplica visita, Campi obbligatori configurabili.
 
-Deploy: carica su hosting statico o GitHub Pages. Apri da iPhone e “Aggiungi a Home”.
+Installazione PWA (iPhone):
+1) Apri index.html in Safari.
+2) Condividi → “Aggiungi a Home”.
+3) Avvia l’app dalla Home (offline-ready).
+
+Sincronizzazione:
+- Non c’è un server (SyncSoft rimosso). Per condividere dati tra device: Esporta JSON su uno, Importa sull’altro.
