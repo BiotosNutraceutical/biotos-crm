@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biotos CRM – Field App</title>
+  <meta name="theme-color" content="#0f1115">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Biotos CRM">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root { --bg:#0f1115; --panel:#151823; --muted:#aab3c5; --text:#e6ebf5; --accent:#9ad8ff; --warn:#ffd166; --err:#ff6b6b; }
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    header{position:sticky;top:0;background:linear-gradient(180deg,#0f1115 0%,#0f1115dd 70%,transparent);backdrop-filter:saturate(1.3) blur(6px);z-index:10}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    h1{font-size:18px;margin:6px 0 10px;letter-spacing:.3px}
+    nav{display:flex;gap:6px;flex-wrap:wrap}
+    nav button{border:1px solid #26304a;background:#121624;color:var(--text);padding:8px 10px;border-radius:10px;cursor:pointer}
+    nav button.active{border-color:#3a79ff;background:#16213a;box-shadow:inset 0 0 0 1px #3a79ff22}
+    .grid{display:grid;gap:12px}
+    .pan{background:var(--panel);padding:14px;border-radius:14px;border:1px solid #26304a}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .row > *{flex:1 1 220px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+    input,select,textarea{width:100%;box-sizing:border-box;background:#0f1423;color:var(--text);border:1px solid #2a3555;border-radius:10px;padding:10px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:8px 10px;border-bottom:1px solid #222a41;vertical-align:top}
+    th{position:sticky;top:0;background:#121624;color:#c9d4f0;text-align:left}
+    tr:hover{background:#141a2b}
+    .btn{display:inline-flex;gap:8px;align-items:center;border:1px solid #2a3555;background:#121a2b;color:var(--text);padding:8px 10px;border-radius:10px;cursor:pointer}
+    .btn.primary{border-color:#3a79ff;background:#1a2c55}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #2a3555;color:#cfe}
+    .badge{padding:2px 6px;border-radius:6px;font-size:12px}
+    .ok{background:#11331f;color:#b0f5c3;border:1px solid #1d6c3e}
+    .warn{background:#332a11;color:#ffe2a6;border:1px solid #8a6d1a}
+    .err{background:#3a1818;color:#ffc9c9;border:1px solid #7a2b2b}
+    .muted{color:var(--muted)}
+    .right{margin-left:auto}
+    .hidden{display:none !important}
+    .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+    .kpis .pan{padding:10px}
+    .kpis h3{margin:6px 0 4px;font-size:12px;color:#c8d1ea}
+    .kpis .value{font-size:20px;font-weight:700}
+    .help{font-size:12px;color:#9aa4bd}
+    .tablewrap{max-height:48vh;overflow:auto;border:1px solid #26304a;border-radius:12px}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Biotos CRM – Field App (Medici • Farmacie • Visite)</h1>
+    <nav>
+      <button class="tabbtn active" data-tab="dashboard">Dashboard</button>
+      <button class="tabbtn" data-tab="medici">Medici</button>
+      <button class="tabbtn" data-tab="farmacie">Farmacie</button>
+      <button class="tabbtn" data-tab="visite">Visite</button>
+      <button class="tabbtn" data-tab="followup">Follow-up</button>
+      <button class="tabbtn" data-tab="io">Import/Export</button>
+      <button class="tabbtn" data-tab="info">Info</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="dashboard" class="grid">
+    <div class="kpis">
+      <div class="pan"><h3>Medici schedati</h3><div class="value" id="k_medici">0</div></div>
+      <div class="pan"><h3>Farmacie schedate</h3><div class="value" id="k_farmacie">0</div></div>
+      <div class="pan"><h3>Visite totali</h3><div class="value" id="k_visite">0</div></div>
+      <div class="pan"><h3>Follow-up scaduti</h3><div class="value" id="k_fu_over">0</div></div>
+      <div class="pan"><h3>Follow-up prossimi 3 gg</h3><div class="value" id="k_fu_soon">0</div></div>
+      <div class="pan"><h3>Ordini stimati FV / FL</h3><div class="value"><span id="k_ord_fv">0</span> / <span id="k_ord_fl">0</span></div></div>
+    </div>
+
+    <div class="pan">
+      <h3 style="margin:0 0 8px">Follow-up imminenti</h3>
+      <div class="tablewrap"><table id="tbl_fu"><thead><tr>
+        <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prossimo step</th><th>Contatto</th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="medici" class="grid hidden">
+    <div class="pan">
+      <div class="row">
+        <div><label>Titolo</label><input id="m_titolo" placeholder="Dott./Dott.ssa"></div>
+        <div><label>Nome</label><input id="m_nome"></div>
+        <div><label>Cognome</label><input id="m_cognome"></div>
+        <div><label>Specialità</label>
+          <select id="m_spec"><option value="Ginecologia">Ginecologia</option><option value="MMG">MMG</option><option value="Altro">Altro</option></select>
+        </div>
+      </div>
+      <div class="row">
+        <div><label>Studio/Struttura</label><input id="m_struttura"></div>
+        <div><label>Comune</label><input id="m_comune"></div>
+        <div><label>Indirizzo</label><input id="m_indirizzo"></div>
+        <div><label>Telefono</label><input id="m_tel"></div>
+        <div><label>Email</label><input id="m_email"></div>
+      </div>
+      <div class="row">
+        <div><label>Note</label><input id="m_note"></div>
+        <div class="right"><label>&nbsp;</label><button class="btn primary" id="btn_add_medico">+ Aggiungi medico</button></div>
+      </div>
+      <div class="row">
+        <div><label>Filtro</label><input id="m_filter" placeholder="cerca per nome, cognome, comune, specialità..."></div>
+      </div>
+      <div class="tablewrap"><table id="tbl_medici"><thead><tr>
+        <th>ID</th><th>Nome</th><th>Specialità</th><th>Studio</th><th>Comune</th><th>Contatti</th><th>Note</th><th></th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="farmacie" class="grid hidden">
+    <div class="pan">
+      <div class="row">
+        <div><label>Ragione Sociale</label><input id="f_ragione"></div>
+        <div><label>Direttore</label><input id="f_direttore"></div>
+        <div><label>Comune</label><input id="f_comune"></div>
+        <div><label>Indirizzo</label><input id="f_indirizzo"></div>
+        <div><label>Telefono</label><input id="f_tel"></div>
+        <div><label>Email</label><input id="f_email"></div>
+      </div>
+      <div class="row">
+        <div><label>Note</label><input id="f_note"></div>
+        <div class="right"><label>&nbsp;</label><button class="btn primary" id="btn_add_farmacia">+ Aggiungi farmacia</button></div>
+      </div>
+      <div class="row">
+        <div><label>Filtro</label><input id="f_filter" placeholder="cerca per ragione sociale, comune..."></div>
+      </div>
+      <div class="tablewrap"><table id="tbl_farmacie"><thead><tr>
+        <th>ID</th><th>Ragione Sociale</th><th>Comune</th><th>Indirizzo</th><th>Contatti</th><th>Note</th><th></th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="visite" class="grid hidden">
+    <div class="pan">
+      <div class="row">
+        <div><label>Data</label><input type="date" id="v_data"></div>
+        <div><label>Tipo visita</label>
+          <select id="v_tipo"><option>Medico</option><option>Farmacia</option></select></div>
+        <div><label>Riferimento</label>
+          <select id="v_ref"></select></div>
+        <div><label>Referente</label>
+          <select id="v_refe"><option>Stefano</option><option>Mariangela</option></select></div>
+      </div>
+      <div class="row">
+        <div><label>Obiettivo visita</label><input id="v_obj" placeholder="es. presentazione FV, riordino FL..."></div>
+        <div><label>Prodotti presentati</label>
+          <select id="v_prod"><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
+        <div><label>Materiali consegnati</label><input id="v_mat" placeholder="folder, scheda, locandina..."></div>
+      </div>
+      <div class="row">
+        <div><label>Esito</label>
+          <select id="v_esito"><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
+        <div><label>Prossimo step</label>
+          <select id="v_next"><option>Follow-up telefonico</option><option>Invio materiali</option><option>Richiesta ordine</option><option>Demo/Approfondimento</option><option>Altro</option></select></div>
+        <div><label>Data follow-up</label><input type="date" id="v_follow"></div>
+        <div><label>Tempo (min)</label><input id="v_time" type="number" min="0" step="5" value="15"></div>
+      </div>
+      <div class="row">
+        <div><label>Ordine stimato FV</label><input id="v_fv" type="number" min="0" step="1" value="0"></div>
+        <div><label>Ordine stimato FL</label><input id="v_fl" type="number" min="0" step="1" value="0"></div>
+        <div><label>Note esito</label><input id="v_note"></div>
+        <div class="right"><label>&nbsp;</label><button class="btn primary" id="btn_add_visita">+ Registra visita</button></div>
+      </div>
+
+      <div class="row">
+        <div><label>Filtro</label><input id="v_filter" placeholder="cerca per referente, obiettivo, esito..."></div>
+      </div>
+      <div class="tablewrap"><table id="tbl_visite"><thead><tr>
+        <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prodotti</th><th>Esito</th><th>Next</th><th>Follow-up</th><th>Ref.</th><th>Ord FV/FL</th><th>Note</th><th></th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="followup" class="grid hidden">
+    <div class="pan">
+      <div class="row">
+        <div><label>Filtra per stato</label>
+          <select id="fu_state">
+            <option value="all">Tutti</option>
+            <option value="over">Scaduti</option>
+            <option value="soon">Prossimi 3 gg</option>
+            <option value="future">Oltre 3 gg</option>
+          </select>
+        </div>
+      </div>
+      <div class="tablewrap"><table id="tbl_follow"><thead><tr>
+        <th>Data</th><th>Tipo</th><th>Rif.</th><th>Prossimo step</th><th>Contatto</th><th>Note</th><th></th>
+      </tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="io" class="grid hidden">
+    <div class="pan">
+      <h3 style="margin:0 0 8px">Backup & Dati</h3>
+      <div class="row">
+        <button class="btn" id="btn_exp_json">⬇️ Esporta backup JSON</button>
+        <input type="file" id="inp_imp_json" accept="application/json" class="btn">
+        <button class="btn" id="btn_clear" title="Cancella tutti i dati (usa con cautela)">🗑️ Reset dati</button>
+      </div>
+      <hr style="border-color:#26304a">
+      <div class="row">
+        <button class="btn" id="btn_exp_med">⬇️ Esporta Medici CSV</button>
+        <button class="btn" id="btn_exp_far">⬇️ Esporta Farmacie CSV</button>
+        <button class="btn" id="btn_exp_vis">⬇️ Esporta Visite CSV</button>
+      </div>
+      <div class="row">
+        <div><label>Importa Medici CSV</label><input type="file" id="imp_med" accept=".csv"></div>
+        <div><label>Importa Farmacie CSV</label><input type="file" id="imp_far" accept=".csv"></div>
+        <div><label>Importa Visite CSV</label><input type="file" id="imp_vis" accept=".csv"></div>
+      </div>
+      <p class="help">Suggerimento: esporta i fogli dal tuo Excel e importali qui. I campi non riconosciuti vengono ignorati.</p>
+    </div>
+  </section>
+
+  <section id="info" class="grid hidden">
+    <div class="pan">
+      <h3 style="margin:0 0 8px">Info & Note</h3>
+      <ul>
+        <li>I dati restano sul tuo dispositivo (localStorage). Per iPhone: apri in Safari e <b>Aggiungi alla schermata Home</b>.</li>
+        <li>Se la app è su HTTPS, il <i>service worker</i> abilita l'uso offline dopo il primo caricamento.</li>
+        <li>GDPR: inserisci solo dati professionali (no dati sanitari personali).</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<script>
+const S = {
+  get k(){ return {med:'medici',far:'farmacie',vis:'visite'}; },
+  load(key){ return JSON.parse(localStorage.getItem(key)||'[]'); },
+  save(key,val){ localStorage.setItem(key,JSON.stringify(val)); },
+  uid(){ return 'id_' + Math.random().toString(36).slice(2,8) + Date.now().toString(36).slice(-4); },
+  today(){ const d=new Date(); return d.toISOString().slice(0,10); }
+};
+let medici = S.load(S.k.med);
+let farmacie = S.load(S.k.far);
+let visite = S.load(S.k.vis);
+
+// Tabs
+document.querySelectorAll('.tabbtn').forEach(b=>b.addEventListener('click', e=>{
+  document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.tab).classList.remove('hidden');
+  if(b.dataset.tab==='dashboard') renderDashboard();
+  if(b.dataset.tab==='visite') refreshVisitRefs();
+  if(b.dataset.tab==='followup') renderFollowup();
+}));
+
+// Utils
+const byId = id => document.getElementById(id);
+const download = (filename, text) => {
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'})); a.download=filename; a.click();
+};
+function addDays(iso,days){ const d=new Date(iso); d.setDate(d.getDate()+days); return d.toISOString().slice(0,10); }
+
+// Dashboard
+function renderDashboard(){
+  byId('k_medici').textContent = medici.length;
+  byId('k_farmacie').textContent = farmacie.length;
+  byId('k_visite').textContent = visite.length;
+  const today = S.today(), soon = addDays(today,3);
+  const over = visite.filter(v=>v.follow && v.follow<today).length;
+  const soonN = visite.filter(v=>v.follow && v.follow>=today && v.follow<=soon).length;
+  byId('k_fu_over').textContent = over;
+  byId('k_fu_soon').textContent = soonN;
+  byId('k_ord_fv').textContent = visite.reduce((a,v)=>a+(+v.fv||0),0);
+  byId('k_ord_fl').textContent = visite.reduce((a,v)=>a+(+v.fl||0),0);
+  const tbody = byId('tbl_fu').querySelector('tbody'); tbody.innerHTML='';
+  visite.filter(v=>v.follow && v.follow>=today && v.follow<=soon).sort((a,b)=>a.follow.localeCompare(b.follow)).slice(0,20).forEach(v=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${v.follow||''}</td><td>${v.tipo}</td><td>${refName(v)}</td><td>${v.next||''}</td><td>${v.contact||''}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function refName(v){
+  if(v.tipo==='Medico'){
+    const m = medici.find(x=>x.id===v.ref);
+    return m ? `${m.titolo||''} ${m.nome||''} ${m.cognome||''}`.trim() : v.ref;
+  } else {
+    const f = farmacie.find(x=>x.id===v.ref);
+    return f ? `${f.ragione||''}` : v.ref;
+  }
+}
+function contactInfo(v){
+  if(v.tipo==='Medico'){
+    const m = medici.find(x=>x.id===v.ref);
+    return m ? `${m.telefono||m.email||''}` : '';
+  } else {
+    const f = farmacie.find(x=>x.id===v.ref);
+    return f ? `${f.telefono||f.email||''}` : '';
+  }
+}
+function dueFollowups(mode){
+  const today = S.today();
+  const soon = addDays(today,3);
+  return visite.filter(v=>v.follow).filter(v=>{
+    if(mode==='over') return v.follow < today;
+    if(mode==='soon') return v.follow >= today && v.follow <= soon;
+    if(mode==='future') return v.follow > soon;
+    return true;
+  }).sort((a,b)=>a.follow.localeCompare(b.follow));
+}
+
+// Medici
+function renderMedici(filter=''){
+  const tb = byId('tbl_medici').querySelector('tbody'); tb.innerHTML='';
+  medici.filter(m=>{
+    const s = (m.nome+' '+m.cognome+' '+(m.comune||'')+' '+(m.spec||'')).toLowerCase();
+    return s.includes(filter.toLowerCase());
+  }).forEach(m=>{
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="muted">${m.id}</td>
+      <td>${m.titolo||''} ${m.nome||''} ${m.cognome||''}</td>
+      <td><span class="pill">${m.spec||''}</span></td>
+      <td>${m.struttura||''}</td>
+      <td>${m.comune||''}</td>
+      <td>${m.telefono||''}${m.email?'<br>'+m.email:''}</td>
+      <td>${m.note||''}</td>
+      <td><button class="btn" onclick="delMedico('${m.id}')">Elimina</button></td>`;
+    tb.appendChild(row);
+  });
+}
+function delMedico(id){
+  if(!confirm('Eliminare il medico e le visite collegate?')) return;
+  medici = medici.filter(x=>x.id!==id);
+  visite = visite.filter(v=>!(v.tipo==='Medico' && v.ref===id));
+  S.save(S.k.med, medici); S.save(S.k.vis, visite);
+  renderMedici(byId('m_filter').value); renderVisite(byId('v_filter').value); renderDashboard(); refreshVisitRefs();
+}
+document.getElementById('btn_add_medico').addEventListener('click', ()=>{
+  const m = {
+    id:S.uid(), titolo:byId('m_titolo').value.trim(), nome:byId('m_nome').value.trim(), cognome:byId('m_cognome').value.trim(),
+    spec:byId('m_spec').value, struttura:byId('m_struttura').value.trim(), comune:byId('m_comune').value.trim(),
+    indirizzo:byId('m_indirizzo').value.trim(), telefono:byId('m_tel').value.trim(), email:byId('m_email').value.trim(),
+    note:byId('m_note').value.trim()
+  };
+  medici.push(m); S.save(S.k.med, medici);
+  ['m_titolo','m_nome','m_cognome','m_struttura','m_comune','m_indirizzo','m_tel','m_email','m_note'].forEach(id=>byId(id).value='');
+  renderMedici(byId('m_filter').value); refreshVisitRefs(); renderDashboard();
+});
+byId('m_filter').addEventListener('input', e=>renderMedici(e.target.value));
+
+// Farmacie
+function renderFarmacie(filter=''){
+  const tb = byId('tbl_farmacie').querySelector('tbody'); tb.innerHTML='';
+  farmacie.filter(f=>{
+    const s = (f.ragione+' '+(f.comune||'')).toLowerCase();
+    return s.includes(filter.toLowerCase());
+  }).forEach(f=>{
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="muted">${f.id}</td>
+      <td>${f.ragione||''} ${f.direttore?'<div class=muted>'+f.direttore+'</div>':''}</td>
+      <td>${f.comune||''}</td>
+      <td>${f.indirizzo||''}</td>
+      <td>${f.telefono||''}${f.email?'<br>'+f.email:''}</td>
+      <td>${f.note||''}</td>
+      <td><button class="btn" onclick="delFarmacia('${f.id}')">Elimina</button></td>`;
+    tb.appendChild(row);
+  });
+}
+function delFarmacia(id){
+  if(!confirm('Eliminare la farmacia e le visite collegate?')) return;
+  farmacie = farmacie.filter(x=>x.id!==id);
+  visite = visite.filter(v=>!(v.tipo==='Farmacia' && v.ref===id));
+  S.save(S.k.far, farmacie); S.save(S.k.vis, visite);
+  renderFarmacie(byId('f_filter').value); renderVisite(byId('v_filter').value); renderDashboard(); refreshVisitRefs();
+}
+document.getElementById('btn_add_farmacia').addEventListener('click', ()=>{
+  const f = {
+    id:S.uid(), ragione:byId('f_ragione').value.trim(), direttore:byId('f_direttore').value.trim(),
+    comune:byId('f_comune').value.trim(), indirizzo:byId('f_indirizzo').value.trim(),
+    telefono:byId('f_tel').value.trim(), email:byId('f_email').value.trim(), note:byId('f_note').value.trim()
+  };
+  farmacie.push(f); S.save(S.k.far, farmacie);
+  ['f_ragione','f_direttore','f_comune','f_indirizzo','f_tel','f_email','f_note'].forEach(id=>byId(id).value='');
+  renderFarmacie(byId('f_filter').value); refreshVisitRefs(); renderDashboard();
+});
+byId('f_filter').addEventListener('input', e=>renderFarmacie(e.target.value));
+
+// Visite
+function refreshVisitRefs(){
+  const vref = byId('v_ref'); vref.innerHTML='';
+  const tipo = byId('v_tipo').value;
+  const list = tipo==='Medico' ? medici : farmacie;
+  list.forEach(x=>{
+    const opt = document.createElement('option');
+    opt.value = x.id; opt.textContent = tipo==='Medico' ? `${x.titolo||''} ${x.nome||''} ${x.cognome||''}`.trim() : (x.ragione||x.id);
+    vref.appendChild(opt);
+  });
+}
+byId('v_tipo').addEventListener('change', refreshVisitRefs);
+
+function renderVisite(filter=''){
+  const tb = byId('tbl_visite').querySelector('tbody'); tb.innerHTML='';
+  visite.filter(v=>{
+    const s = (v.refe+' '+v.obj+' '+v.esito+' '+v.next+' '+(v.note||'')).toLowerCase();
+    return s.includes(filter.toLowerCase());
+  }).sort((a,b)=>b.data.localeCompare(a.data)).forEach(v=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${v.data}</td><td>${v.tipo}</td><td>${refName(v)}</td>
+      <td>${v.prod}</td><td>${v.esito}</td><td>${v.next||''}</td><td>${v.follow||''}</td>
+      <td>${v.refe}</td><td>${v.fv||0}/${v.fl||0}</td><td>${v.note||''}</td>
+      <td><button class="btn" onclick="delVisita('${v.id}')">Elimina</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function delVisita(id){
+  visite = visite.filter(v=>v.id!==id); S.save(S.k.vis, visite);
+  renderVisite(byId('v_filter').value); renderDashboard(); renderFollowup();
+}
+document.getElementById('btn_add_visita').addEventListener('click', ()=>{
+  const v = {
+    id:S.uid(),
+    data: byId('v_data').value || S.today(),
+    tipo: byId('v_tipo').value,
+    ref: byId('v_ref').value,
+    refe: byId('v_refe').value,
+    obj: byId('v_obj').value.trim(),
+    prod: byId('v_prod').value,
+    mat: byId('v_mat').value.trim(),
+    esito: byId('v_esito').value,
+    next: byId('v_next').value,
+    follow: byId('v_follow').value || '',
+    time: +byId('v_time').value || 0,
+    fv: +byId('v_fv').value || 0,
+    fl: +byId('v_fl').value || 0,
+    note: byId('v_note').value.trim(),
+    contact: contactInfo({tipo: byId('v_tipo').value, ref: byId('v_ref').value})
+  };
+  visite.push(v); S.save(S.k.vis, visite);
+  ['v_obj','v_mat','v_note'].forEach(id=>byId(id).value=''); byId('v_fv').value=0; byId('v_fl').value=0;
+  renderVisite(byId('v_filter').value); renderDashboard(); renderFollowup();
+});
+byId('v_filter').addEventListener('input', e=>renderVisite(e.target.value));
+
+// Follow-up
+function renderFollowup(){
+  const mode = byId('fu_state').value;
+  const today = S.today(); const soon = addDays(today,3);
+  let data = visite.filter(v=>v.follow);
+  if(mode==='over') data = data.filter(v=>v.follow < today);
+  if(mode==='soon') data = data.filter(v=>v.follow >= today && v.follow <= soon);
+  if(mode==='future') data = data.filter(v=>v.follow > soon);
+  data.sort((a,b)=>a.follow.localeCompare(b.follow));
+  const tb = byId('tbl_follow').querySelector('tbody'); tb.innerHTML='';
+  data.forEach(v=>{
+    const cls = v.follow < today ? 'badge err' : (v.follow <= soon ? 'badge warn' : 'badge ok');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><span class="${cls}">${v.follow}</span></td>
+      <td>${v.tipo}</td>
+      <td>${refName(v)}</td>
+      <td>${v.next||''}</td>
+      <td>${v.contact||''}</td>
+      <td>${v.note||''}</td>
+      <td><button class="btn" onclick="completeFU('${v.id}')">✓ Fatto</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function completeFU(id){
+  const v = visite.find(x=>x.id===id);
+  if(!v) return;
+  v.follow = ''; v.next=''; S.save(S.k.vis, visite);
+  renderFollowup(); renderDashboard();
+}
+byId('fu_state').addEventListener('change', renderFollowup);
+
+// Import/Export
+byId('btn_exp_json').addEventListener('click', ()=>{
+  const payload = { exportedAt: new Date().toISOString(), medici, farmacie, visite };
+  download('biotos_crm_backup.json', JSON.stringify(payload,null,2));
+});
+byId('inp_imp_json').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try{
+      const obj = JSON.parse(rd.result);
+      medici = obj.medici||[]; farmacie = obj.farmacie||[]; visite = obj.visite||[];
+      S.save(S.k.med, medici); S.save(S.k.far, farmacie); S.save(S.k.vis, visite);
+      renderMedici(); renderFarmacie(); renderVisite(); renderDashboard(); refreshVisitRefs(); renderFollowup();
+      alert('Backup importato con successo');
+    }catch(err){ alert('File non valido'); }
+  };
+  rd.readAsText(f);
+});
+
+function toCSV(arr, cols){
+  const esc = s => (''+s).replace(/"/g,'""');
+  const header = cols.join(',');
+  const rows = arr.map(o=>cols.map(k=>`"${esc(o[k]??'')}"`).join(','));
+  return [header].concat(rows).join('\n');
+}
+function fromCSV(text){
+  const lines = text.trim().split(/\r?\n/);
+  const cols = lines.shift().split(',').map(s=>s.replace(/^"|"$/g,''));
+  return lines.map(line=>{
+    const cells = []; let cur = ''; let inq=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i], nx=line[i+1];
+      if(ch=='"' && nx=='"'){ cur+='"'; i++; continue; }
+      if(ch=='"'){ inq=!inq; continue; }
+      if(ch==',' && !inq){ cells.push(cur); cur=''; continue; }
+      cur+=ch;
+    }
+    cells.push(cur);
+    const obj={}; cols.forEach((c,i)=>obj[c]=cells[i]||''); return obj;
+  });
+}
+byId('btn_exp_med').addEventListener('click', ()=>{
+  const cols = ["id","titolo","nome","cognome","spec","struttura","comune","indirizzo","telefono","email","note"];
+  download('medici.csv', toCSV(medici, cols));
+});
+byId('btn_exp_far').addEventListener('click', ()=>{
+  const cols = ["id","ragione","direttore","comune","indirizzo","telefono","email","note"];
+  download('farmacie.csv', toCSV(farmacie, cols));
+});
+byId('btn_exp_vis').addEventListener('click', ()=>{
+  const cols = ["id","data","tipo","ref","refe","obj","prod","mat","esito","next","follow","time","fv","fl","note"];
+  download('visite.csv', toCSV(visite, cols));
+});
+
+document.getElementById('imp_med').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader(); rd.onload=()=>{
+    const rows=fromCSV(rd.result);
+    rows.forEach(r=>{
+      medici.push({
+        id:r.id||S.uid(), titolo:r.titolo||'', nome:r.nome||'', cognome:r.cognome||'',
+        spec:r.spec||'', struttura:r.struttura||'', comune:r.comune||'', indirizzo:r.indirizzo||'',
+        telefono:r.telefono||'', email:r.email||'', note:r.note||''
+      });
+    });
+    S.save(S.k.med, medici); renderMedici(); refreshVisitRefs(); renderDashboard();
+  }; rd.readAsText(f);
+});
+document.getElementById('imp_far').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader(); rd.onload=()=>{
+    const rows=fromCSV(rd.result);
+    rows.forEach(r=>{
+      farmacie.push({
+        id:r.id||S.uid(), ragione:r.ragione||'', direttore:r.direttore||'', comune:r.comune||'',
+        indirizzo:r.indirizzo||'', telefono:r.telefono||'', email:r.email||'', note:r.note||''
+      });
+    });
+    S.save(S.k.far, farmacie); renderFarmacie(); refreshVisitRefs(); renderDashboard();
+  }; rd.readAsText(f);
+});
+document.getElementById('imp_vis').addEventListener('change', e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader(); rd.onload=()=>{
+    const rows=fromCSV(rd.result);
+    rows.forEach(r=>{
+      visite.push({
+        id:r.id||S.uid(), data:r.data||S.today(), tipo:r.tipo||'Medico', ref:r.ref||'',
+        refe:r.refe||'', obj:r.obj||'', prod:r.prod||'—', mat:r.mat||'', esito:r.esito||'',
+        next:r.next||'', follow:r.follow||'', time:+r.time||0, fv:+r.fv||0, fl:+r.fl||0, note:r.note||'',
+        contact: contactInfo({tipo:r.tipo||'Medico', ref:r.ref||''})
+      });
+    });
+    S.save(S.k.vis, visite); renderVisite(); renderDashboard(); renderFollowup();
+  }; rd.readAsText(f);
+});
+
+// Initial render
+renderMedici(''); renderFarmacie(''); refreshVisitRefs(); renderVisite(''); renderDashboard(); renderFollowup();
+
+// Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
