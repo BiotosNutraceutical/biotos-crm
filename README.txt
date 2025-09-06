@@ -1,11 +1,14 @@
-Biotos CRM – v8.0 (UX/Perf/Design)
+Biotos CRM – v9.0 (UX/Color/Agenda/Debug)
 Build: 2025-09-06
 
 Novità principali:
-- Fluidità: rendering a chunk, ricerche debounced, UI contain/paint.
-- Grafica: dark/light auto, tipografia leggibile, contrasti migliorati, toast e banner update PWA.
-- Funzionalità: quick-chips follow-up (+1/+3/+7/+14), ordinamenti rapidi, undo “soft”, usage storage.
-- PWA: cache v8.0, prompt aggiornamento quando esce una nuova build.
-- Dati: IndexedDB + LocalStorage; backup JSON; iCal follow-up con contatto.
+- Barra sezioni compatta (50–58px), icone + testo, safe-area ottimizzata iPhone.
+- FAB con menu azioni contestuali e posizionamento che non si sovrappone ai contenuti.
+- Palette migliorata (Tema Scuro/Chiaro/Contrasto alto) + accento personalizzabile.
+- Nuova **Agenda** per appuntamenti (converti → Visita in 1 tap).
+- Global Search su tutto: medici, farmacie, visite, appuntamenti.
+- Import/Export CSV per Medici e Farmacie; backup JSON esteso.
+- Validazioni configurabili, default follow-up, migliorata leggibilità/contrasto.
+- Debug & performance: liste più fluide, cache PWA v9.0, vari fix input/scroll.
 
-Deploy: carica su GitHub Pages/hosting statico. Aggiungi alla Home su iPhone.
+Deploy: carica su hosting statico o GitHub Pages. Apri da iPhone e “Aggiungi a Home”.
