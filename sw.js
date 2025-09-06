@@ -1,5 +1,5 @@
-// Biotos CRM – PWA cache v4
-const CACHE = 'biotos-crm-v4';
+// Biotos CRM – PWA cache v5
+const CACHE = 'biotos-crm-v5';
 const ASSETS = ['./','./index.html','./manifest.webmanifest','./sw.js','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install', e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));

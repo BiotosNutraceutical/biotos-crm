@@ -1,19 +1,20 @@
-Biotos CRM – v4 (PWA)
+Biotos CRM – v5 (PWA)
 =======================
 Build: 2025-09-06
 
-Cosa cambia rispetto alla v3
-- **Rimosso** il riquadro “Suggerimento” per iPhone.
-- **Header** compatto e fluido: niente blur/gradiente, padding top con **safe‑area** (Dynamic Island/Notch).
-- Migliore **fluidità**: meno effetti grafici e `-webkit-overflow-scrolling: touch` nelle liste.
-- Bottom nav più compatto con safe‑area aggiornata.
-- Bump cache SW → `biotos-crm-v4` per aggiornarsi subito.
+Cosa migliora rispetto alla v4
+- **Persistenza robusta**: dati salvati in **IndexedDB** (con fallback a LocalStorage). Non perdi nulla aprendo/chiudendo l’app o aggiornando.
+- **Navigazione adattiva**: top‑nav su desktop, bottom‑nav su smartphone. Padding e safe‑area per evitare sovrapposizioni.
+- **Tabelle con paginazione** (25/pg) per liste lunghe e scroll fluido su iOS (touch momentum).
+- **Leggibilità**: contrasto maggiore, input più chiari, font 17pt su iPhone.
+- **Bug‑fix**: header non sovrappone contenuti, sticky table header disattivato su mobile per evitare glitch.
+- **SW cache** aggiornata → `biotos-crm-v5` (autoupdate).
 
-Deploy con GitHub Pages
-1) Carica tutti i file nella root del repo (o nella cartella del sito).
-2) Settings → Pages → Deploy from a branch → main / (root).
-3) Apri l’URL con Safari → Condividi → Aggiungi a Home.
+Deploy
+1) Carica i file nel repo (root o cartella del sito).
+2) Abilita GitHub Pages.
+3) Apri l’URL con Safari/iPhone e aggiungi a Home (PWA).
 
 Note
-- I dati restano in locale (localStorage). Esegui backup periodici.
+- Backup/restore JSON e CSV sempre disponibili nella sezione **Dati**.
 - GDPR: inserire solo dati professionali.
