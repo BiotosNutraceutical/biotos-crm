@@ -1,0 +1,40 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Biotos CRM – Agenda</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head>
+<body data-page="agenda">
+<header><div class="wrap">
+  <h1><img src="icons/icon-192.png" alt=""> Agenda <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
+  <div class="topbar"><button id="btn_new_appt" class="btn primary">+ Appuntamento</button></div>
+</div></header>
+<main class="wrap">
+  <div class="pan">
+    <div class="row">
+      <div><label>Dal</label><input type="date" id="a_from"></div>
+      <div><label>Al</label><input type="date" id="a_to"></div>
+    </div>
+    <div id="cards_agenda" class="cards"></div>
+  </div>
+</main>
+
+<div class="sheet" id="sheet_appt"><div class="panel">
+  <button class="btn" onclick="document.querySelector('#sheet_appt').classList.remove('open')">✕ Chiudi</button>
+  <h3>Nuovo appuntamento</h3>
+  <div class="row"><div><label>Data *</label><input id="a_data" type="date"></div><div><label>Ora</label><input id="a_ora" type="time"></div></div>
+  <div class="row"><div><label>Titolo *</label><input id="a_tit"></div><div><label>Tipo</label><select id="a_tipo"><option>Medico</option><option>Farmacia</option></select></div><div><label>Rif.</label><select id="a_ref"></select></div></div>
+  <div class="row"><div><label>Note</label><input id="a_note"></div></div>
+  <div class="row"><button id="btn_save_appt" class="btn primary" type="button">Salva</button></div>
+</div></div>
+
+<nav class="bottomnav">
+  <a data-page="home" href="index.html">🏠 <span class="label">Home</span></a>
+  <a data-page="medici" href="medici.html">👩‍⚕️ <span class="label">Medici</span></a>
+  <a data-page="farmacie" href="farmacie.html">💊 <span class="label">Farmacie</span></a>
+  <a data-page="visite" href="visite.html">📝 <span class="label">Visite</span></a>
+  <a data-page="agenda" class="active" href="agenda.html">🗓️ <span class="label">Agenda</span></a>
+  <a data-page="followup" href="followup.html">⏰ <span class="label">F/U</span></a>
+  <a data-page="report" href="report.html">📈 <span class="label">Report</span></a>
+  <a data-page="settings" href="io.html">⚙️ <span class="label">Dati</span></a>
+</nav>
+<div class="toast"></div>
+<script src="app.js"></script>
+</body></html>
