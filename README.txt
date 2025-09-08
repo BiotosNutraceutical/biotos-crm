@@ -1,3 +1,3 @@
-Biotos CRM – v2.0
+Biotos CRM – v2.1
 
 Apri l’URL da Safari su iPhone -> Condividi -> Aggiungi a Home.
