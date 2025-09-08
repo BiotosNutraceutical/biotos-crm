@@ -1,14 +1,14 @@
 <!doctype html><html lang="it"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Biotos CRM – Home</title>
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b8f5c">
+<title>Biotos CRM v2.0 – Home</title>
+<meta name="theme-color" content="#0b8f5c"><link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="stylesheet" href="styles.css">
 </head><body data-page="home">
 <header><div class="wrap">
-  <h1><img src="icons/icon-192.png" alt=""> Biotos CRM <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
+  <h1><img src="icons/icon-192.png" alt=""> Biotos CRM <span class="savebadge" id="savebadge" aria-live="polite">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
 </div></header>
 <main class="wrap">
-  <section class="grid">
+  <section class="grid" aria-label="Dashboard">
     <div class="pan">
       <div class="row">
         <div><label>Medici</label><input id="k_medici" disabled></div>
@@ -17,11 +17,14 @@
         <div><label>Appuntamenti futuri</label><input id="k_appt" disabled></div>
       </div>
     </div>
-    <div class="pan"><h3 style="margin:0 0 6px">Prossime attività</h3><div id="cards_dash" class="cards"></div></div>
+    <div class="pan">
+      <h3 style="margin:0 0 6px">Prossime attività</h3>
+      <div id="cards_dash" class="cards"></div>
+    </div>
   </section>
 </main>
 
-<nav class="bottomnav">
+<nav class="bottomnav" aria-label="Sezioni">
   <a data-page="home" class="active" href="index.html">🏠 <span class="label">Home</span></a>
   <a data-page="medici" href="medici.html">👩‍⚕️ <span class="label">Medici</span></a>
   <a data-page="farmacie" href="farmacie.html">💊 <span class="label">Farmacie</span></a>
@@ -31,6 +34,6 @@
   <a data-page="report" href="report.html">📈 <span class="label">Report</span></a>
   <a data-page="settings" href="io.html">⚙️ <span class="label">Dati</span></a>
 </nav>
-<div class="toast"></div>
+<div class="toast" aria-live="polite"></div>
 <script src="app.js"></script>
 </body></html>
