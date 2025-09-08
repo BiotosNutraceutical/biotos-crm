@@ -1,17 +1,19 @@
-/* Biotos CRM v1.6 – shared app.js */
+/* Biotos CRM v2.0 – shared app.js (multi-pagina, mobile-first, PWA) */
+const APP_VERSION = '2.0';
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 function tISO(d=new Date()){ return new Date(d).toISOString().slice(0,10); }
 function uid(){ return 'id_'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4); }
 function slug(s){ return (s||'default').toLowerCase().replace(/[^a-z0-9]+/g,'-'); }
-function showToast(t){ const el=$('.toast'); if(!el) return; el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1600); }
+function showToast(t){ const el=$('.toast'); if(!el) return; el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1700); }
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
+window.addEventListener('error', e=>{ console.error(e.error||e.message); showToast('⚠︎ Errore inatteso'); });
 
-/* Debounce utility */
-function debounce(fn, wait=180){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
+/* Debounce */
+function debounce(fn, wait=160){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
 
 /* Profiles */
-let PROFILES = JSON.parse(localStorage.getItem('biotos:profiles')||'["default"]');
+let PROFILES = safeParse(localStorage.getItem('biotos:profiles'), ['default']);
 let CURRENT = localStorage.getItem('biotos:current') || PROFILES[0] || 'default';
 function saveProfiles(){ localStorage.setItem('biotos:profiles', JSON.stringify(Array.from(new Set(PROFILES)))); localStorage.setItem('biotos:current', CURRENT); }
 function setProfile(name){ CURRENT=name; saveProfiles(); location.reload(); }
@@ -24,18 +26,21 @@ function applyTheme(){
   document.documentElement.setAttribute('data-theme', theme);
 }
 
+/* Safe JSON parse */
+function safeParse(str, fallback){ try{ const v=JSON.parse(str); return (v==null?fallback:v); } catch{ return fallback; } }
+
 /* DB via IndexedDB */
 let medici=[], farmacie=[], visite=[], appuntamenti=[];
 let db=null, DBNAME=null;
 function idbOpen(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DBNAME,'1');
   r.onupgradeneeded=(e)=>{ const d=e.target.result;
-    d.createObjectStore('medici',{keyPath:'id'});
-    d.createObjectStore('farmacie',{keyPath:'id'});
-    d.createObjectStore('visite',{keyPath:'id'});
-    d.createObjectStore('appuntamenti',{keyPath:'id'});
+    if(!d.objectStoreNames.contains('medici')) d.createObjectStore('medici',{keyPath:'id'});
+    if(!d.objectStoreNames.contains('farmacie')) d.createObjectStore('farmacie',{keyPath:'id'});
+    if(!d.objectStoreNames.contains('visite')) d.createObjectStore('visite',{keyPath:'id'});
+    if(!d.objectStoreNames.contains('appuntamenti')) d.createObjectStore('appuntamenti',{keyPath:'id'});
   };
   r.onsuccess=()=>{ db=r.result; res(); };
-  r.onerror=()=>rej(r.error);
+  r.onerror=()=>rej(r.error||new Error('IndexedDB open error'));
 });}
 function idbLoadAll(store){ return new Promise((res)=>{ const tx=db.transaction(store,'readonly'); const os=tx.objectStore(store); const out=[];
   os.openCursor().onsuccess=(e)=>{ const c=e.target.result; if(c){ out.push(c.value); c.continue(); } else res(out); };
@@ -43,7 +48,7 @@ function idbLoadAll(store){ return new Promise((res)=>{ const tx=db.transaction(
 function idbClearAll(){ return Promise.all(['medici','farmacie','visite','appuntamenti'].map(store=>new Promise((res)=>{ const tx=db.transaction(store,'readwrite'); tx.objectStore(store).clear().onsuccess=()=>res(); }))); }
 function idbBulkPut(store, arr){ return new Promise((res)=>{ const tx=db.transaction(store,'readwrite'); const os=tx.objectStore(store); arr.forEach(x=>os.put(x)); tx.oncomplete=()=>res(); }); }
 async function saveAll(){
-  localStorage.setItem('biotos:'+CURRENT+':data', JSON.stringify({medici,farmacie,visite,appuntamenti}));
+  localStorage.setItem('biotos:'+CURRENT+':data', JSON.stringify({medici,farmacie,visite,appuntamenti, _v:APP_VERSION}));
   try{ if(db){ await idbClearAll(); await idbBulkPut('medici', medici); await idbBulkPut('farmacie', farmacie); await idbBulkPut('visite', visite); await idbBulkPut('appuntamenti', appuntamenti); }
     const sb=$('#savebadge'); if(sb) sb.textContent='Salvato ✓';
   }catch(err){ console.error(err); const sb=$('#savebadge'); if(sb) sb.textContent='⚠︎ Non salvato'; }
@@ -55,16 +60,13 @@ async function loadAll(){
     const m=await idbLoadAll('medici'); const f=await idbLoadAll('farmacie'); const v=await idbLoadAll('visite'); const a=await idbLoadAll('appuntamenti');
     if(m.length||f.length||v.length||a.length){ medici=m; farmacie=f; visite=v; appuntamenti=a; return; }
   }catch(_){}
-  try{ const j=JSON.parse(localStorage.getItem('biotos:'+CURRENT+':data')||'{}'); medici=j.medici||[]; farmacie=j.farmacie||[]; visite=j.visite||[]; appuntamenti=j.appuntamenti||[]; }catch(_){}
+  const j=safeParse(localStorage.getItem('biotos:'+CURRENT+':data'), {});
+  medici=j.medici||[]; farmacie=j.farmacie||[]; visite=j.visite||[]; appuntamenti=j.appuntamenti||[];
 }
 
 /* Common UI */
-function setActiveNav(page){
-  $$('.bottomnav a').forEach(a=>{ if(a.dataset.page===page) a.classList.add('active'); else a.classList.remove('active'); });
-}
-function populateProfileBadge(){
-  const pb=$('#profilebadge'); if(pb) pb.textContent='Profilo: '+CURRENT;
-}
+function setActiveNav(page){ $$('.bottomnav a').forEach(a=>{ if(a.dataset.page===page) a.classList.add('active'); else a.classList.remove('active'); }); }
+function populateProfileBadge(){ const pb=$('#profilebadge'); if(pb) pb.textContent='Profilo: '+CURRENT; }
 function ensureHeader(){
   const sb=$('#savebadge'); if(sb) sb.textContent='Salvato ✓';
   populateProfileBadge();
@@ -79,7 +81,7 @@ function ensureHeader(){
 function tagsStrToArr(s){ return (s||'').split(',').map(x=>x.trim()).filter(Boolean); }
 function collectTopTags(items, field){ const map=new Map(); items.forEach(it=> (it[field]||[]).forEach(t=> map.set(t,(map.get(t)||0)+1))); return Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,12).map(x=>x[0]); }
 function chips(container, tags, set, onToggle){
-  const el=$(container); if(!el) return; el.innerHTML=''; tags.forEach(t=>{ const b=document.createElement('button'); b.className='chip'+(set.has(t)?' on':''); b.textContent=t; b.onclick=()=>{ if(set.has(t)) set.delete(t); else set.add(t); onToggle(); }; el.appendChild(b); });
+  const el=$(container); if(!el) return; el.innerHTML=''; tags.forEach(t=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'+(set.has(t)?' on':''); b.textContent=t; b.onclick=()=>{ if(set.has(t)) set.delete(t); else set.add(t); onToggle(); }; el.appendChild(b); });
 }
 function refreshRefs(selectRef, includeBoth=true){
   const sel=$(selectRef); if(!sel) return; sel.innerHTML='';
@@ -100,7 +102,7 @@ function toCSV(arr, headers){
 }
 function fromCSV(text){
   const lines=text.split(/\r?\n/).filter(Boolean);
-  const hdr=lines.shift().split(',');
+  const hdr=(lines.shift()||'').split(',');
   const rows=lines.map(line=>{
     const out=[]; let cur='', q=false;
     for(let i=0;i<line.length;i++){
@@ -129,10 +131,13 @@ async function boot(page){
     $('#k_appt').value = appuntamenti.filter(a=>a.data>=tISO()).length;
     const list = appuntamenti.slice().sort((a,b)=> (a.data+a.ora).localeCompare(b.data+b.ora)).slice(0,8);
     $('#cards_dash').innerHTML = list.map(a=>`
-      <div class="card"><div class="main">
-        <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
-        <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
-      </div><a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}">→ Visita</a></div>`).join('');
+      <div class="card" role="article" aria-label="Appuntamento">
+        <div class="main">
+          <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
+          <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
+        </div>
+        <a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}" aria-label="Converti in visita">→ Visita</a>
+      </div>`).join('');
   }
 
   if(page==='medici'){
@@ -147,12 +152,14 @@ async function boot(page){
         && (!qs || m.spec===qs)
         && ([...M_TAGS].every(t=>(m.tag||[]).map(x=>x.toLowerCase()).includes(t.toLowerCase()))));
       $('#cards_medici').innerHTML = items.map(m=>`
-        <div class="card"><div class="main">
-          <div class="title">${m.tit||'Dott.'} ${m.cognome||''} ${m.nome||''} • <span class="meta">${m.spec||''}</span></div>
-          <div class="meta">${m.strutt||''} — ${m.comune||''}</div>
-          <div class="meta">${(m.tag||[]).join(', ')}</div>
-        </div>
-        <a class="btn" href="visite.html#new?tipo=Medico&ref=${encodeURIComponent(m.id)}">+ Visita</a></div>`).join('');
+        <div class="card" role="article" aria-label="Medico">
+          <div class="main">
+            <div class="title">${m.tit||'Dott.'} ${m.cognome||''} ${m.nome||''} • <span class="meta">${m.spec||''}</span></div>
+            <div class="meta">${m.strutt||''} — ${m.comune||''}</div>
+            <div class="meta">${(m.tag||[]).join(', ')}</div>
+          </div>
+          <a class="btn" href="visite.html#new?tipo=Medico&ref=${encodeURIComponent(m.id)}">+ Visita</a>
+        </div>`).join('');
       const top=collectTopTags(medici,'tag'); chips('#m_chips', top, M_TAGS, render);
     };
     const rDeb=debounce(render, 120);
@@ -180,12 +187,14 @@ async function boot(page){
         && (!qc || (f.comune||'').toLowerCase().includes(qc))
         && ([...F_TAGS].every(t=>(f.tag||[]).map(x=>x.toLowerCase()).includes(t.toLowerCase()))));
       $('#cards_farmacie').innerHTML = items.map(f=>`
-        <div class="card"><div class="main">
-          <div class="title">${f.ragione}</div>
-          <div class="meta">${f.comune||''} — ${f.dir||''}</div>
-          <div class="meta">${(f.tag||[]).join(', ')}</div>
-        </div>
-        <a class="btn" href="visite.html#new?tipo=Farmacia&ref=${encodeURIComponent(f.id)}">+ Visita</a></div>`).join('');
+        <div class="card" role="article" aria-label="Farmacia">
+          <div class="main">
+            <div class="title">${f.ragione}</div>
+            <div class="meta">${f.comune||''} — ${f.dir||''}</div>
+            <div class="meta">${(f.tag||[]).join(', ')}</div>
+          </div>
+          <a class="btn" href="visite.html#new?tipo=Farmacia&ref=${encodeURIComponent(f.id)}">+ Visita</a>
+        </div>`).join('');
       const top=collectTopTags(farmacie,'tag'); chips('#f_chips', top, F_TAGS, render);
     };
     const rDeb=debounce(render, 120);
@@ -225,14 +234,16 @@ async function boot(page){
         && ([...V_TAGS].every(t=>(v.tag||[]).map(x=>x.toLowerCase()).includes(t.toLowerCase()))))
         .slice().sort((a,b)=> (b.data).localeCompare(a.data));
       $('#cards_visite').innerHTML = items.map(v=>`
-        <div class="card"><div class="main">
-          <div class="title">${v.data} • ${v.tipo} • ${v.prod||'—'}</div>
-          <div class="meta">${v.esito||''} • ref:${v.ref||''} • FU:${v.follow||'-'} • FV/FL:${v.fv||0}/${v.fl||0}</div>
-          <div class="meta">${(v.tag||[]).join(', ')}</div>
-        </div>
-        <div class="actions">
-          ${v.follow?`<a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>`:''}
-        </div></div>`).join('');
+        <div class="card" role="article" aria-label="Visita">
+          <div class="main">
+            <div class="title">${v.data} • ${v.tipo} • ${v.prod||'—'}</div>
+            <div class="meta">${v.esito||''} • ref:${v.ref||''} • FU:${v.follow||'-'} • FV/FL:${v.fv||0}/${v.fl||0}</div>
+            <div class="meta">${(v.tag||[]).join(', ')}</div>
+          </div>
+          <div class="actions">
+            ${v.follow?`<a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>`:''}
+          </div>
+        </div>`).join('');
       const top=collectTopTags(visite,'tag'); chips('#v_chips', top, V_TAGS, render);
     };
     const rDeb=debounce(render, 120);
@@ -258,11 +269,13 @@ async function boot(page){
       const items=appuntamenti.filter(a=>(!af || a.data>=af)&&(!at || a.data<=at))
         .slice().sort((a,b)=> (a.data+a.ora).localeCompare(b.data+b.ora));
       $('#cards_agenda').innerHTML = items.map(a=>`
-        <div class="card"><div class="main">
-          <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
-          <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
-        </div>
-        <a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}">→ Visita</a></div>`).join('');
+        <div class="card" role="article" aria-label="Appuntamento">
+          <div class="main">
+            <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
+            <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
+          </div>
+          <a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}">→ Visita</a>
+        </div>`).join('');
     };
     const rDeb=debounce(render, 120);
     $$('#a_from,#a_to').forEach(el=>el.addEventListener('input', rDeb));
@@ -292,13 +305,24 @@ async function boot(page){
       const st=$('#fu_state').value; const now=tISO(); const soon=tISO(new Date(Date.now()+3*86400000));
       const items=visite.filter(v=>v.follow).filter(v=> st==='all' || (st==='over'&&v.follow<now) || (st==='soon'&&v.follow>=now&&v.follow<=soon) || (st==='future'&&v.follow>soon));
       $('#cards_follow').innerHTML = items.map(v=>`
-        <div class="card"><div class="main"><div class="title">${v.follow} • ${v.tipo}</div>
+        <div class="card" role="article" aria-label="Follow up">
+          <div class="main"><div class="title">${v.follow} • ${v.tipo}</div>
           <div class="meta">ref:${v.ref||''} • next:${v.next||'-'}</div></div>
           <div>
             <a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>
-          </div></div>`).join('');
+          </div>
+        </div>`).join('');
     };
     $('#fu_state').addEventListener('input', render);
+    $('#btn_exp_ics')?.addEventListener('click', ()=>{
+      const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Biotos CRM//FollowUp//IT'];
+      visite.filter(v=>v.follow).forEach(v=>{
+        const dt=v.follow.replace(/-/g,'')+'T090000';
+        lines.push('BEGIN:VEVENT','UID:'+v.id+'@biotos','DTSTAMP:'+dt,'DTSTART:'+dt,'SUMMARY:Follow-up '+v.tipo,'DESCRIPTION:ref '+(v.ref||''),'END:VEVENT');
+      });
+      lines.push('END:VCALENDAR');
+      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'})); a.download='followup_'+slug(CURRENT)+'.ics'; a.click();
+    });
     render();
   }
 
@@ -332,13 +356,14 @@ async function boot(page){
 
     // Backup/restore
     $('#btn_backup')?.addEventListener('click', ()=>{
-      const payload={exportedAt:new Date().toISOString(), version:'v1.6', profile:CURRENT, data:{medici,farmacie,visite,appuntamenti}};
+      const payload={exportedAt:new Date().toISOString(), version:'v'+APP_VERSION, profile:CURRENT, data:{medici,farmacie,visite,appuntamenti}};
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
       a.download='biotos_crm_'+slug(CURRENT)+'_backup.json'; a.click();
     });
     $('#inp_restore')?.addEventListener('change', e=>{
       const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=async()=>{ try{
-        const j=JSON.parse(rd.result); medici=j.data?.medici||[]; farmacie=j.data?.farmacie||[]; visite=j.data?.visite||[]; appuntamenti=j.data?.appuntamenti||[];
+        const j=safeParse(rd.result, null); if(!j) throw new Error('file');
+        medici=j.data?.medici||[]; farmacie=j.data?.farmacie||[]; visite=j.data?.visite||[]; appuntamenti=j.data?.appuntamenti||[];
         await saveAll(); showToast('Backup importato');
       }catch(_){ alert('File non valido'); } }; rd.readAsText(f);
     });
@@ -384,5 +409,5 @@ async function boot(page){
 
 document.addEventListener('DOMContentLoaded', ()=>{
   const page = document.body.dataset.page || 'home';
-  boot(page);
+  boot(page).catch(err=>{ console.error(err); showToast('⚠︎ Avvio fallito'); });
 });
