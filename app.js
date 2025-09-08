@@ -1,5 +1,5 @@
-/* Biotos CRM v2.0 – shared app.js (multi-pagina, mobile-first, PWA) */
-const APP_VERSION = '2.0';
+/* Biotos CRM v2.5 – hotfix + features */
+const APP_VERSION = '2.5';
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 function tISO(d=new Date()){ return new Date(d).toISOString().slice(0,10); }
@@ -78,19 +78,17 @@ function ensureHeader(){
 }
 
 /* Helpers */
-function tagsStrToArr(s){ return (s||'').split(',').map(x=>x.trim()).filter(Boolean); }
+function tagsStrToArr(s){ return (s||'').split(/[|,]/).map(x=>x.trim()).filter(Boolean); }
 function collectTopTags(items, field){ const map=new Map(); items.forEach(it=> (it[field]||[]).forEach(t=> map.set(t,(map.get(t)||0)+1))); return Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,12).map(x=>x[0]); }
-function chips(container, tags, set, onToggle){
-  const el=$(container); if(!el) return; el.innerHTML=''; tags.forEach(t=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'+(set.has(t)?' on':''); b.textContent=t; b.onclick=()=>{ if(set.has(t)) set.delete(t); else set.add(t); onToggle(); }; el.appendChild(b); });
-}
-function refreshRefs(selectRef, includeBoth=true){
-  const sel=$(selectRef); if(!sel) return; sel.innerHTML='';
-  if(includeBoth){
-    medici.forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=`Dr. ${m.cognome||''} ${m.nome||''}`; sel.appendChild(o); });
-    farmacie.forEach(f=>{ const o=document.createElement('option'); o.value=f.id; o.textContent=f.ragione; sel.appendChild(o); });
-  }else{
-    medici.forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=`Dr. ${m.cognome||''} ${m.nome||''}`; sel.appendChild(o); });
-  }
+
+/* Etichetta leggibile per ref */
+function refLabel(id){
+  if(!id) return '';
+  const m = medici.find(x=>x.id===id);
+  if(m) return `Dr. ${m.cognome||''} ${m.nome||''}`.trim();
+  const f = farmacie.find(x=>x.id===id);
+  if(f) return f.ragione || id;
+  return id;
 }
 
 /* CSV utils */
@@ -117,6 +115,10 @@ function fromCSV(text){
   return {headers:hdr, rows};
 }
 
+/* Open helpers (modali) */
+function openSheet(id){ $(id).classList.add('open'); }
+function closeSheet(id){ $(id).classList.remove('open'); }
+
 /* Page boot */
 async function boot(page){
   applyTheme();
@@ -124,6 +126,7 @@ async function boot(page){
   ensureHeader();
   setActiveNav(page);
 
+  /* HOME */
   if(page==='home'){
     $('#k_medici').value = medici.length;
     $('#k_farmacie').value = farmacie.length;
@@ -131,17 +134,34 @@ async function boot(page){
     $('#k_appt').value = appuntamenti.filter(a=>a.data>=tISO()).length;
     const list = appuntamenti.slice().sort((a,b)=> (a.data+a.ora).localeCompare(b.data+b.ora)).slice(0,8);
     $('#cards_dash').innerHTML = list.map(a=>`
-      <div class="card" role="article" aria-label="Appuntamento">
+      <div class="card">
         <div class="main">
           <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
-          <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
+          <div class="meta">${a.tipo}${a.ref?(' • '+refLabel(a.ref)) : ''}</div>
         </div>
         <a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}" aria-label="Converti in visita">→ Visita</a>
       </div>`).join('');
   }
 
+  /* MEDICI */
   if(page==='medici'){
     const M_TAGS=new Set();
+
+    function fillMedicoForm(m={}){
+      $('#m_id').value = m.id || '';
+      $('#m_tit').value = m.tit || 'Dott.';
+      $('#m_nome').value = m.nome || '';
+      $('#m_cognome').value = m.cognome || '';
+      $('#m_spec').value = m.spec || 'Ginecologia';
+      $('#m_strutt').value = m.strutt || '';
+      $('#m_comune').value = m.comune || '';
+      $('#m_tel').value = m.tel || '';
+      $('#m_email').value = m.email || '';
+      $('#m_tag').value = (m.tag||[]).join(', ');
+      $('#m_note').value = m.note || '';
+      $('#m_title').textContent = m.id ? 'Modifica medico' : 'Nuovo medico';
+    }
+
     const render=()=>{
       const q=($('#m_q')?.value||'').toLowerCase();
       const qc=($('#m_q_comune')?.value||'').toLowerCase();
@@ -152,33 +172,82 @@ async function boot(page){
         && (!qs || m.spec===qs)
         && ([...M_TAGS].every(t=>(m.tag||[]).map(x=>x.toLowerCase()).includes(t.toLowerCase()))));
       $('#cards_medici').innerHTML = items.map(m=>`
-        <div class="card" role="article" aria-label="Medico">
+        <div class="card" data-id="${m.id}">
           <div class="main">
             <div class="title">${m.tit||'Dott.'} ${m.cognome||''} ${m.nome||''} • <span class="meta">${m.spec||''}</span></div>
             <div class="meta">${m.strutt||''} — ${m.comune||''}</div>
             <div class="meta">${(m.tag||[]).join(', ')}</div>
           </div>
-          <a class="btn" href="visite.html#new?tipo=Medico&ref=${encodeURIComponent(m.id)}">+ Visita</a>
+          <div class="actions" style="display:flex;gap:6px">
+            <button class="btn" data-act="edit-med" data-id="${m.id}" title="Modifica">✎</button>
+            <button class="btn" data-act="del-med" data-id="${m.id}" title="Elimina">🗑</button>
+            <a class="btn" href="visite.html#new?tipo=Medico&ref=${encodeURIComponent(m.id)}">+ Visita</a>
+          </div>
         </div>`).join('');
-      const top=collectTopTags(medici,'tag'); chips('#m_chips', top, M_TAGS, render);
+      const top=collectTopTags(medici,'tag'); const set=M_TAGS; const container='#m_chips';
+      const el=$(container); if(el){ el.innerHTML=''; top.forEach(t=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'+(set.has(t)?' on':''); b.textContent=t; b.onclick=()=>{ if(set.has(t)) set.delete(t); else set.add(t); render(); }; el.appendChild(b); }); }
     };
+
     const rDeb=debounce(render, 120);
     $$('#m_q, #m_q_comune, #m_q_spec, #m_q_tag').forEach(el=>el.addEventListener('input', rDeb));
-    $('#btn_new_med')?.addEventListener('click', ()=> $('#sheet_medico').classList.add('open'));
+
+    $('#btn_new_med')?.addEventListener('click', ()=>{ fillMedicoForm({}); openSheet('#sheet_medico'); });
+
     $('#btn_save_medico')?.addEventListener('click', async (ev)=>{
       ev.preventDefault();
       const nome=$('#m_nome').value.trim(), cognome=$('#m_cognome').value.trim();
       if(!nome||!cognome) return alert('Nome e Cognome obbligatori');
-      medici.unshift({id:uid(), tit:$('#m_tit').value, nome, cognome, spec:$('#m_spec').value, strutt:($('#m_strutt').value||'').trim(),
+
+      const id = $('#m_id').value.trim();
+      const payload = {id: id || uid(), tit:$('#m_tit').value, nome, cognome, spec:$('#m_spec').value, strutt:($('#m_strutt').value||'').trim(),
         comune:($('#m_comune').value||'').trim(), tel:($('#m_tel').value||'').trim(), email:($('#m_email').value||'').trim(),
-        tag:tagsStrToArr($('#m_tag').value), note:($('#m_note').value||'').trim()});
-      await saveAll(); $('#sheet_medico').classList.remove('open'); render(); showToast('Medico salvato');
+        tag:tagsStrToArr($('#m_tag').value), note:($('#m_note').value||'').trim()};
+
+      if(id){
+        const ix = medici.findIndex(x=>x.id===id);
+        if(ix>=0) medici[ix]=payload;
+      }else{
+        medici.unshift(payload);
+      }
+      await saveAll();
+      closeSheet('#sheet_medico');
+      fillMedicoForm({}); // campi liberi al prossimo “Nuovo”
+      render(); showToast('Medico salvato');
     });
+
+    // Deleghe Modifica/Elimina
+    $('#cards_medici')?.addEventListener('click', (e)=>{
+      const btn=e.target.closest('button');
+      if(!btn) return;
+      const id=btn.dataset.id, act=btn.dataset.act;
+      const m=medici.find(x=>x.id===id);
+      if(!m) return;
+      if(act==='edit-med'){ fillMedicoForm(m); openSheet('#sheet_medico'); }
+      if(act==='del-med'){
+        if(confirm('Eliminare questo medico?')){ medici=medici.filter(x=>x.id!==id); saveAll().then(()=>{ render(); showToast('Medico eliminato'); }); }
+      }
+    });
+
     render();
   }
 
+  /* FARMACIE */
   if(page==='farmacie'){
     const F_TAGS=new Set();
+
+    function fillFarForm(f={}){
+      $('#f_id').value = f.id || '';
+      $('#f_ragione').value = f.ragione || '';
+      $('#f_dir').value = f.dir || '';
+      $('#f_comune').value = f.comune || '';
+      $('#f_tel').value = f.tel || '';
+      $('#f_email').value = f.email || '';
+      $('#f_tag').value = (f.tag||[]).join(', ');
+      $('#f_addr').value = f.addr || '';
+      $('#f_note').value = f.note || '';
+      $('#f_title').textContent = f.id ? 'Modifica farmacia' : 'Nuova farmacia';
+    }
+
     const render=()=>{
       const q=($('#f_q')?.value||'').toLowerCase();
       const qc=($('#f_q_comune')?.value||'').toLowerCase();
@@ -187,39 +256,89 @@ async function boot(page){
         && (!qc || (f.comune||'').toLowerCase().includes(qc))
         && ([...F_TAGS].every(t=>(f.tag||[]).map(x=>x.toLowerCase()).includes(t.toLowerCase()))));
       $('#cards_farmacie').innerHTML = items.map(f=>`
-        <div class="card" role="article" aria-label="Farmacia">
+        <div class="card" data-id="${f.id}">
           <div class="main">
             <div class="title">${f.ragione}</div>
             <div class="meta">${f.comune||''} — ${f.dir||''}</div>
             <div class="meta">${(f.tag||[]).join(', ')}</div>
           </div>
-          <a class="btn" href="visite.html#new?tipo=Farmacia&ref=${encodeURIComponent(f.id)}">+ Visita</a>
+          <div class="actions" style="display:flex;gap:6px">
+            <button class="btn" data-act="edit-far" data-id="${f.id}" title="Modifica">✎</button>
+            <button class="btn" data-act="del-far" data-id="${f.id}" title="Elimina">🗑</button>
+            <a class="btn" href="visite.html#new?tipo=Farmacia&ref=${encodeURIComponent(f.id)}">+ Visita</a>
+          </div>
         </div>`).join('');
-      const top=collectTopTags(farmacie,'tag'); chips('#f_chips', top, F_TAGS, render);
+      const top=collectTopTags(farmacie,'tag'); const set=F_TAGS; const container='#f_chips';
+      const el=$(container); if(el){ el.innerHTML=''; top.forEach(t=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'+(set.has(t)?' on':''); b.textContent=t; b.onclick=()=>{ if(set.has(t)) set.delete(t); else set.add(t); render(); }; el.appendChild(b); }); }
     };
+
     const rDeb=debounce(render, 120);
     $$('#f_q, #f_q_comune, #f_q_tag').forEach(el=>el.addEventListener('input', rDeb));
-    $('#btn_new_far')?.addEventListener('click', ()=> $('#sheet_farmacia').classList.add('open'));
+
+    $('#btn_new_far')?.addEventListener('click', ()=>{ fillFarForm({}); openSheet('#sheet_farmacia'); });
+
     $('#btn_save_farmacia')?.addEventListener('click', async (ev)=>{
       ev.preventDefault();
       const ragione=$('#f_ragione').value.trim(); if(!ragione) return alert('Ragione sociale obbligatoria');
-      farmacie.unshift({id:uid(), ragione, dir:($('#f_dir').value||'').trim(), comune:($('#f_comune').value||'').trim(),
+
+      const id = $('#f_id').value.trim();
+      const payload = {id: id || uid(), ragione, dir:($('#f_dir').value||'').trim(), comune:($('#f_comune').value||'').trim(),
         tel:($('#f_tel').value||'').trim(), email:($('#f_email').value||'').trim(), tag:tagsStrToArr($('#f_tag').value),
-        addr:($('#f_addr').value||'').trim(), note:($('#f_note').value||'').trim()});
-      await saveAll(); $('#sheet_farmacia').classList.remove('open'); render(); showToast('Farmacia salvata');
+        addr:($('#f_addr').value||'').trim(), note:($('#f_note').value||'').trim()};
+
+      if(id){
+        const ix=farmacie.findIndex(x=>x.id===id);
+        if(ix>=0) farmacie[ix]=payload;
+      }else{
+        farmacie.unshift(payload);
+      }
+      await saveAll();
+      closeSheet('#sheet_farmacia');
+      fillFarForm({}); // campi liberi
+      render(); showToast('Farmacia salvata');
     });
+
+    // Deleghe Modifica/Elimina
+    $('#cards_farmacie')?.addEventListener('click', (e)=>{
+      const btn=e.target.closest('button');
+      if(!btn) return;
+      const id=btn.dataset.id, act=btn.dataset.act;
+      const f=farmacie.find(x=>x.id===id);
+      if(!f) return;
+      if(act==='edit-far'){ fillFarForm(f); openSheet('#sheet_farmacia'); }
+      if(act==='del-far'){
+        if(confirm('Eliminare questa farmacia?')){ farmacie=farmacie.filter(x=>x.id!==id); saveAll().then(()=>{ render(); showToast('Farmacia eliminata'); }); }
+      }
+    });
+
     render();
   }
 
+  /* VISITE */
   if(page==='visite'){
     const hash = location.hash || '';
     const qstr = hash.includes('?') ? hash.split('?')[1] : '';
     const params = new URLSearchParams(qstr);
-    refreshRefs('#v_ref', true);
+
+    const refSel = $('#v_ref');
+
+    function refreshRefs(){
+      refSel.innerHTML='';
+      medici.forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=`Dr. ${m.cognome||''} ${m.nome||''}`; refSel.appendChild(o); });
+      farmacie.forEach(f=>{ const o=document.createElement('option'); o.value=f.id; o.textContent=f.ragione; refSel.appendChild(o); });
+    }
+    refreshRefs();
+
     if(params.get('from')){
       const id = params.get('from');
       const a = appuntamenti.find(x=>x.id===id);
-      if(a){ $('#v_data').value=a.data; $('#v_tipo').value=a.tipo; $('#v_ref').value=a.ref||''; $('#v_next').value='Dopo appuntamento'; }
+      if(a){
+        $('#v_data').value=a.data;
+        $('#v_tipo').value=a.tipo;
+        $('#v_ref').value=a.ref||'';
+        $('#v_next').value='Dopo appuntamento';
+        openSheet('#sheet_visita'); // ← apre direttamente il modulo
+      }
     }else{
       if(params.get('tipo')) $('#v_tipo').value=params.get('tipo');
       if(params.get('ref')) $('#v_ref').value=params.get('ref');
@@ -234,22 +353,22 @@ async function boot(page){
         && ([...V_TAGS].every(t=>(v.tag||[]).map(x=>x.toLowerCase()).includes(t.toLowerCase()))))
         .slice().sort((a,b)=> (b.data).localeCompare(a.data));
       $('#cards_visite').innerHTML = items.map(v=>`
-        <div class="card" role="article" aria-label="Visita">
+        <div class="card">
           <div class="main">
             <div class="title">${v.data} • ${v.tipo} • ${v.prod||'—'}</div>
-            <div class="meta">${v.esito||''} • ref:${v.ref||''} • FU:${v.follow||'-'} • FV/FL:${v.fv||0}/${v.fl||0}</div>
+            <div class="meta">${v.esito||''} • ${refLabel(v.ref)||''} • FU:${v.follow||'-'} • FV/FL:${v.fv||0}/${v.fl||0}</div>
             <div class="meta">${(v.tag||[]).join(', ')}</div>
           </div>
-          <div class="actions">
-            ${v.follow?`<a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>`:''}
-          </div>
+          ${v.follow?`<a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>`:''}
         </div>`).join('');
-      const top=collectTopTags(visite,'tag'); chips('#v_chips', top, V_TAGS, render);
+      const top=collectTopTags(visite,'tag'); const set=V_TAGS; const container='#v_chips';
+      const el=$(container); if(el){ el.innerHTML=''; top.forEach(t=>{ const b=document.createElement('button'); b.type='button'; b.className='chip'+(set.has(t)?' on':''); b.textContent=t; b.onclick=()=>{ if(set.has(t)) set.delete(t); else set.add(t); render(); }; el.appendChild(b); }); }
     };
     const rDeb=debounce(render, 120);
     $$('#v_q_from,#v_q_to,#v_q_tipo,#v_q_tag').forEach(el=>el.addEventListener('input', rDeb));
 
-    $('#btn_new_vis')?.addEventListener('click', ()=> $('#sheet_visita').classList.add('open'));
+    $('#btn_new_vis')?.addEventListener('click', ()=> openSheet('#sheet_visita'));
+
     $('#btn_save_visita')?.addEventListener('click', async (ev)=>{
       ev.preventDefault();
       const data=$('#v_data').value||tISO(), tipo=$('#v_tipo').value, ref=$('#v_ref').value||'';
@@ -257,60 +376,81 @@ async function boot(page){
       visite.unshift({ id:uid(), data, tipo, ref, prod:$('#v_prod').value, esito:$('#v_esito').value, refe:$('#v_refe').value,
         mat:($('#v_mat').value||'').trim(), next:($('#v_next').value||'').trim(), follow:$('#v_follow').value||'',
         fv:+($('#v_fv').value||0), fl:+($('#v_fl').value||0), tag:tagsStrToArr($('#v_tag').value), note:($('#v_note').value||'').trim() });
-      await saveAll(); $('#sheet_visita').classList.remove('open'); render(); showToast('Visita salvata');
+      await saveAll();
+      closeSheet('#sheet_visita');
+      // reset campi per nuovo inserimento
+      $('#v_data').value=tISO(); $('#v_tipo').value='Medico'; refreshRefs();
+      $('#v_prod').value='FV'; $('#v_esito').value='Incontro svolto'; $('#v_refe').value='Stefano';
+      $('#v_mat').value=''; $('#v_next').value=''; $('#v_follow').value=''; $('#v_fv').value=0; $('#v_fl').value=0; $('#v_tag').value=''; $('#v_note').value='';
+      render(); showToast('Visita salvata');
     });
+
     render();
   }
 
+  /* AGENDA */
   if(page==='agenda'){
-    refreshRefs('#a_ref', true);
+    const refSel = $('#a_ref');
+    function refreshRefs(){
+      refSel.innerHTML='';
+      medici.forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=`Dr. ${m.cognome||''} ${m.nome||''}`; refSel.appendChild(o); });
+      farmacie.forEach(f=>{ const o=document.createElement('option'); o.value=f.id; o.textContent=f.ragione; refSel.appendChild(o); });
+    }
+    refreshRefs();
+
     const render=()=>{
       const af=$('#a_from').value, at=$('#a_to').value;
       const items=appuntamenti.filter(a=>(!af || a.data>=af)&&(!at || a.data<=at))
         .slice().sort((a,b)=> (a.data+a.ora).localeCompare(b.data+b.ora));
       $('#cards_agenda').innerHTML = items.map(a=>`
-        <div class="card" role="article" aria-label="Appuntamento">
+        <div class="card">
           <div class="main">
             <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
-            <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
+            <div class="meta">${a.tipo}${a.ref?(' • '+refLabel(a.ref)) : ''}</div>
           </div>
           <a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}">→ Visita</a>
         </div>`).join('');
     };
     const rDeb=debounce(render, 120);
     $$('#a_from,#a_to').forEach(el=>el.addEventListener('input', rDeb));
-    $('#btn_new_appt')?.addEventListener('click', ()=> $('#sheet_appt').classList.add('open'));
+
+    $('#btn_new_appt')?.addEventListener('click', ()=> openSheet('#sheet_appt'));
+
     $('#btn_save_appt')?.addEventListener('click', async (ev)=>{
       ev.preventDefault();
       const data=$('#a_data').value||tISO(), ora=$('#a_ora').value||'', tit=($('#a_tit').value||'Appuntamento').trim();
       if(!data||!tit) return alert('Data e Titolo obbligatori');
       appuntamenti.unshift({id:uid(), data, ora, tit, tipo:$('#a_tipo').value, ref:$('#a_ref').value||'', note:($('#a_note').value||'').trim()});
-      await saveAll(); $('#sheet_appt').classList.remove('open'); render(); showToast('Appuntamento salvato');
+      await saveAll();
+      closeSheet('#sheet_appt');
+      // reset per nuovo
+      $('#a_data').value=''; $('#a_ora').value=''; $('#a_tit').value=''; $('#a_tipo').value='Medico'; refreshRefs(); $('#a_note').value='';
+      render(); showToast('Appuntamento salvato');
     });
 
-    /* hash pre-compilazione da followup */
     const hash = location.hash || '';
     if(hash.startsWith('#new?')){
       const p = new URLSearchParams(hash.substring(5));
       if(p.get('date')) $('#a_data').value = p.get('date');
       if(p.get('tipo')) $('#a_tipo').value = p.get('tipo');
       if(p.get('ref')) $('#a_ref').value = p.get('ref');
-      $('#sheet_appt').classList.add('open');
+      openSheet('#sheet_appt');
     }
     render();
   }
 
+  /* FOLLOW-UP */
   if(page==='followup'){
     const render=()=>{
       const st=$('#fu_state').value; const now=tISO(); const soon=tISO(new Date(Date.now()+3*86400000));
       const items=visite.filter(v=>v.follow).filter(v=> st==='all' || (st==='over'&&v.follow<now) || (st==='soon'&&v.follow>=now&&v.follow<=soon) || (st==='future'&&v.follow>soon));
       $('#cards_follow').innerHTML = items.map(v=>`
-        <div class="card" role="article" aria-label="Follow up">
-          <div class="main"><div class="title">${v.follow} • ${v.tipo}</div>
-          <div class="meta">ref:${v.ref||''} • next:${v.next||'-'}</div></div>
-          <div>
-            <a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>
+        <div class="card">
+          <div class="main">
+            <div class="title">${v.follow} • ${v.tipo}</div>
+            <div class="meta">${refLabel(v.ref)||''} • next:${v.next||'-'}</div>
           </div>
+          <a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>
         </div>`).join('');
     };
     $('#fu_state').addEventListener('input', render);
@@ -318,7 +458,8 @@ async function boot(page){
       const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Biotos CRM//FollowUp//IT'];
       visite.filter(v=>v.follow).forEach(v=>{
         const dt=v.follow.replace(/-/g,'')+'T090000';
-        lines.push('BEGIN:VEVENT','UID:'+v.id+'@biotos','DTSTAMP:'+dt,'DTSTART:'+dt,'SUMMARY:Follow-up '+v.tipo,'DESCRIPTION:ref '+(v.ref||''),'END:VEVENT');
+        lines.push('BEGIN:VEVENT','UID:'+v.id+'@biotos','DTSTAMP:'+dt,'DTSTART:'+dt,'SUMMARY:Follow-up '+v.tipo+' - '+(refLabel(v.ref)||''),
+        'DESCRIPTION: next '+(v.next||'-'),'END:VEVENT');
       });
       lines.push('END:VCALENDAR');
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'})); a.download='followup_'+slug(CURRENT)+'.ics'; a.click();
@@ -326,6 +467,7 @@ async function boot(page){
     render();
   }
 
+  /* REPORT */
   if(page==='report'){
     const render=()=>{
       const month=$('#r_month').value || tISO().slice(0,7);
@@ -336,15 +478,15 @@ async function boot(page){
       $('#rk_fu').value = inMonth.filter(v=>v.follow).length;
       const sumFV=inMonth.reduce((s,v)=>s+(+v.fv||0),0), sumFL=inMonth.reduce((s,v)=>s+(+v.fl||0),0);
       $('#rk_ord').value = sumFV+'/'+sumFL;
-      $('#cards_rep').innerHTML = inMonth.map(v=>`<div class="card"><div class="main"><div class="title">${v.data} • ${v.tipo} ${v.prod||''}</div><div class="meta">${v.esito||''} • FV/FL:${v.fv||0}/${v.fl||0} • tag:${(v.tag||[]).join(',')}</div></div></div>`).join('');
+      $('#cards_rep').innerHTML = inMonth.map(v=>`<div class="card"><div class="main"><div class="title">${v.data} • ${v.tipo} ${v.prod||''}</div><div class="meta">${refLabel(v.ref)||''} • ${v.esito||''} • FV/FL:${v.fv||0}/${v.fl||0} • tag:${(v.tag||[]).join(',')}</div></div></div>`).join('');
     };
     const rDeb=debounce(render, 120);
     $$('#r_month,#r_refe').forEach(el=>el.addEventListener('input', rDeb));
     render();
   }
 
+  /* SETTINGS */
   if(page==='settings'){
-    // Profili
     const sel=$('#profileSel');
     if(sel){ sel.innerHTML=''; PROFILES.forEach(p=>{ const o=document.createElement('option'); o.value=p; o.textContent=p; if(p===CURRENT) o.selected=true; sel.appendChild(o); });
       sel.addEventListener('change', e=> setProfile(e.target.value));
@@ -368,7 +510,7 @@ async function boot(page){
       }catch(_){ alert('File non valido'); } }; rd.readAsText(f);
     });
 
-    // Export
+    // Export/Import CSV
     $('#exp_med')?.addEventListener('click', ()=>{
       const csv = toCSV(medici, ['id','tit','nome','cognome','spec','strutt','comune','tel','email','tag','note']);
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='medici_'+slug(CURRENT)+'.csv'; a.click();
@@ -381,25 +523,23 @@ async function boot(page){
       const csv = toCSV(visite, ['id','data','tipo','ref','prod','esito','refe','mat','next','follow','fv','fl','tag','note']);
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='visite_'+slug(CURRENT)+'.csv'; a.click();
     });
-
-    // Import
     $('#imp_med')?.addEventListener('change', async e=>{
       const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=async()=>{ const {rows}=fromCSV(rd.result);
-        rows.forEach(r=>{ r.tag = (r.tag? r.tag.split(',').map(s=>s.trim()).filter(Boolean):[]); });
+        rows.forEach(r=>{ r.tag = (r.tag? r.tag.split(/[|,]/).map(s=>s.trim()).filter(Boolean):[]); });
         medici = rows.map(r=>Object.assign({id:r.id||uid()}, r));
         await saveAll(); showToast('Medici importati');
       }; rd.readAsText(f);
     });
     $('#imp_far')?.addEventListener('change', async e=>{
       const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=async()=>{ const {rows}=fromCSV(rd.result);
-        rows.forEach(r=>{ r.tag = (r.tag? r.tag.split(',').map(s=>s.trim()).filter(Boolean):[]); });
+        rows.forEach(r=>{ r.tag = (r.tag? r.tag.split(/[|,]/).map(s=>s.trim()).filter(Boolean):[]); });
         farmacie = rows.map(r=>Object.assign({id:r.id||uid()}, r));
         await saveAll(); showToast('Farmacie importate');
       }; rd.readAsText(f);
     });
     $('#imp_vis')?.addEventListener('change', async e=>{
       const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=async()=>{ const {rows}=fromCSV(rd.result);
-        rows.forEach(r=>{ r.fv=+r.fv||0; r.fl=+r.fl||0; r.tag = (r.tag? r.tag.split(',').map(s=>s.trim()).filter(Boolean):[]); });
+        rows.forEach(r=>{ r.fv=+r.fv||0; r.fl=+r.fl||0; r.tag = (r.tag? r.tag.split(/[|,]/).map(s=>s.trim()).filter(Boolean):[]); });
         visite = rows.map(r=>Object.assign({id:r.id||uid()}, r));
         await saveAll(); showToast('Visite importate');
       }; rd.readAsText(f);
