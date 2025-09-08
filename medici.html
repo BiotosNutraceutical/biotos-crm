@@ -1,6 +1,6 @@
 <!doctype html><html lang="it"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Biotos CRM v2.0 – Medici</title><meta name="theme-color" content="#0b8f5c">
+<title>Biotos CRM v2.5 – Medici</title><meta name="theme-color" content="#0b8f5c">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="stylesheet" href="styles.css">
 </head><body data-page="medici">
 <header><div class="wrap">
@@ -24,7 +24,8 @@
 
 <div class="sheet" id="sheet_medico" aria-modal="true" role="dialog"><div class="panel">
   <button type="button" class="btn" onclick="document.querySelector('#sheet_medico').classList.remove('open')">✕ Chiudi</button>
-  <h3>Nuovo medico</h3>
+  <h3 id="m_title">Nuovo medico</h3>
+  <input type="hidden" id="m_id">
   <div class="row">
     <div><label>Titolo</label><select id="m_tit"><option>Dott.</option><option>Dott.ssa</option><option>Prof.</option></select></div>
     <div><label>Nome *</label><input id="m_nome" required></div>
