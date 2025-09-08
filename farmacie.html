@@ -1,6 +1,6 @@
 <!doctype html><html lang="it"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Biotos CRM v2.0 – Farmacie</title><meta name="theme-color" content="#0b8f5c">
+<title>Biotos CRM v2.5 – Farmacie</title><meta name="theme-color" content="#0b8f5c">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="stylesheet" href="styles.css">
 </head><body data-page="farmacie">
 <header><div class="wrap">
@@ -23,7 +23,8 @@
 
 <div class="sheet" id="sheet_farmacia" aria-modal="true" role="dialog"><div class="panel">
   <button type="button" class="btn" onclick="document.querySelector('#sheet_farmacia').classList.remove('open')">✕ Chiudi</button>
-  <h3>Nuova farmacia</h3>
+  <h3 id="f_title">Nuova farmacia</h3>
+  <input type="hidden" id="f_id">
   <div class="row"><div><label>Ragione sociale *</label><input id="f_ragione" required></div><div><label>Direttore</label><input id="f_dir"></div><div><label>Comune</label><input id="f_comune"></div></div>
   <div class="row"><div><label>Telefono</label><input id="f_tel" inputmode="tel"></div><div><label>Email</label><input id="f_email" autocapitalize="none" inputmode="email"></div><div><label>Tag</label><input id="f_tag" placeholder="es. FV, vetrina"></div></div>
   <div class="row"><div><label>Indirizzo</label><input id="f_addr"></div><div><label>Note</label><input id="f_note"></div></div>
