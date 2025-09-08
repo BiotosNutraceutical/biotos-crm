@@ -5,12 +5,11 @@
 <body data-page="medici">
 <header><div class="wrap">
   <h1><img src="icons/icon-192.png" alt=""> Medici <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
-  <div class="topbar">
+  <div class="topbar smallgap">
     <input id="m_q" type="search" placeholder="Cerca medico...">
     <button id="btn_new_med" class="btn primary">+ Medico</button>
   </div>
 </div></header>
-
 <main class="wrap">
   <div class="pan">
     <div class="row">
@@ -25,7 +24,7 @@
 
 <!-- Sheet nuovo medico -->
 <div class="sheet" id="sheet_medico"><div class="panel">
-  <button class="btn" onclick="document.querySelector('#sheet_medico').classList.remove('open')">✕ Chiudi</button>
+  <button type="button" class="btn" onclick="document.querySelector('#sheet_medico').classList.remove('open')">✕ Chiudi</button>
   <h3>Nuovo medico</h3>
   <div class="row">
     <div><label>Titolo</label><select id="m_tit"><option>Dott.</option><option>Dott.ssa</option><option>Prof.</option></select></div>
@@ -43,7 +42,7 @@
     <div><label>Tag</label><input id="m_tag" placeholder="es. top, FV"></div>
   </div>
   <div class="row"><div><label>Note</label><textarea id="m_note"></textarea></div></div>
-  <div class="row"><button id="btn_save_medico" class="btn primary" type="button">Salva</button></div>
+ <div class="row"><button id="btn_save_medico" class="btn primary" type="button">Salva</button></div>
 </div></div>
 
 <nav class="bottomnav">
