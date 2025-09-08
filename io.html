@@ -1,7 +1,8 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Biotos CRM – Dati & Impostazioni</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head>
-<body data-page="settings">
+<!doctype html><html lang="it"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Biotos CRM v2.0 – Impostazioni & Dati</title><meta name="theme-color" content="#0b8f5c">
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
+</head><body data-page="settings">
 <header><div class="wrap">
   <h1><img src="icons/icon-192.png" alt=""> Impostazioni & Dati <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
 </div></header>
@@ -17,25 +18,25 @@
     <div class="row">
       <div><label>Profilo corrente</label><select id="profileSel"></select></div>
       <div><label>Nuovo profilo</label><input id="profileNew" placeholder="es. Mariangela"></div>
-      <div><label>&nbsp;</label><button class="btn" id="btn_add_profile">+ Crea profilo</button></div>
+      <div><label>&nbsp;</label><button class="btn" id="btn_add_profile" type="button">+ Crea profilo</button></div>
     </div>
   </div>
 
   <div class="pan">
-    <h3 style="margin:0 8px 8px">Backup & Export</h3>
+    <h3 style="margin:0 8px 8px">Backup & CSV</h3>
     <div class="row">
-      <div><label>Backup completo</label><button id="btn_backup" class="btn">⬇️ Backup JSON</button></div>
-      <div><label>Ripristina</label><label class="btn" for="inp_restore">⬆️ Import JSON</label><input id="inp_restore" type="file" accept="application/json" style="display:none"></div>
+      <div><label>Backup completo</label><button id="btn_backup" class="btn" type="button">⬇️ Backup JSON</button></div>
+      <div><label>Ripristina backup</label><label class="btn" for="inp_restore">⬆️ Import JSON</label><input id="inp_restore" type="file" accept="application/json" style="display:none"></div>
     </div>
     <div class="row">
-      <div><label>CSV Medici</label><button id="exp_med" class="btn">⬇️ Export</button></div>
-      <div><label>CSV Farmacie</label><button id="exp_far" class="btn">⬇️ Export</button></div>
-      <div><label>CSV Visite</label><button id="exp_vis" class="btn">⬇️ Export</button></div>
+      <div><label>CSV Medici</label><button id="exp_med" class="btn" type="button">⬇️ Export</button> <label class="btn" for="imp_med">⬆️ Import</label><input id="imp_med" type="file" accept=".csv,text/csv" style="display:none"></div>
+      <div><label>CSV Farmacie</label><button id="exp_far" class="btn" type="button">⬇️ Export</button> <label class="btn" for="imp_far">⬆️ Import</label><input id="imp_far" type="file" accept=".csv,text/csv" style="display:none"></div>
+      <div><label>CSV Visite</label><button id="exp_vis" class="btn" type="button">⬇️ Export</button> <label class="btn" for="imp_vis">⬆️ Import</label><input id="imp_vis" type="file" accept=".csv,text/csv" style="display:none"></div>
     </div>
   </div>
 </main>
 
-<nav class="bottomnav">
+<nav class="bottomnav" aria-label="Sezioni">
   <a data-page="home" href="index.html">🏠 <span class="label">Home</span></a>
   <a data-page="medici" href="medici.html">👩‍⚕️ <span class="label">Medici</span></a>
   <a data-page="farmacie" href="farmacie.html">💊 <span class="label">Farmacie</span></a>
@@ -45,6 +46,6 @@
   <a data-page="report" href="report.html">📈 <span class="label">Report</span></a>
   <a data-page="settings" class="active" href="io.html">⚙️ <span class="label">Dati</span></a>
 </nav>
-<div class="toast"></div>
+<div class="toast" aria-live="polite"></div>
 <script src="app.js"></script>
 </body></html>
