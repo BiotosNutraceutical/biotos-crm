@@ -1,7 +1,7 @@
 {
   "name": "Biotos CRM – Field App",
   "short_name": "Biotos CRM",
-  "description": "CRM per medici/farmacie: visite, agenda, follow-up, report. Profili multi-account. Offline.",
+  "description": "CRM per medici/farmacie: visite, agenda, follow-up, report; profili multi-account; offline.",
   "display": "standalone",
   "start_url": "./index.html",
   "scope": "./",
