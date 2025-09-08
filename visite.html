@@ -1,0 +1,51 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Biotos CRM – Visite</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head>
+<body data-page="visite">
+<header><div class="wrap">
+  <h1><img src="icons/icon-192.png" alt=""> Visite <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
+  <div class="topbar">
+    <button id="btn_new_vis" class="btn primary">+ Visita</button>
+  </div>
+</div></header>
+<main class="wrap">
+  <div class="pan">
+    <div class="row">
+      <div><label>Dal</label><input type="date" id="v_q_from"></div>
+      <div><label>Al</label><input type="date" id="v_q_to"></div>
+      <div><label>Tipo</label><select id="v_q_tipo"><option value="">Tutti</option><option>Medico</option><option>Farmacia</option></select></div>
+      <div><label>Tag</label><input id="v_q_tag" placeholder="es. FU, demo"></div>
+    </div>
+    <div id="v_chips" class="chips"></div>
+    <div id="cards_visite" class="cards"></div>
+  </div>
+</main>
+
+<div class="sheet" id="sheet_visita"><div class="panel">
+  <button class="btn" onclick="document.querySelector('#sheet_visita').classList.remove('open')">✕ Chiudi</button>
+  <h3>Nuova visita</h3>
+  <div class="row"><div><label>Data *</label><input id="v_data" type="date"></div>
+  <div><label>Tipo *</label><select id="v_tipo"><option>Medico</option><option>Farmacia</option></select></div>
+  <div><label>Riferimento *</label><select id="v_ref"></select></div></div>
+  <div class="row"><div><label>Prodotti</label><select id="v_prod"><option>FV</option><option>FL</option><option>Entrambi</option><option>—</option></select></div>
+  <div><label>Esito</label><select id="v_esito"><option>Incontro svolto</option><option>Rifiutato</option><option>Assente</option><option>Solo materiale</option><option>Nuovo contatto</option></select></div>
+  <div><label>Referente</label><select id="v_refe"><option>Stefano</option><option>Mariangela</option></select></div></div>
+  <div class="row"><div><label>Materiale</label><input id="v_mat"></div><div><label>Next step</label><input id="v_next"></div><div><label>Follow-up</label><input id="v_follow" type="date"></div></div>
+  <div class="row"><div><label>Ordini stimati FV</label><input id="v_fv" type="number" min="0" value="0"></div><div><label>Ordini stimati FL</label><input id="v_fl" type="number" min="0" value="0"></div><div><label>Tag</label><input id="v_tag" placeholder="es. FV demo"></div></div>
+  <div class="row"><div><label>Note</label><textarea id="v_note"></textarea></div></div>
+  <div class="row"><button id="btn_save_visita" class="btn primary" type="button">Salva</button></div>
+</div></div>
+
+<nav class="bottomnav">
+  <a data-page="home" href="index.html">🏠 <span class="label">Home</span></a>
+  <a data-page="medici" href="medici.html">👩‍⚕️ <span class="label">Medici</span></a>
+  <a data-page="farmacie" href="farmacie.html">💊 <span class="label">Farmacie</span></a>
+  <a data-page="visite" class="active" href="visite.html">📝 <span class="label">Visite</span></a>
+  <a data-page="agenda" href="agenda.html">🗓️ <span class="label">Agenda</span></a>
+  <a data-page="followup" href="followup.html">⏰ <span class="label">F/U</span></a>
+  <a data-page="report" href="report.html">📈 <span class="label">Report</span></a>
+  <a data-page="settings" href="io.html">⚙️ <span class="label">Dati</span></a>
+</nav>
+<div class="toast"></div>
+<script src="app.js"></script>
+</body></html>
