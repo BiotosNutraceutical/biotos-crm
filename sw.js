@@ -1,5 +1,5 @@
-// Biotos CRM – Service Worker v2.1 (hotfix mobile/light theme)
-const CACHE = 'biotos-crm-v2-1';
+// Biotos CRM – Service Worker v2.5
+const CACHE = 'biotos-crm-v2-5';
 const ASSETS = [
   './','./index.html','./medici.html','./farmacie.html','./visite.html','./agenda.html','./followup.html','./report.html','./io.html',
   './styles.css','./app.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'
