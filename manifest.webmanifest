@@ -1,9 +1,9 @@
 {
   "name": "Biotos CRM – Field App",
   "short_name": "Biotos CRM",
-  "description": "PWA CRM per medici/farmacie: visite, agenda, follow-up, report; profili multi-account; offline.",
+  "description": "CRM per medici/farmacie: visite, agenda, follow-up, report. Profili multi-account. Offline.",
   "display": "standalone",
-  "start_url": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "background_color": "#07130e",
   "theme_color": "#0b8f5c",
