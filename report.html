@@ -1,0 +1,35 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Biotos CRM – Report</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head>
+<body data-page="report">
+<header><div class="wrap">
+  <h1><img src="icons/icon-192.png" alt=""> Report <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
+</div></header>
+<main class="wrap">
+  <div class="pan">
+    <div class="row">
+      <div><label>Mese</label><input type="month" id="r_month"></div>
+      <div><label>Referente</label><select id="r_refe"><option value="">Tutti</option><option>Stefano</option><option>Mariangela</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Visite mese</label><input id="rk_visite" disabled></div>
+      <div><label>Nuovi contatti</label><input id="rk_nuovi" disabled></div>
+      <div><label>FU creati</label><input id="rk_fu" disabled></div>
+      <div><label>Ordini stimati FV/FL</label><input id="rk_ord" disabled></div>
+    </div>
+    <div id="cards_rep" class="cards"></div>
+  </div>
+</main>
+<nav class="bottomnav">
+  <a data-page="home" href="index.html">🏠 <span class="label">Home</span></a>
+  <a data-page="medici" href="medici.html">👩‍⚕️ <span class="label">Medici</span></a>
+  <a data-page="farmacie" href="farmacie.html">💊 <span class="label">Farmacie</span></a>
+  <a data-page="visite" href="visite.html">📝 <span class="label">Visite</span></a>
+  <a data-page="agenda" href="agenda.html">🗓️ <span class="label">Agenda</span></a>
+  <a data-page="followup" href="followup.html">⏰ <span class="label">F/U</span></a>
+  <a data-page="report" class="active" href="report.html">📈 <span class="label">Report</span></a>
+  <a data-page="settings" href="io.html">⚙️ <span class="label">Dati</span></a>
+</nav>
+<div class="toast"></div>
+<script src="app.js"></script>
+</body></html>
