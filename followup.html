@@ -1,6 +1,8 @@
-<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Biotos CRM – Follow-up</title><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css"></head>
-<body data-page="followup">
+<!doctype html><html lang="it"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>Biotos CRM v2.0 – Follow-up</title><meta name="theme-color" content="#0b8f5c">
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
+</head><body data-page="followup">
 <header><div class="wrap">
   <h1><img src="icons/icon-192.png" alt=""> Follow-up <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
 </div></header>
@@ -10,13 +12,13 @@
       <div><label>Stato</label>
         <select id="fu_state"><option value="all">Tutti</option><option value="over">Scaduti</option><option value="soon">Prossimi 3 gg</option><option value="future">Oltre 3 gg</option></select>
       </div>
-      <div><label>&nbsp;</label><button id="btn_exp_ics" class="btn">📅 iCal</button></div>
+      <div><label>&nbsp;</label><button id="btn_exp_ics" class="btn" type="button">📅 iCal</button></div>
     </div>
     <div id="cards_follow" class="cards"></div>
   </div>
 </main>
 
-<nav class="bottomnav">
+<nav class="bottomnav" aria-label="Sezioni">
   <a data-page="home" href="index.html">🏠 <span class="label">Home</span></a>
   <a data-page="medici" href="medici.html">👩‍⚕️ <span class="label">Medici</span></a>
   <a data-page="farmacie" href="farmacie.html">💊 <span class="label">Farmacie</span></a>
@@ -26,6 +28,6 @@
   <a data-page="report" href="report.html">📈 <span class="label">Report</span></a>
   <a data-page="settings" href="io.html">⚙️ <span class="label">Dati</span></a>
 </nav>
-<div class="toast"></div>
+<div class="toast" aria-live="polite"></div>
 <script src="app.js"></script>
 </body></html>
