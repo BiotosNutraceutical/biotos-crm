@@ -1,4 +1,4 @@
-/* Biotos CRM v1.5 – shared app.js (multi-page) */
+/* Biotos CRM v1.6 – shared app.js */
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 function tISO(d=new Date()){ return new Date(d).toISOString().slice(0,10); }
@@ -7,13 +7,16 @@ function slug(s){ return (s||'default').toLowerCase().replace(/[^a-z0-9]+/g,'-')
 function showToast(t){ const el=$('.toast'); if(!el) return; el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1600); }
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 
-/* ===== Profiles ===== */
+/* Debounce utility */
+function debounce(fn, wait=180){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
+
+/* Profiles */
 let PROFILES = JSON.parse(localStorage.getItem('biotos:profiles')||'["default"]');
 let CURRENT = localStorage.getItem('biotos:current') || PROFILES[0] || 'default';
 function saveProfiles(){ localStorage.setItem('biotos:profiles', JSON.stringify(Array.from(new Set(PROFILES)))); localStorage.setItem('biotos:current', CURRENT); }
 function setProfile(name){ CURRENT=name; saveProfiles(); location.reload(); }
 
-/* ===== Theme ===== */
+/* Theme */
 function applyTheme(){
   const pref = localStorage.getItem('biotos:theme') || 'auto';
   let theme = pref;
@@ -21,7 +24,7 @@ function applyTheme(){
   document.documentElement.setAttribute('data-theme', theme);
 }
 
-/* ===== DB via IndexedDB ===== */
+/* DB via IndexedDB */
 let medici=[], farmacie=[], visite=[], appuntamenti=[];
 let db=null, DBNAME=null;
 function idbOpen(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DBNAME,'1');
@@ -55,7 +58,7 @@ async function loadAll(){
   try{ const j=JSON.parse(localStorage.getItem('biotos:'+CURRENT+':data')||'{}'); medici=j.medici||[]; farmacie=j.farmacie||[]; visite=j.visite||[]; appuntamenti=j.appuntamenti||[]; }catch(_){}
 }
 
-/* ===== Common UI ===== */
+/* Common UI */
 function setActiveNav(page){
   $$('.bottomnav a').forEach(a=>{ if(a.dataset.page===page) a.classList.add('active'); else a.classList.remove('active'); });
 }
@@ -72,7 +75,7 @@ function ensureHeader(){
   }
 }
 
-/* ===== Helpers ===== */
+/* Helpers */
 function tagsStrToArr(s){ return (s||'').split(',').map(x=>x.trim()).filter(Boolean); }
 function collectTopTags(items, field){ const map=new Map(); items.forEach(it=> (it[field]||[]).forEach(t=> map.set(t,(map.get(t)||0)+1))); return Array.from(map.entries()).sort((a,b)=>b[1]-a[1]).slice(0,12).map(x=>x[0]); }
 function chips(container, tags, set, onToggle){
@@ -88,14 +91,38 @@ function refreshRefs(selectRef, includeBoth=true){
   }
 }
 
-/* ===== Page bootstraps ===== */
+/* CSV utils */
+function toCSV(arr, headers){
+  const esc = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+  const lines=[headers.join(',')];
+  arr.forEach(o=> lines.push(headers.map(h=> esc(Array.isArray(o[h])? o[h].join(', ') : o[h])).join(',')));
+  return lines.join('\r\n');
+}
+function fromCSV(text){
+  const lines=text.split(/\r?\n/).filter(Boolean);
+  const hdr=lines.shift().split(',');
+  const rows=lines.map(line=>{
+    const out=[]; let cur='', q=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch=='"'){ if(q && line[i+1]=='"'){ cur+='"'; i++; } else { q=!q; } }
+      else if(ch==',' && !q){ out.push(cur); cur=''; }
+      else cur+=ch;
+    }
+    out.push(cur);
+    const obj={}; hdr.forEach((h,idx)=> obj[h]=out[idx]||'' ); return obj;
+  });
+  return {headers:hdr, rows};
+}
+
+/* Page boot */
 async function boot(page){
   applyTheme();
   await loadAll();
   ensureHeader();
   setActiveNav(page);
 
-  if(page==='home'){ // Dashboard
+  if(page==='home'){
     $('#k_medici').value = medici.length;
     $('#k_farmacie').value = farmacie.length;
     $('#k_visite').value = visite.length;
@@ -105,7 +132,7 @@ async function boot(page){
       <div class="card"><div class="main">
         <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
         <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
-      </div><a class="btn" href="visite.html#new?from=${a.id}">→ Visita</a></div>`).join('');
+      </div><a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}">→ Visita</a></div>`).join('');
   }
 
   if(page==='medici'){
@@ -125,17 +152,19 @@ async function boot(page){
           <div class="meta">${m.strutt||''} — ${m.comune||''}</div>
           <div class="meta">${(m.tag||[]).join(', ')}</div>
         </div>
-        <a class="btn" href="visite.html#new?tipo=Medico&ref=${m.id}">+ Visita</a></div>`).join('');
+        <a class="btn" href="visite.html#new?tipo=Medico&ref=${encodeURIComponent(m.id)}">+ Visita</a></div>`).join('');
       const top=collectTopTags(medici,'tag'); chips('#m_chips', top, M_TAGS, render);
     };
-    $$('#m_q, #m_q_comune, #m_q_spec, #m_q_tag').forEach(el=>el.addEventListener('input',render));
+    const rDeb=debounce(render, 120);
+    $$('#m_q, #m_q_comune, #m_q_spec, #m_q_tag').forEach(el=>el.addEventListener('input', rDeb));
     $('#btn_new_med')?.addEventListener('click', ()=> $('#sheet_medico').classList.add('open'));
-    $('#btn_save_medico')?.addEventListener('click', async ()=>{
+    $('#btn_save_medico')?.addEventListener('click', async (ev)=>{
+      ev.preventDefault();
       const nome=$('#m_nome').value.trim(), cognome=$('#m_cognome').value.trim();
       if(!nome||!cognome) return alert('Nome e Cognome obbligatori');
-      medici.unshift({id:uid(), tit:$('#m_tit').value, nome, cognome, spec:$('#m_spec').value, strutt:$('#m_strutt').value.trim(),
-        comune:$('#m_comune').value.trim(), tel:$('#m_tel').value.trim(), email:$('#m_email').value.trim(),
-        tag:tagsStrToArr($('#m_tag').value), note:$('#m_note').value.trim()});
+      medici.unshift({id:uid(), tit:$('#m_tit').value, nome, cognome, spec:$('#m_spec').value, strutt:($('#m_strutt').value||'').trim(),
+        comune:($('#m_comune').value||'').trim(), tel:($('#m_tel').value||'').trim(), email:($('#m_email').value||'').trim(),
+        tag:tagsStrToArr($('#m_tag').value), note:($('#m_note').value||'').trim()});
       await saveAll(); $('#sheet_medico').classList.remove('open'); render(); showToast('Medico salvato');
     });
     render();
@@ -156,31 +185,36 @@ async function boot(page){
           <div class="meta">${f.comune||''} — ${f.dir||''}</div>
           <div class="meta">${(f.tag||[]).join(', ')}</div>
         </div>
-        <a class="btn" href="visite.html#new?tipo=Farmacia&ref=${f.id}">+ Visita</a></div>`).join('');
+        <a class="btn" href="visite.html#new?tipo=Farmacia&ref=${encodeURIComponent(f.id)}">+ Visita</a></div>`).join('');
       const top=collectTopTags(farmacie,'tag'); chips('#f_chips', top, F_TAGS, render);
     };
-    $$('#f_q, #f_q_comune, #f_q_tag').forEach(el=>el.addEventListener('input',render));
+    const rDeb=debounce(render, 120);
+    $$('#f_q, #f_q_comune, #f_q_tag').forEach(el=>el.addEventListener('input', rDeb));
     $('#btn_new_far')?.addEventListener('click', ()=> $('#sheet_farmacia').classList.add('open'));
-    $('#btn_save_farmacia')?.addEventListener('click', async ()=>{
+    $('#btn_save_farmacia')?.addEventListener('click', async (ev)=>{
+      ev.preventDefault();
       const ragione=$('#f_ragione').value.trim(); if(!ragione) return alert('Ragione sociale obbligatoria');
-      farmacie.unshift({id:uid(), ragione, dir:$('#f_dir').value.trim(), comune:$('#f_comune').value.trim(),
-        tel:$('#f_tel').value.trim(), email:$('#f_email').value.trim(), tag:tagsStrToArr($('#f_tag').value),
-        addr:$('#f_addr').value.trim(), note:$('#f_note').value.trim()});
+      farmacie.unshift({id:uid(), ragione, dir:($('#f_dir').value||'').trim(), comune:($('#f_comune').value||'').trim(),
+        tel:($('#f_tel').value||'').trim(), email:($('#f_email').value||'').trim(), tag:tagsStrToArr($('#f_tag').value),
+        addr:($('#f_addr').value||'').trim(), note:($('#f_note').value||'').trim()});
       await saveAll(); $('#sheet_farmacia').classList.remove('open'); render(); showToast('Farmacia salvata');
     });
     render();
   }
 
   if(page==='visite'){
-    const params = new URLSearchParams((location.hash.split('?')[1]||''));
+    const hash = location.hash || '';
+    const qstr = hash.includes('?') ? hash.split('?')[1] : '';
+    const params = new URLSearchParams(qstr);
     refreshRefs('#v_ref', true);
-    if(params.get('from')){ // da agenda
-      const a = appuntamenti.find(x=>x.id===params.get('from'));
+    if(params.get('from')){
+      const id = params.get('from');
+      const a = appuntamenti.find(x=>x.id===id);
       if(a){ $('#v_data').value=a.data; $('#v_tipo').value=a.tipo; $('#v_ref').value=a.ref||''; $('#v_next').value='Dopo appuntamento'; }
-    } else {
+    }else{
       if(params.get('tipo')) $('#v_tipo').value=params.get('tipo');
       if(params.get('ref')) $('#v_ref').value=params.get('ref');
-      $('#v_data').value = tISO();
+      if(!$('#v_data').value) $('#v_data').value = tISO();
     }
 
     const V_TAGS=new Set();
@@ -197,25 +231,23 @@ async function boot(page){
           <div class="meta">${(v.tag||[]).join(', ')}</div>
         </div>
         <div class="actions">
-          ${v.follow?`<button class="btn" onclick="postponeFU('${v.id}',1)">+1</button>
-                       <button class="btn" onclick="postponeFU('${v.id}',3)">+3</button>
-                       <button class="btn" onclick="postponeFU('${v.id}',7)">+7</button>`:''}
+          ${v.follow?`<a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>`:''}
         </div></div>`).join('');
       const top=collectTopTags(visite,'tag'); chips('#v_chips', top, V_TAGS, render);
     };
-    window.postponeFU = async (id,days)=>{ const v=visite.find(x=>x.id===id); if(!v) return; const base = v.follow || tISO(); const x=new Date(base); x.setDate(x.getDate()+days); v.follow = tISO(x); await saveAll(); render(); };
+    const rDeb=debounce(render, 120);
+    $$('#v_q_from,#v_q_to,#v_q_tipo,#v_q_tag').forEach(el=>el.addEventListener('input', rDeb));
 
     $('#btn_new_vis')?.addEventListener('click', ()=> $('#sheet_visita').classList.add('open'));
-    $('#btn_save_visita')?.addEventListener('click', async ()=>{
+    $('#btn_save_visita')?.addEventListener('click', async (ev)=>{
+      ev.preventDefault();
       const data=$('#v_data').value||tISO(), tipo=$('#v_tipo').value, ref=$('#v_ref').value||'';
       if(!data||!tipo||!ref) return alert('Data, Tipo e Riferimento obbligatori');
       visite.unshift({ id:uid(), data, tipo, ref, prod:$('#v_prod').value, esito:$('#v_esito').value, refe:$('#v_refe').value,
-        mat:$('#v_mat').value.trim(), next:$('#v_next').value.trim(), follow:$('#v_follow').value||'',
-        fv:+($('#v_fv').value||0), fl:+($('#v_fl').value||0), tag:tagsStrToArr($('#v_tag').value), note:$('#v_note').value.trim() });
+        mat:($('#v_mat').value||'').trim(), next:($('#v_next').value||'').trim(), follow:$('#v_follow').value||'',
+        fv:+($('#v_fv').value||0), fl:+($('#v_fl').value||0), tag:tagsStrToArr($('#v_tag').value), note:($('#v_note').value||'').trim() });
       await saveAll(); $('#sheet_visita').classList.remove('open'); render(); showToast('Visita salvata');
     });
-
-    $$('#v_q_from,#v_q_to,#v_q_tipo,#v_q_tag').forEach(el=>el.addEventListener('input',render));
     render();
   }
 
@@ -230,16 +262,28 @@ async function boot(page){
           <div class="title">${a.data} ${a.ora||''} • ${a.tit}</div>
           <div class="meta">${a.tipo}${a.ref?(' • ref:'+a.ref):''}</div>
         </div>
-        <a class="btn" href="visite.html#new?from=${a.id}">→ Visita</a></div>`).join('');
+        <a class="btn" href="visite.html#new?from=${encodeURIComponent(a.id)}">→ Visita</a></div>`).join('');
     };
-    $$('#a_from,#a_to').forEach(el=>el.addEventListener('input',render));
+    const rDeb=debounce(render, 120);
+    $$('#a_from,#a_to').forEach(el=>el.addEventListener('input', rDeb));
     $('#btn_new_appt')?.addEventListener('click', ()=> $('#sheet_appt').classList.add('open'));
-    $('#btn_save_appt')?.addEventListener('click', async ()=>{
+    $('#btn_save_appt')?.addEventListener('click', async (ev)=>{
+      ev.preventDefault();
       const data=$('#a_data').value||tISO(), ora=$('#a_ora').value||'', tit=($('#a_tit').value||'Appuntamento').trim();
       if(!data||!tit) return alert('Data e Titolo obbligatori');
-      appuntamenti.unshift({id:uid(), data, ora, tit, tipo:$('#a_tipo').value, ref:$('#a_ref').value||'', note:$('#a_note').value.trim()});
+      appuntamenti.unshift({id:uid(), data, ora, tit, tipo:$('#a_tipo').value, ref:$('#a_ref').value||'', note:($('#a_note').value||'').trim()});
       await saveAll(); $('#sheet_appt').classList.remove('open'); render(); showToast('Appuntamento salvato');
     });
+
+    /* hash pre-compilazione da followup */
+    const hash = location.hash || '';
+    if(hash.startsWith('#new?')){
+      const p = new URLSearchParams(hash.substring(5));
+      if(p.get('date')) $('#a_data').value = p.get('date');
+      if(p.get('tipo')) $('#a_tipo').value = p.get('tipo');
+      if(p.get('ref')) $('#a_ref').value = p.get('ref');
+      $('#sheet_appt').classList.add('open');
+    }
     render();
   }
 
@@ -251,23 +295,10 @@ async function boot(page){
         <div class="card"><div class="main"><div class="title">${v.follow} • ${v.tipo}</div>
           <div class="meta">ref:${v.ref||''} • next:${v.next||'-'}</div></div>
           <div>
-            <button class="btn" onclick="postponeFU('${v.id}',1)">+1</button>
-            <button class="btn" onclick="postponeFU('${v.id}',3)">+3</button>
-            <button class="btn" onclick="postponeFU('${v.id}',7)">+7</button>
-            <a class="btn" href="agenda.html#new?date=${v.follow}&tipo=${v.tipo}&ref=${v.ref||''}">FU → Appt</a>
+            <a class="btn" href="agenda.html#new?date=${encodeURIComponent(v.follow)}&tipo=${encodeURIComponent(v.tipo)}&ref=${encodeURIComponent(v.ref||'')}">FU → Appt</a>
           </div></div>`).join('');
     };
-    window.postponeFU = async (id,days)=>{ const v=visite.find(x=>x.id===id); if(!v) return; const base=v.follow||tISO(); const x=new Date(base); x.setDate(x.getDate()+days); v.follow=tISO(x); await saveAll(); render(); };
-    $('#fu_state').addEventListener('input',render);
-    $('#btn_exp_ics')?.addEventListener('click', ()=>{
-      const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Biotos CRM//FollowUp//IT'];
-      visite.filter(v=>v.follow).forEach(v=>{
-        const dt=v.follow.replace(/-/g,'')+'T090000';
-        lines.push('BEGIN:VEVENT','UID:'+v.id+'@biotos','DTSTAMP:'+dt,'DTSTART:'+dt,'SUMMARY:Follow-up '+v.tipo,'DESCRIPTION:ref '+(v.ref||''),'END:VEVENT');
-      });
-      lines.push('END:VCALENDAR');
-      const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/calendar'})); a.download='followup_'+slug(CURRENT)+'.ics'; a.click();
-    });
+    $('#fu_state').addEventListener('input', render);
     render();
   }
 
@@ -283,7 +314,8 @@ async function boot(page){
       $('#rk_ord').value = sumFV+'/'+sumFL;
       $('#cards_rep').innerHTML = inMonth.map(v=>`<div class="card"><div class="main"><div class="title">${v.data} • ${v.tipo} ${v.prod||''}</div><div class="meta">${v.esito||''} • FV/FL:${v.fv||0}/${v.fl||0} • tag:${(v.tag||[]).join(',')}</div></div></div>`).join('');
     };
-    $$('#r_month,#r_refe').forEach(el=>el.addEventListener('input',render));
+    const rDeb=debounce(render, 120);
+    $$('#r_month,#r_refe').forEach(el=>el.addEventListener('input', rDeb));
     render();
   }
 
@@ -300,7 +332,7 @@ async function boot(page){
 
     // Backup/restore
     $('#btn_backup')?.addEventListener('click', ()=>{
-      const payload={exportedAt:new Date().toISOString(), version:'v1.5', profile:CURRENT, data:{medici,farmacie,visite,appuntamenti}};
+      const payload={exportedAt:new Date().toISOString(), version:'v1.6', profile:CURRENT, data:{medici,farmacie,visite,appuntamenti}};
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
       a.download='biotos_crm_'+slug(CURRENT)+'_backup.json'; a.click();
     });
@@ -311,31 +343,45 @@ async function boot(page){
       }catch(_){ alert('File non valido'); } }; rd.readAsText(f);
     });
 
-    // CSV (rapidi)
+    // Export
     $('#exp_med')?.addEventListener('click', ()=>{
-      const hdr=['id','tit','nome','cognome','spec','strutt','comune','tel','email','tag','note'];
-      const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-      const csv=[hdr.join(',')].concat(medici.map(o=>hdr.map(h=>esc(Array.isArray(o[h])?o[h].join(', '):o[h])).join(','))).join('\r\n');
+      const csv = toCSV(medici, ['id','tit','nome','cognome','spec','strutt','comune','tel','email','tag','note']);
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='medici_'+slug(CURRENT)+'.csv'; a.click();
     });
     $('#exp_far')?.addEventListener('click', ()=>{
-      const hdr=['id','ragione','dir','comune','tel','email','tag','addr','note'];
-      const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-      const csv=[hdr.join(',')].concat(farmacie.map(o=>hdr.map(h=>esc(Array.isArray(o[h])?o[h].join(', '):o[h])).join(','))).join('\r\n');
+      const csv = toCSV(farmacie, ['id','ragione','dir','comune','tel','email','tag','addr','note']);
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='farmacie_'+slug(CURRENT)+'.csv'; a.click();
     });
     $('#exp_vis')?.addEventListener('click', ()=>{
-      const hdr=['id','data','tipo','ref','prod','esito','refe','mat','next','follow','fv','fl','tag','note'];
-      const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-      const csv=[hdr.join(',')].concat(visite.map(o=>hdr.map(h=>esc(Array.isArray(o[h])?o[h].join(', '):o[h])).join(','))).join('\r\n');
+      const csv = toCSV(visite, ['id','data','tipo','ref','prod','esito','refe','mat','next','follow','fv','fl','tag','note']);
       const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='visite_'+slug(CURRENT)+'.csv'; a.click();
     });
 
-    // Theme pref is bound in ensureHeader()
+    // Import
+    $('#imp_med')?.addEventListener('change', async e=>{
+      const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=async()=>{ const {rows}=fromCSV(rd.result);
+        rows.forEach(r=>{ r.tag = (r.tag? r.tag.split(',').map(s=>s.trim()).filter(Boolean):[]); });
+        medici = rows.map(r=>Object.assign({id:r.id||uid()}, r));
+        await saveAll(); showToast('Medici importati');
+      }; rd.readAsText(f);
+    });
+    $('#imp_far')?.addEventListener('change', async e=>{
+      const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=async()=>{ const {rows}=fromCSV(rd.result);
+        rows.forEach(r=>{ r.tag = (r.tag? r.tag.split(',').map(s=>s.trim()).filter(Boolean):[]); });
+        farmacie = rows.map(r=>Object.assign({id:r.id||uid()}, r));
+        await saveAll(); showToast('Farmacie importate');
+      }; rd.readAsText(f);
+    });
+    $('#imp_vis')?.addEventListener('change', async e=>{
+      const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=async()=>{ const {rows}=fromCSV(rd.result);
+        rows.forEach(r=>{ r.fv=+r.fv||0; r.fl=+r.fl||0; r.tag = (r.tag? r.tag.split(',').map(s=>s.trim()).filter(Boolean):[]); });
+        visite = rows.map(r=>Object.assign({id:r.id||uid()}, r));
+        await saveAll(); showToast('Visite importate');
+      }; rd.readAsText(f);
+    });
   }
 }
 
-/* ===== Page detector ===== */
 document.addEventListener('DOMContentLoaded', ()=>{
   const page = document.body.dataset.page || 'home';
   boot(page);
