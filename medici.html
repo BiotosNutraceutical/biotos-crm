@@ -1,13 +1,13 @@
 <!doctype html><html lang="it"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Biotos CRM – Medici</title><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b8f5c">
-<link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="stylesheet" href="styles.css"></head>
-<body data-page="medici">
+<title>Biotos CRM v2.0 – Medici</title><meta name="theme-color" content="#0b8f5c">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-192.png"><link rel="stylesheet" href="styles.css">
+</head><body data-page="medici">
 <header><div class="wrap">
   <h1><img src="icons/icon-192.png" alt=""> Medici <span class="savebadge" id="savebadge">Salvato ✓</span><span id="profilebadge" class="profilebadge"></span></h1>
-  <div class="topbar smallgap">
-    <input id="m_q" type="search" placeholder="Cerca medico...">
-    <button id="btn_new_med" class="btn primary">+ Medico</button>
+  <div class="topbar smallgap" role="search">
+    <input id="m_q" type="search" placeholder="Cerca medico per nome/cognome">
+    <button id="btn_new_med" class="btn primary" type="button">+ Medico</button>
   </div>
 </div></header>
 <main class="wrap">
@@ -17,13 +17,12 @@
       <div><label>Specialità</label><select id="m_q_spec"><option value="">Tutte</option><option>Ginecologia</option><option>MMG</option><option>Altro</option></select></div>
       <div><label>Tag</label><input id="m_q_tag" placeholder="es. top, FV"></div>
     </div>
-    <div id="m_chips" class="chips"></div>
+    <div id="m_chips" class="chips" aria-label="Tag rapidi"></div>
     <div id="cards_medici" class="cards"></div>
   </div>
 </main>
 
-<!-- Sheet nuovo medico -->
-<div class="sheet" id="sheet_medico"><div class="panel">
+<div class="sheet" id="sheet_medico" aria-modal="true" role="dialog"><div class="panel">
   <button type="button" class="btn" onclick="document.querySelector('#sheet_medico').classList.remove('open')">✕ Chiudi</button>
   <h3>Nuovo medico</h3>
   <div class="row">
@@ -37,15 +36,15 @@
     <div><label>Comune</label><input id="m_comune"></div>
   </div>
   <div class="row">
-    <div><label>Telefono</label><input id="m_tel"></div>
-    <div><label>Email</label><input id="m_email" autocapitalize="none"></div>
+    <div><label>Telefono</label><input id="m_tel" inputmode="tel"></div>
+    <div><label>Email</label><input id="m_email" autocapitalize="none" inputmode="email"></div>
     <div><label>Tag</label><input id="m_tag" placeholder="es. top, FV"></div>
   </div>
   <div class="row"><div><label>Note</label><textarea id="m_note"></textarea></div></div>
- <div class="row"><button id="btn_save_medico" class="btn primary" type="button">Salva</button></div>
+  <div class="row"><button id="btn_save_medico" class="btn primary" type="button">Salva</button></div>
 </div></div>
 
-<nav class="bottomnav">
+<nav class="bottomnav" aria-label="Sezioni">
   <a data-page="home" href="index.html">🏠 <span class="label">Home</span></a>
   <a data-page="medici" class="active" href="medici.html">👩‍⚕️ <span class="label">Medici</span></a>
   <a data-page="farmacie" href="farmacie.html">💊 <span class="label">Farmacie</span></a>
@@ -55,6 +54,6 @@
   <a data-page="report" href="report.html">📈 <span class="label">Report</span></a>
   <a data-page="settings" href="io.html">⚙️ <span class="label">Dati</span></a>
 </nav>
-<div class="toast"></div>
+<div class="toast" aria-live="polite"></div>
 <script src="app.js"></script>
 </body></html>
